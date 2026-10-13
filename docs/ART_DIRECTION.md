@@ -34,6 +34,8 @@ This is a storyboard candidate, stored separately from runtime art. The room sta
 
 The second opening keyframe, [S02 — A little wider](storyboard/s02-consent-v1.png), uses S01 version 3 and the updated portrait as references. It shows a closer, same-axis consent-control press, with the approved temple module retained. Its [exact generation prompt](storyboard/s02-consent-v1.prompt.txt) and review notes are recorded with the storyboard assets. The in-game cinematic remains planned work.
 
+The third keyframe, [S03 — Someone familiar](storyboard/s03-kite-response-v1.png), uses the [static Kite reference](storyboard/kite-visual-anchor.png) exported from the current SVG, alongside S01's room/light reference. The [exact prompt](storyboard/s03-kite-response-v1.prompt.txt) preserves Kite's geometry as a perceptual avatar. The three Connection storyboard frames are now available; no runtime cinematic has been added.
+
 ## Replace the art
 
 1. Put licensed replacement assets in `public/art/`.

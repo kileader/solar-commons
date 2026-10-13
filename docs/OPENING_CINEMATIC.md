@@ -155,7 +155,7 @@ Keep the presentation to one control, two paths and a short feedback line. Durin
 
 **Future definition of done:** company splash still plays first; all ten assets match the approved identity; natural completion and skip reach the untouched first harbor line; aligned, missed, untimed and bypass routes reach the same state; keyboard/touch/controller work without input leakage; captions and still fallback preserve the story; focus loss pauses timing; scene replay does not repeat startup. Verify actual browser rendering on desktop and phone, not just the build.
 
-The first two storyboard images now exist: [S01, cybernetic version 3](storyboard/s01-integration-room-v3-cybernetic.png) and [S02, consent](storyboard/s02-consent-v1.png), with their [generation prompts and provenance](storyboard/README.md). The matching temple module now appears in Mara's in-game portrait. The remaining storyboard images, cinematic player, new audio and video exports remain future work.
+The three Connection storyboard images now exist: [S01, cybernetic version 3](storyboard/s01-integration-room-v3-cybernetic.png), [S02, consent](storyboard/s02-consent-v1.png), and [S03, Kite's response](storyboard/s03-kite-response-v1.png), with their [generation prompts and provenance](storyboard/README.md). The matching temple module now appears in Mara's in-game portrait. The remaining storyboard images, cinematic player, new audio and video exports remain future work.
 
 ## 9. Execution order
 

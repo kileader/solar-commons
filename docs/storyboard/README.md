@@ -27,6 +27,22 @@ Reviewed against S01: face and temple hardware, costume, camera axis, chair and 
 
 Master: PNG, 1672 × 941, 2,458,922 bytes. SHA-256: `2724c73139b928ed77b263c194e365c417833254556af181bdf9a6a66b237cad`.
 
+## S03 — Someone familiar
+
+[Working image, version 1](s03-kite-response-v1.png) · [Exact generation prompt](s03-kite-response-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool, using the exported current Kite SVG as character reference and S01 version 3 as room/light reference. The close perceptual portrait preserves the diamond core, folded fins, mint/teal facets, gold attention slit, top ornament and two ribbon tails. No physical cast shadow, projector or mechanical body is depicted.
+
+Reviewed against the anchor and S01: silhouette, palette, room, chair, plant, arch and harbor are consistent. This completes the three storyboard frames for Clip 1, Connection. The authored caption is **“Your pace. Your choice.”** Captions remain separate from the raster image. Animation and in-game cinematic playback remain future work.
+
+Master: PNG, 1672 × 941, 2,099,765 bytes. SHA-256: `8b453a954442e8e3e21bbaefc65db36fae94979f5065cee54d8904d30e4d2432`.
+
+## Kite visual anchor
+
+[PNG reference](kite-visual-anchor.png) · [Original exported SVG](kite-visual-anchor.svg)
+
+The reference is a static export of the existing `Kite` component in `src/components/Kite.tsx`, rendered with React's `renderToStaticMarkup`. The field, attention accent and signal styling use the current inactive portrait values; animation is absent and inactive cognition branches remain hidden. Sharp rasterized the export on a plain deep-teal background at 960 × 1040 for image-generation reference. The SVG geometry and runtime component were not redesigned.
+
 ## Mara visual anchor / runtime portrait
 
 [PNG master](mara-neural-interface-v1.png) · [Exact edit prompt](mara-neural-interface-v1.prompt.txt)
