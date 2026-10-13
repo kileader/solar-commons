@@ -12,3 +12,14 @@ Verified locally on October 13, 2026.
 - Console: no warning or error logs in the final browser walkthrough.
 
 Browser interaction checks used the Vite development server. Production output was built successfully; it has not been deployed to a public host. No live AI calls are part of the prototype.
+
+## Audio and controller pass
+
+- Production build and all 28 tests pass: ten original progression tests, six gamepad sampler tests, four actual-scene controller integration tests, five voice playback tests, and three preference tests.
+- Browser activation: explicit Enable sound activates the score without inadvertently muting it. Returning to a fresh page leaves audio locked until interaction.
+- Real local voices enumerated: Microsoft David, Mark, and Zira. Kite's test line produced a speech-start event; closing panels and setting master to zero canceled speech.
+- Audio output sampled after the master bus: music alone produced a nonzero peak of 0.035986; perception effects with music disabled produced 0.026353. Master volume zero produced exactly zero output. These are signal checks, not a claim of human listening review.
+- Controller integration exercises actual React controls and scene transitions with a simulated standard gamepad: held A advances one line, D-pad selects a choice, A opens evidence, B closes it, X toggles perception, Y opens notes, Start opens settings, and left/right changes a real volume slider. Focus loss and reconnect consume stale held input. Polling stops on unmount.
+- Physical controller hardware was not exercised in the browser verification session. Hardware mapping, Bluetooth behavior, and controller-specific feel remain to be checked with Kevin's controller.
+- A fresh page load, audio activation, and local voice test produced no new console warnings or errors. An earlier hot-reload hook-order error during development did not recur on the fresh load.
+- All audio is generated locally or uses a local speech service. No paid calls, cloud speech fallback, or unlicensed music assets were used.

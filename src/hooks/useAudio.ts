@@ -1,0 +1,111 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { HarborAudio, type AudioStatus, type SoundCue } from '../audio/HarborAudio'
+import { localEnglishVoices, VoicePlayback, type VoiceState } from '../audio/VoicePlayback'
+import {
+  loadAudioPreferences,
+  normalizeAudioPreferences,
+  saveAudioPreferences,
+  type AudioPreferences,
+} from '../audio/preferences'
+import type { DialogueLine } from '../content/harbor'
+import { voiceTestLine } from '../content/harbor'
+
+export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognitive: boolean) {
+  const [preferences, setPreferences] = useState(loadAudioPreferences)
+  const [status, setStatus] = useState<AudioStatus>({ state: 'locked', peak: 0 })
+  const [voiceState, setVoiceState] = useState<VoiceState>('idle')
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
+  const [foreground, setForeground] = useState(() => !document.hidden)
+  const [replay, setReplay] = useState(0)
+  const audio = useRef<HarborAudio | null>(null)
+  const speech = useRef<VoicePlayback | null>(null)
+  const preferencesRef = useRef(preferences)
+  const linesRef = useRef(lines)
+  linesRef.current = lines
+  const speechKey = lines.map((line) => line.id).join('|')
+
+  useEffect(() => {
+    const engine = new HarborAudio(setStatus)
+    audio.current = engine
+    engine.configure(preferencesRef.current)
+    const service = 'speechSynthesis' in window ? window.speechSynthesis : null
+    const player = new VoicePlayback(
+      service,
+      (text) => new SpeechSynthesisUtterance(text),
+      (state) => {
+        setVoiceState(state)
+        engine.setSpeaking(state === 'speaking')
+      },
+    )
+    speech.current = player
+    const refreshVoices = () => setVoices(service ? localEnglishVoices(service.getVoices()) : [])
+    refreshVoices()
+    service?.addEventListener('voiceschanged', refreshVoices)
+    const setActive = () => {
+      const active = !document.hidden && document.hasFocus()
+      setForeground(active)
+      engine.setForeground(active)
+      if (!active) player.stop()
+    }
+    document.addEventListener('visibilitychange', setActive)
+    window.addEventListener('blur', setActive)
+    window.addEventListener('focus', setActive)
+    return () => {
+      service?.removeEventListener('voiceschanged', refreshVoices)
+      document.removeEventListener('visibilitychange', setActive)
+      window.removeEventListener('blur', setActive)
+      window.removeEventListener('focus', setActive)
+      player.stop()
+      engine.dispose()
+      if (audio.current === engine) audio.current = null
+      if (speech.current === player) speech.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    preferencesRef.current = preferences
+    audio.current?.configure(preferences)
+    saveAudioPreferences(preferences)
+  }, [preferences])
+  useEffect(() => {
+    audio.current?.setCognitive(cognitive)
+  }, [cognitive])
+  useEffect(() => {
+    if (paused || !foreground || status.state !== 'running') {
+      speech.current?.stop()
+      return
+    }
+    speech.current?.say(linesRef.current, preferences)
+    return () => speech.current?.stop()
+  }, [speechKey, paused, foreground, status.state, preferences, voices, replay])
+
+  const unlock = useCallback(() => audio.current?.unlock(), [])
+  const play = useCallback((cue: SoundCue) => audio.current?.play(cue), [])
+  const update = useCallback((patch: Partial<AudioPreferences>) => {
+    setPreferences((previous) => normalizeAudioPreferences({ ...previous, ...patch }))
+  }, [])
+  const toggle = useCallback(() => {
+    unlock()
+    update({ muted: status.state === 'running' ? !preferencesRef.current.muted : false })
+  }, [unlock, update, status.state])
+  const replayVoice = useCallback(() => {
+    unlock()
+    setReplay((value) => value + 1)
+  }, [unlock])
+  const testVoice = useCallback(() => {
+    speech.current?.say([voiceTestLine], preferencesRef.current)
+  }, [])
+  return {
+    preferences,
+    status,
+    voiceState,
+    voices,
+    unlock,
+    play,
+    update,
+    toggle,
+    replayVoice,
+    testVoice,
+    ready: status.state === 'running',
+  }
+}

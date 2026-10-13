@@ -41,6 +41,12 @@ export interface ConclusionChoice {
 export const sceneTitle = 'The Harbor'
 export const sceneSubtitle = 'Larkhaven · late afternoon'
 
+export const voiceTestLine: DialogueLine = {
+  id: 'voice-test',
+  speaker: 'Kite',
+  text: 'I’m here, Mara. We can take our time.',
+}
+
 /** Authored scene copy stays with the narrative, independent of its layout. */
 export const sceneCopy = {
   location: 'LARKHAVEN · COASTAL COMMONS',

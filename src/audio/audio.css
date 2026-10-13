@@ -1,0 +1,249 @@
+.dialogue-buttons {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  flex-shrink: 0;
+}
+[data-input='gamepad'] :is(button, input, select):focus {
+  outline: 3px solid #b5ffdd;
+  outline-offset: 5px;
+  box-shadow: 0 0 16px #b5ffdd30;
+}
+.voice-replay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 13px 4px;
+  border: 0;
+  background: transparent;
+  color: #bde8d4;
+  font-size: 13px;
+}
+.voice-replay:hover:not(:disabled) {
+  color: #e3ffef;
+}
+.voice-replay:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.scene-footer {
+  gap: 20px;
+  flex-wrap: wrap;
+  height: auto;
+  min-height: 47px;
+  padding: 8px 0;
+}
+.scene-footer > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.sound-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  padding: 7px 4px;
+  color: #cdf1dd;
+}
+.sound-toggle:hover:not(:disabled) {
+  color: #edfff2;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.sound-toggle:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.is-speaking .portrait-disc {
+  box-shadow:
+    0 0 32px #b2ffe13d,
+    inset 0 0 25px #92ead332;
+}
+.is-speaking .kite-core {
+  filter: drop-shadow(0 0 7px #b6ffe884);
+}
+.is-speaking .kite-signal {
+  animation-duration: 3s;
+  opacity: 0.95;
+}
+.audio-settings {
+  margin-top: 29px;
+  border-top: 1px solid #9eceb53a;
+  padding-top: 25px;
+}
+.audio-settings h3 {
+  font-family: Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+  margin: 0 0 12px;
+}
+.settings-description {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #c3d0be;
+  margin: 10px 0 20px;
+}
+.compact-setting {
+  padding: 12px 0 19px;
+}
+.volume-row {
+  display: block;
+  padding: 17px 0 7px;
+}
+.volume-row > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 11px;
+  font-size: 15px;
+}
+.volume-row output {
+  color: #acdbbf;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.volume-row input {
+  display: block;
+  width: 100%;
+  height: 24px;
+  cursor: pointer;
+  accent-color: #a6ecc9;
+}
+.voice-choice {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 22px 0 16px;
+  font-size: 14px;
+}
+.voice-choice > span {
+  min-width: 42px;
+}
+.voice-choice select {
+  min-width: 0;
+  flex: 1;
+  width: 100%;
+  padding: 11px 9px;
+  font:
+    13px 'Trebuchet MS',
+    Arial,
+    sans-serif;
+  border: 1px solid #a6d7bc60;
+  background: #163f48;
+  color: #e7f4e9;
+  border-radius: 3px;
+}
+.voice-test {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border: 1px solid #a6d7bc60;
+  background: #b6efd30b;
+  color: #c8f6dc;
+  border-radius: 3px;
+  font-size: 14px;
+  margin: 12px 0 25px;
+}
+.voice-test:hover:not(:disabled) {
+  background: #b6efd318;
+}
+.voice-test:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.voice-unavailable {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-left: 1px solid #e7ce9f80;
+  background: #debc730b;
+  color: #e1d6b7;
+}
+.controller-guide {
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 1px solid #9eceb53a;
+}
+.controller-guide > p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #c3d0be;
+}
+.controller-guide dl {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 18px 0;
+}
+.controller-guide dl > div {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 15px;
+  margin: 10px 0;
+}
+.controller-guide dt {
+  color: #b9e8cf;
+}
+.controller-guide dd {
+  margin: 0;
+  color: #d7e2d0;
+}
+@media (max-width: 1100px) {
+  .dialogue-buttons {
+    gap: 8px;
+  }
+  .voice-replay > span {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .dialogue-buttons {
+    justify-content: flex-end;
+    gap: 22px;
+    margin-top: 18px;
+  }
+  .dialogue-buttons .continue-button {
+    margin: 0;
+    padding: 0;
+  }
+  .voice-replay > span {
+    display: inline;
+  }
+  .voice-replay {
+    padding: 10px 0;
+    font-size: 13px;
+  }
+  .scene-footer {
+    gap: 6px 17px;
+    min-height: 47px;
+    padding: 8px 0;
+  }
+  .scene-footer > span:last-child {
+    display: flex;
+  }
+  .scene-footer > span {
+    font-size: 10px;
+  }
+  .sound-toggle {
+    font-size: 12px;
+    gap: 6px;
+  }
+  .controller-guide dl > div {
+    grid-template-columns: 118px 1fr;
+    gap: 12px;
+  }
+  .controller-guide dl {
+    font-size: 11px;
+  }
+  .volume-row > span {
+    font-size: 14px;
+  }
+  .voice-choice {
+    gap: 12px;
+  }
+}

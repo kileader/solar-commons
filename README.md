@@ -26,7 +26,34 @@ Keyboard: **Enter/Space** continues dialogue; **C** toggles perception; **J** op
 - Three evidence inspections separating observations, modeled explanations, and unresolved questions.
 - Responsive presentation, native modal focus handling, and reduced-motion support.
 
-This is a browser-local, authored story. It makes no AI requests, collects no telemetry, and has no backend. Scene progress resets on reload. There is no audio, save system, or additional chapter in this slice.
+This is a browser-local, authored story. It makes no AI requests, collects no telemetry, and has no backend. Scene progress resets on reload; sound preferences persist on this device. There is no story save system or additional chapter in this slice.
+
+## Sound and controllers
+
+Click **Enable sound**, or use the scene controls, to start audio. The original ambient score layers a continuous shore texture, slowly changing chords, and sparse glass tones. It ducks beneath spoken dialogue. Focus, dialogue, choices, evidence, perception, panels, settings, and endings have their own restrained feedback.
+
+**Listen** replays the current dialogue. Mara and Kite use different local device voices when available. Opening an evidence panel plays its character dialogue; advancing, closing a panel, muting, or leaving the foreground cancels old speech. Dialogue never advances automatically.
+
+Settings include **Master**, **Music**, **Voice**, and **Sound effects** volumes, a mute switch, automatic dialogue playback, local voice selection, and a voice test. Preferences are stored locally. Voices must be reported by the browser as local English voices; remote voices are excluded, with no fallback to a cloud speech service. Availability and voice quality depend on the device and browser. See [MDN: local speech services](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService).
+
+Standard-mapped Xbox and PlayStation controllers use the following controls:
+
+| Control                                       | Action                      |
+| --------------------------------------------- | --------------------------- |
+| D-pad / left stick                            | Move focus                  |
+| A / Cross                                     | Continue or select          |
+| B / Circle                                    | Close a panel               |
+| X / Square                                    | Cognitive Perception        |
+| Y / Triangle                                  | Field notes                 |
+| Start / Options                               | Settings                    |
+| LB / L1                                       | Replay dialogue             |
+| RB / R1                                       | Mute or unmute              |
+| Right stick                                   | Scroll the scene or a panel |
+| Left/right on a selected slider or voice list | Adjust it                   |
+
+Press a controller button to let the browser detect it. The first detected held press is consumed; held face buttons cannot skip multiple lines. Stick dead zones, delayed navigation repeats, disconnect handling, and background input isolation keep controller actions predictable. Controller focus receives a visible cyan outline. Some browsers require one mouse/keyboard interaction to unlock sound: click **Enable sound** if necessary.
+
+Controller wiring is exercised by simulated gamepad input against the actual React scene; physical hardware testing remains outstanding. Browser API requirements are described in [MDN: Gamepad API](https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API).
 
 ## Engineering
 
@@ -44,6 +71,9 @@ npm run preview
 - `src/App.tsx`: scene presentation and input.
 - `src/components/`: Kite, scientific overlays, and accessible modal shell.
 - `src/art.ts` and `public/art/`: replaceable art manifest and optimized assets.
+- `src/audio/`: original score, synthesized cues, local voice playback, and validated preferences.
+- `src/hooks/useAudio.ts`: audio lifecycle, voice cancellation, foreground handling, and music ducking.
+- `src/input/` and `src/hooks/useGamepad.ts`: controller sampling, focus navigation, and integration tests.
 
 The investigation has one canonical state. Viewing evidence is idempotent; unknown choices and out-of-phase actions are ignored; the final choice is gated on all three distinct clues. Dialogue content does not own presentation or mutate state.
 
@@ -55,4 +85,4 @@ All sensor values and historical records are fictional. The presentation keeps d
 
 The short-range blue-light greeting is grounded in demonstrated underwater optical communication; range and clarity matter. Background reading: [Woods Hole Oceanographic Institution: Can You Hear Me Now?](https://www.whoi.edu/ocean-learning-hub/multimedia/can-you-hear-me-now/). The delayed emission in the story remains an ambiguous fictional observation.
 
-The next useful step is refining the characters, voice, and visual identity through this scene before adding more chapters.
+Recorded character clips can replace `VoicePlayback` using the existing stable dialogue IDs. Commissioned or licensed music can replace the score in `HarborAudio` while retaining its mixing and ducking. Neither change needs a new story-state system. The next useful step is refining the characters, voice, and visual identity through this scene before adding more chapters.

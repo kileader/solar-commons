@@ -19,6 +19,8 @@ Kite is an origami-like intelligence: a faceted diamond, folded fins, a small go
 
 The panorama is 1672 × 941; the portrait is an optimized 600 × 800 transparent WebP. Encoding to WebP and portrait downsampling use Pillow. Original generated PNGs remain in the local image-generation output folder; the running project references only its own checked-in assets.
 
+The harbor score and interaction effects are original Web Audio synthesis in `src/audio/HarborAudio.ts`, with no third-party recordings or downloaded samples. Dialogue uses English speech voices reported as local by the device/browser. No voice model, recording, or third-party voice file is redistributed. Stable dialogue IDs provide replacement points for later licensed character recordings.
+
 ## Replace the art
 
 1. Put licensed replacement assets in `public/art/`.

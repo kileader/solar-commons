@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from 'react'
+import { useEffect, useMemo, useReducer, useState } from 'react'
 import {
   ArrowRight,
   BookOpen,
@@ -11,6 +11,9 @@ import {
   Sparkles,
   Sun,
   X,
+  Volume2,
+  VolumeX,
+  Gamepad2,
 } from 'lucide-react'
 import { characterArt, harborArt } from './art'
 import {
@@ -21,11 +24,24 @@ import {
   sceneSubtitle,
   sceneTitle,
 } from './content/harbor'
-import { canConclude, getCurrentLine, initialSceneState, sceneReducer } from './state/scene'
+import {
+  canConclude,
+  getCurrentLine,
+  initialSceneState,
+  sceneReducer,
+  type SceneEvent,
+} from './state/scene'
 import { Kite } from './components/Kite'
 import { Modal } from './components/Modal'
 import { Perception } from './components/Perception'
 import { useMotion } from './hooks/useMotion'
+import { useAudio } from './hooks/useAudio'
+import { useGamepad } from './hooks/useGamepad'
+import { adjustControl, moveFocus, visibleControls } from './input/focus'
+import type { SoundCue } from './audio/HarborAudio'
+import type { DialogueLine } from './content/harbor'
+import { AudioSettings } from './components/AudioSettings'
+import './audio/audio.css'
 
 function EvidenceDiagram({ kind }: { kind: string }) {
   return (
@@ -72,6 +88,7 @@ export default function App() {
   const [state, dispatch] = useReducer(sceneReducer, initialSceneState)
   const [panel, setPanel] = useState<'journal' | 'settings' | null>(null)
   const [largeText, setLargeText] = useState(false)
+  const [usingGamepad, setUsingGamepad] = useState(false)
   const motion = useMotion()
   const currentLine = getCurrentLine(state)
   const activeClue = clues.find((clue) => clue.id === state.activeClueId)
@@ -79,6 +96,134 @@ export default function App() {
   const isChoice = state.phase === 'entry-choice' || state.phase === 'decision'
   const investigated = canConclude(state)
   const choices = state.phase === 'entry-choice' ? entryChoices : conclusionChoices
+
+  const speechLines = useMemo<readonly DialogueLine[]>(() => {
+    if (activeClue) return activeClue.dialogue
+    if (currentLine) return [currentLine]
+    if (state.phase === 'investigation')
+      return [
+        {
+          id: `investigation-${investigated}`,
+          speaker: 'Kite',
+          text: investigated ? sceneCopy.synthesis : sceneCopy.investigation,
+        },
+      ]
+    return []
+  }, [activeClue, currentLine, state.phase, investigated])
+  const audio = useAudio(speechLines, panel !== null, state.perception)
+
+  function perform(event: SceneEvent) {
+    audio.unlock()
+    let cue: SoundCue = 'confirm'
+    switch (event.type) {
+      case 'NEXT':
+        cue = 'advance'
+        break
+      case 'CHOOSE_ENTRY':
+      case 'CHOOSE_ENDING':
+        cue = 'choice'
+        break
+      case 'TOGGLE_PERCEPTION':
+        cue = state.perception ? 'perception-off' : 'perception-on'
+        break
+      case 'OPEN_CLUE':
+        cue =
+          state.inspected.length === 2 && !state.inspected.includes(event.id)
+            ? 'discovery'
+            : event.id === 'archive'
+              ? 'archive'
+              : event.id === 'thermal'
+                ? 'thermal'
+                : 'evidence'
+        break
+      case 'CLOSE_CLUE':
+        cue = 'back'
+        break
+      case 'RESTART':
+        cue = 'restart'
+        break
+    }
+    audio.play(cue)
+    dispatch(event)
+  }
+
+  function openPanel(next: 'journal' | 'settings') {
+    audio.unlock()
+    if (activeClue) perform({ type: 'CLOSE_CLUE' })
+    audio.play(panel === next ? 'back' : next === 'journal' ? 'archive' : 'open')
+    setPanel((previous) => (previous === next ? null : next))
+  }
+  function closePanel() {
+    audio.play('back')
+    setPanel(null)
+  }
+
+  const controller = useGamepad(
+    (action) => {
+      setUsingGamepad(true)
+      const modal = document.querySelector<HTMLDialogElement>('dialog[open]')
+      if (action === 'back') {
+        if (activeClue) perform({ type: 'CLOSE_CLUE' })
+        else if (panel) closePanel()
+        return
+      }
+      if (action === 'settings') {
+        openPanel('settings')
+        return
+      }
+      if (action === 'notes') {
+        openPanel('journal')
+        return
+      }
+      if (action === 'mute') {
+        audio.toggle()
+        return
+      }
+      if (action === 'perception') {
+        if (!modal) perform({ type: 'TOGGLE_PERCEPTION' })
+        return
+      }
+      if (action === 'replay') {
+        if (!panel) audio.replayVoice()
+        return
+      }
+      const controls = modal
+        ? visibleControls(modal)
+        : visibleControls(document).filter((element) =>
+            element.matches(
+              '.continue-button, .voice-replay, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle',
+            ),
+          )
+      const focused = document.activeElement as HTMLElement | null
+      if (action === 'confirm') {
+        const target =
+          focused && controls.includes(focused)
+            ? focused
+            : (controls.find((element) =>
+                element.matches('.continue-button, .story-choice, .hotspot, .replay-button'),
+              ) ?? controls[0])
+        if (target?.matches('button, input[type="checkbox"]')) {
+          target.focus()
+          target.click()
+        }
+        return
+      }
+      const direction = action === 'up' || action === 'left' ? -1 : 1
+      if ((action === 'left' || action === 'right') && focused && adjustControl(focused, direction))
+        return
+      moveFocus(controls, direction)
+    },
+    (amount) => {
+      const target = document.querySelector('dialog[open]') ?? document.scrollingElement
+      target?.scrollBy({ top: amount, behavior: 'auto' })
+    },
+  )
+
+  useEffect(() => {
+    if (state.phase === 'complete') audio.play('ending')
+    if (state.phase === 'ending' && state.endingChoiceId === 'handshake' && state.lineIndex === 1)
+      audio.play('signal')
+  }, [state.phase, state.endingChoiceId, state.lineIndex, audio.play])
 
   useEffect(() => {
     const keydown = (event: KeyboardEvent) => {
@@ -94,11 +239,11 @@ export default function App() {
       if (target.closest('input, select, textarea, [contenteditable="true"]')) return
       if (event.key.toLowerCase() === 'c') {
         event.preventDefault()
-        dispatch({ type: 'TOGGLE_PERCEPTION' })
+        perform({ type: 'TOGGLE_PERCEPTION' })
       }
       if (event.key.toLowerCase() === 'j') {
         event.preventDefault()
-        setPanel('journal')
+        openPanel('journal')
       }
       if (
         (event.key === 'Enter' || event.key === ' ') &&
@@ -106,11 +251,11 @@ export default function App() {
         !target.closest('button, a')
       ) {
         event.preventDefault()
-        dispatch({ type: 'NEXT' })
+        perform({ type: 'NEXT' })
       }
       if ((event.key === '1' || event.key === '2') && isChoice) {
         event.preventDefault()
-        dispatch({
+        perform({
           type: state.phase === 'entry-choice' ? 'CHOOSE_ENTRY' : 'CHOOSE_ENDING',
           id: choices[Number(event.key) - 1].id,
         })
@@ -118,7 +263,7 @@ export default function App() {
     }
     window.addEventListener('keydown', keydown)
     return () => window.removeEventListener('keydown', keydown)
-  }, [currentLine, isChoice, choices, state.phase])
+  })
 
   useEffect(() => {
     if (state.phase === 'intro') return
@@ -137,6 +282,8 @@ export default function App() {
   }, [state.phase])
 
   async function toggleFullscreen() {
+    audio.unlock()
+    audio.play('open')
     try {
       if (document.fullscreenElement) await document.exitFullscreen()
       else await document.documentElement.requestFullscreen()
@@ -149,6 +296,45 @@ export default function App() {
     <main
       className={`novel ${state.perception ? 'cognitive' : ''} ${activeClue ? 'is-inspecting' : ''} ${largeText ? 'large-text' : ''}`}
       data-motion={motion.reduced ? 'reduced' : 'full'}
+      data-audio-state={audio.status.state}
+      data-audio-peak={audio.status.peak.toFixed(6)}
+      data-voice-state={audio.voiceState}
+      data-controller-state={controller}
+      data-input={usingGamepad ? 'gamepad' : 'pointer'}
+      onPointerDownCapture={(event) => {
+        setUsingGamepad(false)
+        if (
+          event.isTrusted &&
+          !audio.preferences.muted &&
+          !(event.target as HTMLElement).closest('.sound-toggle')
+        )
+          audio.unlock()
+      }}
+      onKeyDownCapture={(event) => {
+        setUsingGamepad(false)
+        if (event.repeat && (event.key === 'Enter' || event.key === ' ')) event.preventDefault()
+        if (
+          event.isTrusted &&
+          !audio.preferences.muted &&
+          !(event.target as HTMLElement).closest('.sound-toggle') &&
+          ['Enter', ' ', 'c', 'C', '1', '2', 'j', 'J'].includes(event.key)
+        )
+          audio.unlock()
+      }}
+      onClickCapture={(event) => {
+        if ((event.target as HTMLElement).matches('input[type="checkbox"]')) audio.play('confirm')
+      }}
+      onFocusCapture={(event) => {
+        if ((event.target as HTMLElement).matches('button, input, select')) audio.play('focus')
+      }}
+      onPointerOver={(event) => {
+        const button = (event.target as HTMLElement).closest('button')
+        if (
+          button &&
+          !(event.relatedTarget instanceof Node && button.contains(event.relatedTarget))
+        )
+          audio.play('focus')
+      }}
       onPointerMove={(event) => {
         if (motion.reduced || event.pointerType !== 'mouse') return
         const rect = event.currentTarget.getBoundingClientRect()
@@ -212,7 +398,7 @@ export default function App() {
         <nav className="scene-tools" aria-label="Scene controls">
           <button
             className="tool-button journal-button"
-            onClick={() => setPanel('journal')}
+            onClick={() => openPanel('journal')}
             aria-label={`Open field notes, ${state.inspected.length} clues recorded`}
           >
             <BookOpen size={18} />
@@ -222,7 +408,7 @@ export default function App() {
           </button>
           <button
             className="tool-button icon-button"
-            onClick={() => setPanel('settings')}
+            onClick={() => openPanel('settings')}
             aria-label="Open accessibility settings"
             title="Settings"
           >
@@ -251,7 +437,7 @@ export default function App() {
         <button
           className="perception-toggle"
           aria-pressed={state.perception}
-          onClick={() => dispatch({ type: 'TOGGLE_PERCEPTION' })}
+          onClick={() => perform({ type: 'TOGGLE_PERCEPTION' })}
         >
           <span className="perception-icon">
             <Eye size={19} />
@@ -279,7 +465,7 @@ export default function App() {
                 key={clue.id}
                 className={`hotspot hotspot-${clue.id} ${state.inspected.includes(clue.id) ? 'is-read' : ''}`}
                 style={{ left: `${clue.position.x}%`, top: `${clue.position.y}%` }}
-                onClick={() => dispatch({ type: 'OPEN_CLUE', id: clue.id })}
+                onClick={() => perform({ type: 'OPEN_CLUE', id: clue.id })}
                 aria-label={`Examine ${clue.title}${state.inspected.includes(clue.id) ? ', recorded' : ''}`}
               >
                 <span className="hotspot-target">
@@ -300,7 +486,9 @@ export default function App() {
         className={`dialogue-stage ${isChoice ? 'has-choices' : ''}`}
         aria-label="Story and player choices"
       >
-        <div className={`companion-portrait speaker-${speaker.toLowerCase()}`}>
+        <div
+          className={`companion-portrait speaker-${speaker.toLowerCase()} ${audio.voiceState === 'speaking' ? 'is-speaking' : ''}`}
+        >
           <div className="portrait-orbit" />
           <div className="portrait-disc" />
           {speaker === 'Mara' ? (
@@ -337,12 +525,34 @@ export default function App() {
                   {currentLine.text}
                 </p>
               </div>
-              <button className="continue-button" onClick={() => dispatch({ type: 'NEXT' })}>
-                <span>Continue</span>
-                <span className="continue-arrow">
-                  <ArrowRight size={23} />
-                </span>
-              </button>
+              <div className="dialogue-buttons">
+                <button
+                  className="voice-replay"
+                  onClick={audio.replayVoice}
+                  disabled={
+                    !audio.ready ||
+                    !audio.voices.length ||
+                    !audio.preferences.voiceEnabled ||
+                    audio.preferences.muted ||
+                    audio.preferences.master * audio.preferences.voice === 0
+                  }
+                  aria-label="Replay dialogue"
+                  title={
+                    audio.voices.length
+                      ? 'Listen to this dialogue again'
+                      : 'No local English voice available'
+                  }
+                >
+                  <Volume2 size={17} />
+                  <span>Listen</span>
+                </button>
+                <button className="continue-button" onClick={() => perform({ type: 'NEXT' })}>
+                  <span>Continue</span>
+                  <span className="continue-arrow">
+                    <ArrowRight size={23} />
+                  </span>
+                </button>
+              </div>
             </div>
           )}
           {isChoice && (
@@ -358,7 +568,7 @@ export default function App() {
                     className="story-choice"
                     key={choice.id}
                     onClick={() =>
-                      dispatch({
+                      perform({
                         type: state.phase === 'entry-choice' ? 'CHOOSE_ENTRY' : 'CHOOSE_ENDING',
                         id: choice.id,
                       })
@@ -393,14 +603,14 @@ export default function App() {
                 {investigated ? (
                   <button
                     className="text-action"
-                    onClick={() => dispatch({ type: 'MAKE_DECISION' })}
+                    onClick={() => perform({ type: 'MAKE_DECISION' })}
                   >
                     Decide together <ArrowRight size={19} />
                   </button>
                 ) : (
                   <button
                     className="text-action"
-                    onClick={() => dispatch({ type: 'TOGGLE_PERCEPTION' })}
+                    onClick={() => perform({ type: 'TOGGLE_PERCEPTION' })}
                   >
                     <Eye size={17} />
                     {state.perception ? 'Return to natural sight' : 'Open shared perception'}
@@ -420,7 +630,7 @@ export default function App() {
                     : sceneCopy.surveyCompletion}
                 </p>
               </div>
-              <button className="replay-button" onClick={() => dispatch({ type: 'RESTART' })}>
+              <button className="replay-button" onClick={() => perform({ type: 'RESTART' })}>
                 <RotateCcw size={18} />
                 Return to the harbor
               </button>
@@ -430,12 +640,40 @@ export default function App() {
       </section>
 
       <footer className="scene-footer">
-        <span>{sceneCopy.footer}</span>
+        <button
+          className="sound-toggle"
+          onClick={audio.toggle}
+          disabled={audio.status.state === 'unsupported'}
+          aria-label={
+            !audio.ready ? 'Enable sound' : audio.preferences.muted ? 'Unmute sound' : 'Mute sound'
+          }
+        >
+          {audio.preferences.muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          <span>
+            {audio.status.state === 'unsupported'
+              ? 'Sound unavailable'
+              : !audio.ready
+                ? 'Enable sound'
+                : audio.preferences.muted
+                  ? 'Sound off'
+                  : 'Sound on'}
+          </span>
+        </button>
+        <span>
+          {controller === 'connected' ? (
+            <>
+              <Gamepad2 size={15} />
+              Controller connected
+            </>
+          ) : (
+            sceneCopy.footer
+          )}
+        </span>
       </footer>
 
       <Modal
         open={!!activeClue}
-        onClose={() => dispatch({ type: 'CLOSE_CLUE' })}
+        onClose={() => perform({ type: 'CLOSE_CLUE' })}
         titleId="evidence-title"
         className="evidence-modal"
       >
@@ -448,7 +686,7 @@ export default function App() {
               </span>
               <button
                 className="close-button"
-                onClick={() => dispatch({ type: 'CLOSE_CLUE' })}
+                onClick={() => perform({ type: 'CLOSE_CLUE' })}
                 aria-label="Close evidence"
               >
                 <X size={20} />
@@ -487,7 +725,7 @@ export default function App() {
                 </p>
               ))}
             </div>
-            <button className="modal-done" onClick={() => dispatch({ type: 'CLOSE_CLUE' })}>
+            <button className="modal-done" onClick={() => perform({ type: 'CLOSE_CLUE' })}>
               <Check size={16} />
               Saved to field notes
               <span>
@@ -500,7 +738,7 @@ export default function App() {
 
       <Modal
         open={panel === 'journal'}
-        onClose={() => setPanel(null)}
+        onClose={closePanel}
         titleId="notes-title"
         className="notes-modal"
       >
@@ -509,11 +747,7 @@ export default function App() {
             <BookOpen size={14} />
             Mara + Kite
           </span>
-          <button
-            className="close-button"
-            onClick={() => setPanel(null)}
-            aria-label="Close field notes"
-          >
+          <button className="close-button" onClick={closePanel} aria-label="Close field notes">
             <X size={20} />
           </button>
         </div>
@@ -550,17 +784,13 @@ export default function App() {
 
       <Modal
         open={panel === 'settings'}
-        onClose={() => setPanel(null)}
+        onClose={closePanel}
         titleId="settings-title"
         className="settings-modal"
       >
         <div className="modal-topline">
           <span className="eyebrow">Make yourself at home</span>
-          <button
-            className="close-button"
-            onClick={() => setPanel(null)}
-            aria-label="Close settings"
-          >
+          <button className="close-button" onClick={closePanel} aria-label="Close settings">
             <X size={20} />
           </button>
         </div>
@@ -578,7 +808,10 @@ export default function App() {
             type="checkbox"
             checked={motion.reduced}
             disabled={motion.systemReduced}
-            onChange={(e) => motion.setManualReduced(e.target.checked)}
+            onChange={(e) => {
+              motion.setManualReduced(e.target.checked)
+              audio.play('confirm')
+            }}
           />
         </label>
         <label className="setting-row">
@@ -589,9 +822,13 @@ export default function App() {
           <input
             type="checkbox"
             checked={largeText}
-            onChange={(e) => setLargeText(e.target.checked)}
+            onChange={(e) => {
+              setLargeText(e.target.checked)
+              audio.play('confirm')
+            }}
           />
         </label>
+        <AudioSettings audio={audio} controller={controller} />
         <div className="keyboard-guide">
           <span>KEYBOARD</span>
           <p>
