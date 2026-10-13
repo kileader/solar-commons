@@ -4,6 +4,8 @@ This restarts the cinematic after Kevin requested a different room, stronger tec
 
 ## Review the sequence
 
+Ready to generate motion: use the [Firefly upload recipe and seven motion prompts](FIREFLY_GUIDE.md). The prompts continue each approved starting frame; S08 remains the original harbor still.
+
 Open the [ordered review board](review.html) and select **Play 34-second preview** to watch the silent timing animatic. It uses the existing stills, draft dialogue captions, gentle fades and a small camera move. Pause/Resume, Replay, a scrubber and Reduce motion support review; system reduced-motion preferences are respected and losing foreground focus pauses playback. Select individual frames below for larger manual views. It can be opened directly as a local HTML file or at `/docs/storyboard/server-room/review.html` through the Vite development server. Authored shot order/timing/captions are in `shots.js`; presentation and playback are in `review.js`.
 
 The preview plays all eight shots in 34 seconds, with captions at S02–S05, and stops on the original harbor. Full playback, pause/resume, scrubbing and the reduced-motion control were checked in the browser. This is a timing animatic; character motion and interactive synchronization remain future work. Next: review pacing, try one generated-video shot, then build the game opening with separable attention layers, two inputs, audio and the studio → opening → harbor handoff. The running game currently mounts the harbor directly after the studio splash.
