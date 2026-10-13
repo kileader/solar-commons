@@ -2,7 +2,7 @@
 
 Prepared October 13, 2026. Use the approved **server-room restart** images. Start with S01.
 
-Bring **one shot PNG and its matching motion prompt** per generation, plus the matching end image for S01. Upload kit v2 contains S01–S07 images, S01's matching end image, seven motion text files, this guide and S08's harbor still. Generate each shot separately; we will assemble the edit afterward.
+Bring **one shot PNG and its matching motion prompt** per generation, plus the matching end image for S01. Upload kit v3 contains S01's corrected starting image and matching end image, S02–S07 images, seven motion text files, this guide and S08's harbor still. Generate each shot separately; we will assemble the edit afterward.
 
 ## Firefly recipe
 
@@ -10,7 +10,7 @@ Bring **one shot PNG and its matching motion prompt** per generation, plus the m
 2. Select **Firefly Video**, if available in your account.
 3. Under **Frame → First**, upload the PNG for the current shot. For **S01**, also upload the matching `S01-end.png` under **Last**. Leave Last empty for S02–S07.
 4. Set **16:9**, choose **1080p** if available, and use **Camera → Motion → Static** when the control is available. Adding a Last frame disables Firefly's camera-motion selector; the S01 prompt requests a stationary camera.
-5. Paste the matching motion prompt below. Keep prompt enhancement off for the first trial.
+5. Paste the matching motion prompt below. Keep **Enhance prompt off** so the intended small movement is not expanded.
 6. Generate S01 first, then download the result. Firefly's image/keyframe and camera controls are described in [Adobe's official guide](https://helpx.adobe.com/firefly/web/work-with-audio-and-video/work-with-video/generate-videos-using-images.html).
 7. If the first result preserves Mara and the room, continue through S07. Save the downloads as **S01.mp4**, **S02.mp4**, … **S07.mp4**.
 
@@ -18,7 +18,7 @@ Leave captions, voice, music and QTE controls for the game/edit. The first-frame
 
 Our storyboard uses camera cuts. Do not put S01 in First and S02 in Last, or feed the entire contact sheet into one generation. Keep each composition as its own shot.
 
-S01 now has a matching end frame of the **same camera view**, with Mara beside the existing green chair. This replaces the first-frame-only walking test after two supplied clips showed excessive movement and character/module drift. The end keyframe constrains the destination; it does not guarantee clean intermediate frames. Use **Firefly Video** for this two-frame test. Adobe's current [partner-model instructions](https://helpx.adobe.com/firefly/web/work-with-audio-and-video/work-with-video/generate-videos-using-non-adobe-models.html) list only a First frame input for Runway Gen-4.5, so do not assume the same controls are available on that model.
+S01 uses a corrected starting pose and a matching end frame of the **same camera view**. Mara already faces the green chair in both frames; the movement is a short approach and hand contact, without a large turn. Kevin identified that the original start pose pointed her past the chair and forced a reversal; that image is now archived for this shot. The keyframes constrain the movement but do not guarantee clean intermediate frames. Use **Firefly Video** for this two-frame test. Adobe's current [partner-model instructions](https://helpx.adobe.com/firefly/web/work-with-audio-and-video/work-with-video/generate-videos-using-non-adobe-models.html) list only a First frame input for Runway Gen-4.5, so do not assume the same controls are available on that model.
 
 Use the available default clip length. The durations below are editing targets. We can trim longer clips; S04/S05 can use a brief still hold to reach six seconds and later pause for their game interaction.
 
@@ -32,10 +32,10 @@ If Firefly Video is unavailable on your free account, this kit can still be used
 
 ### S01 — Civic machinery
 
-First: [s01-civic-compute-room-v1.png](s01-civic-compute-room-v1.png). Last: [s01-civic-compute-room-end-v1.png](s01-civic-compute-room-end-v1.png). In upload kit v2 these are **S01.png** and **S01-end.png**. Editing target: **3 seconds**. Generate **5 seconds**, then download as **S01.mp4**. The [matching motion prompt](s01-civic-compute-room-v2.motion.txt) is also included in the kit as `S01-motion.txt`.
+First: [s01-civic-compute-room-start-v2.png](s01-civic-compute-room-start-v2.png). Last: [s01-civic-compute-room-end-v1.png](s01-civic-compute-room-end-v1.png). In upload kit v3 these are **S01.png** and **S01-end.png**. Editing target: **3 seconds**. Generate **5 seconds**, then download as **S01.mp4**. The [matching motion prompt](s01-civic-compute-room-v3.motion.txt) is also included in the kit as `S01-motion.txt`.
 
 ```text
-The woman turns gently toward the green chair on the left and takes one short step toward it, ending with her hand resting on the chair back as shown in the final frame. Her curls sway slightly with the turn. Her temple module stays attached to her right temple and becomes hidden as her head turns. The camera and room remain stationary.
+The woman completes a small step toward the green chair on the left and gently rests her left hand on the chair back, settling into the pose shown in the final frame. Subtle natural breathing and hair movement. Locked camera. The room remains still.
 ```
 
 ### S02 — Permission

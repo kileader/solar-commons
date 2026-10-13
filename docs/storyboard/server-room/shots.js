@@ -6,9 +6,9 @@ const shots = [
     phase: 'Connection',
     seconds: 3,
     start: 0,
-    image: 's01-civic-compute-room-v1.png',
-    event: 'Mara enters the computing room and approaches the calibration station.',
-    alt: 'Mara walking beside teal server racks toward a green station chair.',
+    image: 's01-civic-compute-room-start-v2.png',
+    event: 'Already facing the calibration chair, Mara completes a short approach.',
+    alt: 'Rear three-quarter view of Mara facing the green calibration chair, with her hand just short of the chair back.',
     caption: '',
   },
   {
