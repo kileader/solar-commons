@@ -14,7 +14,7 @@ Reviewed: face/curls, natural hand anatomy, ivory/coral clothing, left-chest bro
 
 Master: PNG, 1672 × 941, 2,492,497 bytes. SHA-256: `a8c26943840180ce798d6b4faf738e58cd0fa610da376650b6664b3082786212`.
 
-Status: the three Connection candidates S01–S03 and both completed Synchronization previews S04–S05 are available. S06–S07 require new art and S08 will reuse the existing harbor. These images are not yet wired into runtime playback.
+Status: S01–S06 are available, including the Connection frames, both Synchronization previews and the first Awakening frame. S07's physical departure requires new art; S08 will reuse the existing harbor. These images are not yet wired into runtime playback.
 
 ## S02 — Permission
 
@@ -55,3 +55,13 @@ Generated on October 13, 2026 with the built-in image-generation tool using S04 
 Reviewed: immersive composition differs clearly from the physical rack close-up and earlier Kite portrait. The full canonical Kite silhouette and two tails remain visible at supporting scale. The indicator's rectangular identity persists; adjacent endpoint registration and matched final path directions show the result of coordination. The bezel and planes are represented interface geometry, not newly observed objects or a literal room transformation. No neural readouts, hidden circuitry, upload imagery or server-power changes are depicted. This completed preview is the coordinated result reference; timing, partial-miss variations and production source-layer separation remain future work.
 
 Master: PNG, 1672 × 941, 1,837,259 bytes. SHA-256: `70f2800746c54a63be3bd66773d80b22d715ac6a3f9b7bf5bea91fe124f7815b`.
+
+## S06 — Still human
+
+[Working image, version 1](s06-still-human-v1.png) · [Exact generation prompt](s06-still-human-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool using the current Mara portrait for identity and new S01 for the computing-room setting/light. An intimate right-eye and temple detail returns to embodied Mara after the shared workspace. Technical teal/amber/mint bokeh replaces the earlier draft's sunset window backdrop.
+
+Reviewed: natural hazel iris and ordinary catchlight, relaxed expression, warm brown skin/freckles, curls and recognizable facial proportions are preserved. The small ivory/brass plaque remains on her anatomical right temple with its upper mint indicator and lower teal contact. No reflected data, glowing iris, new hardware, surgical imagery or perceptual paths appear. This is the reaction keyframe; animating the eye opening remains future work.
+
+Master: PNG, 1672 × 941, 2,323,928 bytes. SHA-256: `5f139b02fb10c252d44ffef62c7a7d0a8193543436a2862a6d48a0955c52bb4f`.
