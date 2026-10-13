@@ -14,4 +14,14 @@ Reviewed: face/curls, natural hand anatomy, ivory/coral clothing, left-chest bro
 
 Master: PNG, 1672 × 941, 2,492,497 bytes. SHA-256: `a8c26943840180ce798d6b4faf738e58cd0fa610da376650b6664b3082786212`.
 
-Status: new S01 working candidate. S02–S07 require new art; S08 will reuse the existing harbor. This image is not yet wired into runtime playback.
+Status: new S01 working candidate. S02 now shows the subsequent consent action; S03–S07 require new art and S08 will reuse the existing harbor. These images are not yet wired into runtime playback.
+
+## S02 — Permission
+
+[Working image, version 1](s02-permission-v1.png) · [Exact generation prompt](s02-permission-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool using new S01 for the workstation/control/chair and the current Mara portrait for skin and clothing. A tight diagonal hand/control insert shows Mara now seated, deliberately pressing the same mint consent cap. Its restrained indicator responds; the authored caption is **“A little wider, then.”** Captions remain outside the raster.
+
+Reviewed against S01: index fingertip contact, natural overlapping fingers, ivory/brass control, pale worktop, green upholstery, seated torso/lap and rolled ivory/coral sleeve are coherent. The face and broad room view are cropped out; defocused teal racks preserve location context. This visibly advances the action from entry to authorization. The control grants permission without operating server power or cooling.
+
+Master: PNG, 1672 × 941, 2,163,208 bytes. SHA-256: `de606f0c60290bcafd7341dbcc8af8421ae9015484ce32f62c264ca8ee7a9c3d`.

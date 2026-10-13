@@ -10,7 +10,7 @@ The progression is **entry → permission → connection → perceptual threshol
 
 Mara and Kite have been partners for twelve years. Her existing right-temple interface enables a deeper voluntary channel; this is calibration, not surgery or Kite becoming conscious. The computing room is civic infrastructure supporting the session, not a claim that one cabinet contains Kite's whole identity.
 
-**Current deliverable:** the [new S01 computing-room frame](storyboard/server-room/s01-civic-compute-room-v1.png) and its [exact generation prompt](storyboard/server-room/s01-civic-compute-room-v1.prompt.txt). S02–S07 need new art; S08 uses the existing harbor. Cinematic playback remains future work.
+**Current deliverables:** [S01, Civic machinery](storyboard/server-room/s01-civic-compute-room-v1.png) and [S02, Permission](storyboard/server-room/s02-permission-v1.png), with [exact prompts and provenance](storyboard/server-room/README.md). The sequence now moves from entry to seated authorization. S03–S07 need new art; S08 uses the existing harbor. Cinematic playback remains future work.
 
 ## 2. Clip structure
 
@@ -66,6 +66,8 @@ For S04/S05, deliver **completed storyboard previews with the transformation vis
 Use the [saved exact prompt](storyboard/server-room/s01-civic-compute-room-v1.prompt.txt). The accepted candidate establishes the rack aisle, coolant hardware, calibration workstation, daylight and Mara's entry action. Use it as room reference for the next shots without copying its camera.
 
 **S02 — Permission**
+
+The [working S02 image](storyboard/server-room/s02-permission-v1.png) is a tight hand/control insert; the [saved exact prompt](storyboard/server-room/s02-permission-v1.prompt.txt) records its generation from S01 and the current Mara portrait. Reviewed fingertip contact, relaxed hand anatomy, chair, control and sleeve continuity. Keep this action framing when producing motion.
 
 > Solar Commons restarted storyboard S02. Use the new computing-room S01 and approved Mara portrait. Tight 16:9 insert of Mara's hand deliberately pressing the single small workstation consent control, with a narrow ivory/coral sleeve and seated torso edge. Show that she has settled into S01's upholstered station chair. The control's restrained indicator responds; sealed teal racks and brass hardware are peripheral soft bokeh, no window panorama. Natural finger anatomy, clear intentional action, cool ivory/jade room light, refined painterly cinematic art. Existing right-temple hardware only if naturally in frame. No surgery, cables plugged into skin, dashboard, captions or watermark.
 
