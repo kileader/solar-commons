@@ -40,6 +40,8 @@ The third keyframe, [S03 — Someone familiar](storyboard/s03-kite-response-v1.p
 
 [S05 — Meet my pace](storyboard/s05-meet-my-pace-v1.png) responds to Kevin's request for varied camera angles: the foreground leaf leads to Mara's focused face against the warm room interior. The [exact prompt](storyboard/s05-meet-my-pace-v1.prompt.txt) uses character/room/plant references while changing viewpoint and background. Future S06 uses tight eye/temple detail; S07 uses a rear over-shoulder wide reveal. Preserve identity and world continuity while varying cinematography.
 
+[S06 — Still Mara](storyboard/s06-awakening-detail-v1.png) begins Awakening with an extreme eye-and-temple close-up, soft interior bokeh and natural window catchlights. The [exact prompt](storyboard/s06-awakening-detail-v1.prompt.txt) uses S05 and the current portrait as references. Built-in imagegen generated it on October 13, 2026; continuity review preserves Mara's natural eye, freckles, curls and approved module. This frame varies the camera without adding new hardware or baking cognitive data into the eye.
+
 ## Replace the art
 
 1. Put licensed replacement assets in `public/art/`.

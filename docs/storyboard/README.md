@@ -59,6 +59,16 @@ Reviewed: Mara's identity, hardware, outfit, brooch/strap and seated anatomy rem
 
 Master: PNG, 1672 × 941, 2,296,125 bytes. SHA-256: `c6f103fee216a5ab094e8c0335d5735e016cccfff80624e1a6f8eb0db71a1d12`.
 
+## S06 — Still Mara
+
+[Working image, version 1](s06-awakening-detail-v1.png) · [Exact generation prompt](s06-awakening-detail-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool using S05 and the current Mara portrait as identity/module references. This begins Clip 3, Awakening: an extreme eye-and-temple detail replaces the wider room views, with the interior reduced to warm abstract bokeh.
+
+Reviewed against the references: natural hazel eye, freckles, curls, right-temple ivory/brass plaque and upper mint/lower teal elements remain consistent. The slight low angle and tight crop are intentional camera variation. Natural window catchlights convey quiet attention; there is no luminous iris, data reflected in the eye or new hardware. Captions and perceptual overlays remain separate from the raster. Cinematic playback remains future work.
+
+Master: PNG, 1672 × 941, 2,432,425 bytes. SHA-256: `6ba0b3440f57d944ce55a4979c61187a8699f5ca4d8f4fa7e3ab017958e62947`.
+
 ## Kite visual anchor
 
 [PNG reference](kite-visual-anchor.png) · [Original exported SVG](kite-visual-anchor.svg)
