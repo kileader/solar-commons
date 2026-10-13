@@ -37,6 +37,18 @@ Reviewed against the anchor and S01: silhouette, palette, room, chair, plant, ar
 
 Master: PNG, 1672 × 941, 2,099,765 bytes. SHA-256: `8b453a954442e8e3e21bbaefc65db36fae94979f5065cee54d8904d30e4d2432`.
 
+## S04 — Attend together
+
+[Working clean plate, version 1](s04-attend-together-v1.png) · [Exact generation prompt](s04-attend-together-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool using S01 version 3 and S02 as plant/pot/room/light references. This begins Clip 2, Synchronization: Mara's seated view focuses on one recognizable leaf, with the same warm arch and harbor beyond.
+
+Reviewed against S01/S02: ceramic pot, pointed glossy foliage, limestone sill, shade, arch, harbor and upper-right afternoon light are consistent. The main leaf's upper edge and tip remain clearly visible. A suggested future marker location is the leaf tip, approximately 53% across and 32% down the frame; this is a composition coordinate, not sensor data.
+
+The plate deliberately contains no markers, attention paths, captions or QTE controls. Add those as separate React/SVG layers. S05 should reuse this exact raster unchanged and alter only the attention graphics, preserving registration. Runtime cinematic/QTE implementation remains future work.
+
+Master: PNG, 1672 × 941, 2,433,217 bytes. SHA-256: `fd8651f78045612d0299454b4c2609a9838eba775835eed1666ffc820be3d390`.
+
 ## Kite visual anchor
 
 [PNG reference](kite-visual-anchor.png) · [Original exported SVG](kite-visual-anchor.svg)
