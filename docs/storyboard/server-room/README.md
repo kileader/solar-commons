@@ -24,6 +24,18 @@ Master: PNG, 1672 × 941, 2,492,497 bytes. SHA-256: `a8c26943840180ce798d6b4faf7
 
 Status: all eight working plates are available: seven newly generated restart frames S01–S07 and the existing harbor reused as S08. Review them together before the timing animatic. These images are not yet wired into runtime playback.
 
+### S01 matching end frame
+
+[End frame, version 1](s01-civic-compute-room-end-v1.png) · [Exact image-generation prompt](s01-civic-compute-room-end-v1.prompt.txt) · [Updated video motion prompt](s01-civic-compute-room-v2.motion.txt)
+
+Generated October 13, 2026 with the built-in image-generation tool. S01 supplied the edit target and fixed room/camera composition; the approved Mara portrait supplied identity. Kevin requested an end keyframe after the generated clips showed an incorrect or excessive walk and an ivory shape migrating from the temple onto the hair.
+
+Mara now stands beside the existing green calibration chair, turned toward the desk, with one hand on the chair back. The rack, desk, glass partition and floor perspective retain the starting composition. Her ordinary curls have no white floating piece; the anatomical right-temple module is naturally occluded by the turned head rather than moved onto the hair. She remains standing, ready for the cut to S02's seated permission insert.
+
+Reviewed: same image dimensions and broadly aligned room geometry, recognizable clothing/bag/curls, natural hand contact and a clear destination. The two raster plates are not pixel-identical; video interpolation still needs review for character and background drift. Use this as **Last** with the original S01 as **First** in a model that supports both inputs, such as Firefly Video. This end plate does not change the eight-shot order or add another scene.
+
+Master: PNG, 1672 × 941, 2,320,069 bytes. SHA-256: `1028c24aaaf1188051731c8f31ef97bc735fa107792eefe4d0388e57c0f5f1a4`.
+
 ## S02 — Permission
 
 [Working image, version 1](s02-permission-v1.png) · [Exact generation prompt](s02-permission-v1.prompt.txt)
