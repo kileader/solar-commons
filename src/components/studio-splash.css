@@ -1,0 +1,36 @@
+.studio-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #000;
+  touch-action: none;
+  user-select: none;
+}
+.studio-splash-logo {
+  width: 70vw;
+  height: 70vh;
+  height: 70dvh;
+  object-fit: contain;
+  opacity: 0;
+}
+.studio-splash-logo.is-loaded {
+  animation: studio-logo 2.4s cubic-bezier(0.37, 0, 0.63, 1) both;
+}
+@keyframes studio-logo {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  18.75%,
+  81.25% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-splash-logo.is-loaded {
+    animation: none;
+    opacity: 1;
+  }
+}
