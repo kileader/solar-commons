@@ -10,7 +10,7 @@ The progression is **entry → permission → connection → perceptual threshol
 
 Mara and Kite have been partners for twelve years. Her existing right-temple interface enables a deeper voluntary channel; this is calibration, not surgery or Kite becoming conscious. The computing room is civic infrastructure supporting the session, not a claim that one cabinet contains Kite's whole identity.
 
-**Current deliverables:** [S01, Civic machinery](storyboard/server-room/s01-civic-compute-room-v1.png) and [S02, Permission](storyboard/server-room/s02-permission-v1.png), with [exact prompts and provenance](storyboard/server-room/README.md). The sequence now moves from entry to seated authorization. S03–S07 need new art; S08 uses the existing harbor. Cinematic playback remains future work.
+**Current deliverables:** [S01, Civic machinery](storyboard/server-room/s01-civic-compute-room-v1.png), [S02, Permission](storyboard/server-room/s02-permission-v1.png), and [S03, A familiar partner](storyboard/server-room/s03-familiar-partner-v1.png), with [exact prompts and provenance](storyboard/server-room/README.md). The three Connection frames now show entry, seated authorization and Kite opening the shared channel. S04–S07 need new art; S08 uses the existing harbor. Cinematic playback remains future work.
 
 ## 2. Clip structure
 
@@ -72,6 +72,8 @@ The [working S02 image](storyboard/server-room/s02-permission-v1.png) is a tight
 > Solar Commons restarted storyboard S02. Use the new computing-room S01 and approved Mara portrait. Tight 16:9 insert of Mara's hand deliberately pressing the single small workstation consent control, with a narrow ivory/coral sleeve and seated torso edge. Show that she has settled into S01's upholstered station chair. The control's restrained indicator responds; sealed teal racks and brass hardware are peripheral soft bokeh, no window panorama. Natural finger anatomy, clear intentional action, cool ivory/jade room light, refined painterly cinematic art. Existing right-temple hardware only if naturally in frame. No surgery, cables plugged into skin, dashboard, captions or watermark.
 
 **S03 — A familiar partner**
+
+The [working S03 image](storyboard/server-room/s03-familiar-partner-v1.png) visibly opens two separate attention paths from Kite's field. Its [saved exact prompt](storyboard/server-room/s03-familiar-partner-v1.prompt.txt) uses the canonical Kite anchor and new S01/S02 technical materials. The cyan path ends in a round node and the gold path in a diamond node, keeping the cues distinguishable by shape as well as color. Preserve the complete character silhouette and this opening event when producing motion.
 
 > Solar Commons restarted storyboard S03. Use the exact Kite anchor and new S01 material/light reference. Intimate 16:9 perceptual portrait of the canonical mint/teal diamond with folded fins, gold attention slit and two tails against softly defocused technical rack darkness. Its fins incline in acknowledgement and two sparse gold/mint attention cues begin to open into the foreground. This is Mara's rendered companion, not a physical projector or robot. Distinct cool luminous geometry, restrained painterly depth. No city, harbor, human face, new chassis, dense panels, labels or watermark.
 
