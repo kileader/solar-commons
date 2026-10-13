@@ -26,7 +26,17 @@ The harbor score and interaction effects are original Web Audio synthesis in `sr
 
 The current runtime portrait is `public/art/mara-cybernetic.webp`, a 600 × 800 RGBA WebP encoded from the [generated PNG master](storyboard/mara-neural-interface-v1.png). The [exact edit prompt](storyboard/mara-neural-interface-v1.prompt.txt) used the original `mara.webp` as the identity/pose target and the cybernetic S01 frame as the module reference. Built-in imagegen generated the edit on October 13, 2026; Pillow performed asset downsampling and WebP encoding only. Alpha spans 0–255 and both top corners are transparent. The original portrait remains available as the facial/costume reference.
 
-## Opening storyboard draft
+## Current opening — civic computing room
+
+Kevin requested a full visual restart after the first sequence repeated the harbor setting and deferred visible integration to future overlays. The [current opening plan](OPENING_CINEMATIC.md) now moves through a computing room, a rendered shared-perception space, a public passage and finally the harbor. Each shot must depict an event or a changed perceptual state, rather than only a different portrait crop.
+
+The new [S01 — Civic machinery](storyboard/server-room/s01-civic-compute-room-v1.png) was generated with built-in imagegen on October 13, 2026, using the current Mara portrait for identity only. Its [exact prompt](storyboard/server-room/s01-civic-compute-room-v1.prompt.txt) establishes teal server cabinets, coolant hardware, a calibration workstation and Mara entering the facility. The [asset record](storyboard/server-room/README.md) contains dimensions, hash and review notes. This replaces the old room as the opening's working location reference; S02–S07 still require new art.
+
+Keep the computing room purposeful and maintained, with restrained indicators and clear service access. The station supports voluntary calibration through Mara's existing interface. Kite remains a perceptual companion; the racks do not establish its whole identity or physical embodiment. S04/S05 previews must visibly show the shared channel changing before later layer separation. No early anomaly imagery or numeric neural readouts.
+
+## Archived harbor-alcove storyboard
+
+The [earlier plan](OPENING_CINEMATIC_HARBOR_DRAFT.md) and frames below preserve the first exploration. They are superseded as a sequence; their provenance and character references remain available. Cinematic playback has not been implemented.
 
 The first opening keyframe, **S01 — A room that belongs to the city**, was generated with the built-in image-generation tool on October 13, 2026, using the existing Mara portrait and harbor panorama as references. The current PNG master is [s01-integration-room-v3-cybernetic.png](storyboard/s01-integration-room-v3-cybernetic.png). The [initial prompt set](storyboard/s01-integration-room-v2.prompt.txt) records generation and a hand-position correction; the [temple-module edit](storyboard/s01-integration-room-v3-cybernetic.prompt.txt) adds Kevin's approved cybernetic detail. Dimensions are 1672 × 941. See the [asset record](storyboard/README.md) for provenance and review notes.
 

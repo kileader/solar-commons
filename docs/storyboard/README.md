@@ -1,5 +1,7 @@
 # Opening storyboard assets
 
+The harbor-alcove sequence below is **superseded** by Kevin's requested server-room restart. These files remain as historical art and character references. Follow the [current opening plan](../OPENING_CINEMATIC.md) and [new server-room asset record](server-room/README.md); do not treat the older S01–S07 plates as the approved current sequence.
+
 ## S01 — A room that belongs to the city
 
 [Working image, version 3 — cybernetic Mara](s01-integration-room-v3-cybernetic.png) · [Temple-module edit prompt](s01-integration-room-v3-cybernetic.prompt.txt)
