@@ -36,7 +36,9 @@ The second opening keyframe, [S02 — A little wider](storyboard/s02-consent-v1.
 
 The third keyframe, [S03 — Someone familiar](storyboard/s03-kite-response-v1.png), uses the [static Kite reference](storyboard/kite-visual-anchor.png) exported from the current SVG, alongside S01's room/light reference. The [exact prompt](storyboard/s03-kite-response-v1.prompt.txt) preserves Kite's geometry as a perceptual avatar. The three Connection storyboard frames are now available; no runtime cinematic has been added.
 
-[S04 — Attend together](storyboard/s04-attend-together-v1.png) begins Synchronization with Mara's seated view of the established sill plant and harbor. Its [exact prompt](storyboard/s04-attend-together-v1.prompt.txt) generates a clean ordinary-view plate. The visible leaf edge is the future calibration target; markers, attention paths and QTE controls remain separate, and S05 will reuse the same background unchanged.
+[S04 — Attend together](storyboard/s04-attend-together-v1.png) begins Synchronization with Mara's seated view of the established sill plant and harbor. Its [exact prompt](storyboard/s04-attend-together-v1.prompt.txt) generates a clean ordinary-view plate. The visible leaf edge is the future calibration target; markers, attention paths and QTE controls remain separate, and S05 uses a new reverse interior angle with its own target anchor.
+
+[S05 — Meet my pace](storyboard/s05-meet-my-pace-v1.png) responds to Kevin's request for varied camera angles: the foreground leaf leads to Mara's focused face against the warm room interior. The [exact prompt](storyboard/s05-meet-my-pace-v1.prompt.txt) uses character/room/plant references while changing viewpoint and background. Future S06 uses tight eye/temple detail; S07 uses a rear over-shoulder wide reveal. Preserve identity and world continuity while varying cinematography.
 
 ## Replace the art
 

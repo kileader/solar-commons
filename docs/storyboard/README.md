@@ -45,9 +45,19 @@ Generated on October 13, 2026 with the built-in image-generation tool using S01 
 
 Reviewed against S01/S02: ceramic pot, pointed glossy foliage, limestone sill, shade, arch, harbor and upper-right afternoon light are consistent. The main leaf's upper edge and tip remain clearly visible. A suggested future marker location is the leaf tip, approximately 53% across and 32% down the frame; this is a composition coordinate, not sensor data.
 
-The plate deliberately contains no markers, attention paths, captions or QTE controls. Add those as separate React/SVG layers. S05 should reuse this exact raster unchanged and alter only the attention graphics, preserving registration. Runtime cinematic/QTE implementation remains future work.
+The plate deliberately contains no markers, attention paths, captions or QTE controls. Add those as separate React/SVG layers. S05 changes camera angle after Kevin's visual-variety feedback; each shot has its own stable target anchor. Reuse a shot's raster only for its own outcome variations. Runtime cinematic/QTE implementation remains future work.
 
 Master: PNG, 1672 × 941, 2,433,217 bytes. SHA-256: `fd8651f78045612d0299454b4c2609a9838eba775835eed1666ffc820be3d390`.
+
+## S05 — Meet my pace
+
+[Working clean plate, version 1](s05-meet-my-pace-v1.png) · [Exact generation prompt](s05-meet-my-pace-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool using the current Mara portrait, S01 version 3 and S04 as identity/room/plant references. Kevin requested creative angle changes after the repeated harbor backgrounds. This frame looks diagonally back into the warm interior across the foreground leaf, with Mara's focused face and right-temple module beyond it.
+
+Reviewed: Mara's identity, hardware, outfit, brooch/strap and seated anatomy remain consistent; leaf, flowers, pot, woven chair and limestone/timber room are recognizable. The new interior framing is intentional. Shared-attention paths and QTE controls remain separate layers; assign this shot a new target anchor rather than carrying over S04's coordinates.
+
+Master: PNG, 1672 × 941, 2,296,125 bytes. SHA-256: `c6f103fee216a5ab094e8c0335d5735e016cccfff80624e1a6f8eb0db71a1d12`.
 
 ## Kite visual anchor
 
