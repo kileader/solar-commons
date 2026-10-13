@@ -31,3 +31,5 @@ Initial browser interaction checks used the Vite development server. No live AI 
 - Native Enter and mouse skip leave the opening narrator line unchanged and audio locked.
 - The supplied `studio/` source files remain unchanged. Reduced-motion CSS removes fades while retaining the presentation interval.
 - GitHub Actions runs the full tests and production build before publishing the static output to Pages.
+- Public Pages verification: `https://kileader.github.io/solar-commons/` loads the studio logo, transitions to the opening narrator line, and loads both harbor and Mara images from the project path. Continue advances dialogue and Cognitive Perception toggles through actual controls. No browser warnings or errors were observed.
+- The first hosted run passed all 33 tests, built the production bundle, and deployed successfully. Pages actions were subsequently updated to their official Node.js 24 releases to remove the runtime deprecation notice.
