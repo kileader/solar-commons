@@ -168,6 +168,134 @@
         opacity: 0.4;
         cursor: default;
       }
+      .preview-launch {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px 18px;
+        margin-bottom: 24px;
+      }
+      .play-primary {
+        background: #c2edda;
+        color: #12292b;
+        border-color: #d9ffe9;
+        font-size: 20px;
+        padding: 13px 20px;
+      }
+      #preview-load {
+        margin: 0;
+        color: #cadbd0;
+        font-size: 16px;
+      }
+      #animatic {
+        width: min(1520px, 96vw);
+        max-height: 96dvh;
+        background: #081315;
+      }
+      .preview-stage {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1672 / 941;
+        max-height: 60dvh;
+        overflow: hidden;
+        background: #030708;
+      }
+      .preview-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        opacity: 0;
+        transition: opacity 400ms ease;
+      }
+      .preview-image.is-visible {
+        opacity: 1;
+        animation: preview-drift var(--shot-duration, 3s) linear both;
+        animation-play-state: paused;
+      }
+      .preview-stage.is-playing .preview-image.is-visible {
+        animation-play-state: running;
+      }
+      .preview-stage.is-still .preview-image {
+        animation: none;
+        transition: none;
+      }
+      @keyframes preview-drift {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1.025);
+        }
+      }
+      .preview-bottom {
+        padding: 16px 22px 20px;
+      }
+      .preview-caption {
+        text-align: center;
+        min-height: 55px;
+        margin: 0 0 16px;
+      }
+      .preview-caption[hidden] {
+        display: block;
+        visibility: hidden;
+      }
+      #preview-speaker {
+        display: block;
+        color: #badccb;
+        font-size: 15px;
+        margin-bottom: 5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      #preview-line {
+        color: #fff1d1;
+        font:
+          normal 27px/1.25 Georgia,
+          serif;
+      }
+      .preview-timeline {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      #preview-seek {
+        flex: 1;
+        min-width: 0;
+        accent-color: #bdeed7;
+        cursor: pointer;
+        height: 25px;
+      }
+      #preview-time {
+        font-size: 16px;
+        color: #dce3d8;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+      .preview-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 16px;
+      }
+      .motion-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+      }
+      .motion-control input {
+        width: 19px;
+        height: 19px;
+        accent-color: #bdeed7;
+      }
+      #preview-state {
+        color: #d8c59a;
+        font-size: 16px;
+        margin-left: auto;
+      }
       #detail-image {
         display: block;
         width: 100%;
@@ -281,15 +409,21 @@
           </p>
         </div>
         <p class="timing">
-          34-second draft<br />Still keyframes; interaction holds and motion are not built.
+          34-second draft<br />Watch the timing preview, then compare the keyframes below.
         </p>
       </header>
+      <div class="preview-launch">
+        <button type="button" class="control play-primary" id="play-preview" disabled>
+          Play 34-second preview
+        </button>
+        <p id="preview-load" role="status">Loading the eight frames…</p>
+      </div>
       <div class="sequence" id="sequence" aria-label="Eight opening shots in order"></div>
       <footer>
         <p>
-          <strong>Art ready.</strong> Next: test the timing, build the opening player and two
-          shared-attention inputs, add captions and sound, then connect the studio → opening →
-          harbor handoff.
+          <strong>Timing preview ready.</strong> This animatic uses still images and draft captions.
+          Next: review the pacing, try generated motion, then build the shared-attention inputs,
+          sound and studio → opening → harbor handoff.
         </p>
         <p>
           <a href="../../OPENING_CINEMATIC.md">Full shot plan</a> ·
@@ -313,165 +447,43 @@
         </div>
       </div>
     </dialog>
-    <script>
-      const shots = [
-        {
-          id: 'S01',
-          title: 'Civic machinery',
-          phase: 'Connection',
-          seconds: 3,
-          start: 0,
-          image: 's01-civic-compute-room-v1.png',
-          event: 'Mara enters the computing room and approaches the calibration station.',
-          alt: 'Mara walking beside teal server racks toward a green station chair.',
-          caption: '',
-        },
-        {
-          id: 'S02',
-          title: 'Permission',
-          phase: 'Connection',
-          seconds: 3,
-          start: 3,
-          image: 's02-permission-v1.png',
-          event: 'Seated now, she deliberately presses the consent control.',
-          alt: 'Close view of Mara’s fingertip pressing the mint control on an ivory workstation.',
-          caption: 'Mara: “A little wider, then.”',
-        },
-        {
-          id: 'S03',
-          title: 'A familiar partner',
-          phase: 'Connection',
-          seconds: 4,
-          start: 6,
-          image: 's03-familiar-partner-v1.png',
-          event: 'Kite responds. Two attention paths open outward.',
-          alt: 'Kite’s mint diamond avatar with separate cyan and gold paths against blurred rack lights.',
-          caption: 'Kite: “Your pace. Your choice.”',
-        },
-        {
-          id: 'S04',
-          title: 'The threshold',
-          phase: 'Synchronization',
-          seconds: 6,
-          start: 10,
-          image: 's04-threshold-v1.png',
-          event: 'Two offset cues approach one visible indicator. A partial model opens beyond it.',
-          alt: 'A rectangular rack light with separated round and diamond path endpoints and dashed model edges.',
-          caption: 'Kite: “Follow this.” · Planned input 1',
-        },
-        {
-          id: 'S05',
-          title: 'Shared cognition',
-          phase: 'Synchronization',
-          seconds: 6,
-          start: 16,
-          image: 's05-shared-cognition-v1.png',
-          event: 'The shared workspace expands; both paths settle into coordination.',
-          alt: 'Kite beside translucent jade planes and paired cyan and gold paths at a represented indicator.',
-          caption: 'Kite: “With you.” · Planned input 2',
-        },
-        {
-          id: 'S06',
-          title: 'Still human',
-          phase: 'Awakening',
-          seconds: 3,
-          start: 22,
-          image: 's06-still-human-v1.png',
-          event: 'Return to Mara’s natural eye and unchanged temple interface.',
-          alt: 'Close detail of Mara’s hazel eye, curls and ivory temple module with rack lights behind her.',
-          caption: '',
-        },
-        {
-          id: 'S07',
-          title: 'Into the living city',
-          phase: 'Awakening',
-          seconds: 5,
-          start: 25,
-          image: 's07-living-city-v1.png',
-          event: 'She walks through the doorway into a planted public passage.',
-          alt: 'Mara mid-step out of the computing facility into a sunny civic garden passage.',
-          caption: '',
-        },
-        {
-          id: 'S08',
-          title: 'The Harbor',
-          phase: 'Awakening',
-          seconds: 4,
-          start: 30,
-          image: '../../../public/art/harbor.webp',
-          event: 'Arrive at the harbor. The existing investigation begins after the opening.',
-          alt: 'Lush limestone terraces and ferries around a turquoise harbor beneath distant mountains.',
-          caption: 'Handoff: original harbor image, first narrator line, perception off.',
-        },
-      ]
-      const sequence = document.getElementById('sequence')
-      const detail = document.getElementById('detail')
-      const title = document.getElementById('detail-title')
-      const detailImage = document.getElementById('detail-image')
-      const event = document.getElementById('detail-event')
-      const caption = document.getElementById('detail-caption')
-      const previous = document.getElementById('previous')
-      const next = document.getElementById('next')
-      let current = 0
-      function show(index) {
-        current = Math.max(0, Math.min(shots.length - 1, index))
-        const shot = shots[current]
-        title.textContent = `${shot.id} — ${shot.title}`
-        detailImage.src = shot.image
-        detailImage.alt = shot.alt
-        event.textContent = shot.event
-        caption.textContent = shot.caption
-        caption.hidden = !shot.caption
-        document.getElementById('position').textContent =
-          `${current + 1} / 8 · ${shot.phase} · ${shot.seconds}s draft`
-        previous.disabled = current === 0
-        next.disabled = current === shots.length - 1
-        if (!detail.open) detail.showModal()
-      }
-      shots.forEach((shot, index) => {
-        const figure = document.createElement('figure')
-        const button = document.createElement('button')
-        button.type = 'button'
-        button.className = 'frame'
-        button.setAttribute('aria-label', `View ${shot.id}: ${shot.title}`)
-        const image = document.createElement('img')
-        image.src = shot.image
-        image.alt = shot.alt
-        image.width = 1672
-        image.height = 941
-        image.decoding = 'async'
-        button.append(image)
-        button.addEventListener('click', () => show(index))
-        const figcaption = document.createElement('figcaption')
-        const phase = document.createElement('div')
-        phase.className = 'phase'
-        const phaseName = document.createElement('span')
-        phaseName.textContent = `${shot.id} · ${shot.phase}`
-        const timing = document.createElement('span')
-        timing.textContent = `${shot.start}–${shot.start + shot.seconds}s`
-        phase.append(phaseName, timing)
-        const heading = document.createElement('h2')
-        heading.textContent = shot.title
-        const description = document.createElement('p')
-        description.className = 'event'
-        description.textContent = shot.event
-        figcaption.append(phase, heading, description)
-        figure.append(button, figcaption)
-        sequence.append(figure)
-      })
-      document.getElementById('close').addEventListener('click', () => detail.close())
-      previous.addEventListener('click', () => show(current - 1))
-      next.addEventListener('click', () => show(current + 1))
-      detail.addEventListener('keydown', (key) => {
-        if (key.key === 'ArrowLeft') {
-          key.preventDefault()
-          show(current - 1)
-        }
-        if (key.key === 'ArrowRight') {
-          key.preventDefault()
-          show(current + 1)
-        }
-      })
-    </script>
+    <dialog id="animatic" aria-labelledby="preview-title">
+      <div class="detail-head">
+        <h2 id="preview-title">Opening timing preview</h2>
+        <button type="button" class="control" id="preview-close">Close preview</button>
+      </div>
+      <div class="preview-stage" id="preview-stage">
+        <img class="preview-image" id="preview-a" alt="" aria-hidden="true" />
+        <img class="preview-image" id="preview-b" alt="" aria-hidden="true" />
+      </div>
+      <div class="preview-bottom">
+        <p class="preview-caption" id="preview-caption" hidden>
+          <span id="preview-speaker"></span>
+          <span id="preview-line"></span>
+        </p>
+        <div class="preview-timeline">
+          <input
+            id="preview-seek"
+            type="range"
+            min="0"
+            max="34"
+            step="0.1"
+            value="0"
+            aria-label="Preview position in seconds"
+          />
+          <span id="preview-time">0:00 / 0:34</span>
+        </div>
+        <div class="preview-controls">
+          <button type="button" class="control" id="preview-toggle" autofocus>Pause</button>
+          <button type="button" class="control" id="preview-replay">Replay</button>
+          <label class="motion-control"
+            ><input type="checkbox" id="reduce-motion" /> Reduce motion</label
+          >
+          <span id="preview-state" role="status">Ready</span>
+        </div>
+      </div>
+    </dialog>
+    <script src="shots.js"></script>
+    <script src="review.js"></script>
   </body>
 </html>

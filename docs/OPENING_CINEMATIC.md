@@ -14,7 +14,7 @@ Mara and Kite have been partners for twelve years. Her existing right-temple int
 
 ## 2. Clip structure
 
-Use the [ordered review board](storyboard/server-room/review.html) for side-by-side comparison and larger manual views. It displays the eight current plates, their events, captions and draft timing. It is not the runtime opening or a timed animatic.
+Use the [ordered review board](storyboard/server-room/review.html) for side-by-side comparison, larger manual views and **Play 34-second preview**. The silent timing animatic plays the eight current plates with draft captions, gentle fades and a small camera move; Pause/Resume, Replay, scrubbing and reduced motion are available. Full playback and the controls were checked in the browser. It remains a review artifact rather than the runtime game opening; generated character motion, QTEs and audio are still future work.
 
 | Clip                    | Target duration                     | Visible progression                                                                                                                                          | Transition                                                                                                  |
 | ----------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
