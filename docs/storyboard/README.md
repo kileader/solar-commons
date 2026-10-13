@@ -69,6 +69,20 @@ Reviewed against the references: natural hazel eye, freckles, curls, right-templ
 
 Master: PNG, 1672 × 941, 2,432,425 bytes. SHA-256: `6ba0b3440f57d944ce55a4979c61187a8699f5ca4d8f4fa7e3ab017958e62947`.
 
+## S07 — The city, together
+
+[Working clean plate, version 1](s07-city-together-v1.png) · [Exact generation prompt](s07-city-together-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool using S01 version 3 for the alcove, the existing harbor for landmark geography, and the current Mara portrait for character identity. A rear over-shoulder view opens the frame from S06's intimate detail to the living city, with Mara's curls, ivory/coral shoulder and woven chair in the left foreground.
+
+Reviewed against the references: seated posture, chair/cushion, sill plant, limestone arch, curls, right-temple module, harbor terraces, island bridges, right-hand tower, mountains and afternoon light are coherent. Viewpoint and parallax change intentionally. Small residents, sailboats and a solar-roof ferry keep the harbor inhabited. The plate contains no cognition paths, Kite avatar or underwater anomaly; those separate layers remain future implementation work.
+
+Master: PNG, 1672 × 941, 2,807,462 bytes. SHA-256: `180eac09a6eea870f97495200f9396230ed51975af36b46e39aa339082fbcccc`.
+
+## S08 — An open harbor
+
+Use the [existing harbor panorama](../../public/art/harbor.webp) directly as the final plate. This frame needs no new generation: reusing the game's current background preserves the exact landmark placement and allows a seamless handoff. Match the runtime crop and focal point from `src/art.ts`; captions and perceptual traces settle away before the existing arrival narration begins. See the [harbor's original generation prompt and provenance](../ART_DIRECTION.md#harbor-generation-prompt).
+
 ## Kite visual anchor
 
 [PNG reference](kite-visual-anchor.png) · [Original exported SVG](kite-visual-anchor.svg)
