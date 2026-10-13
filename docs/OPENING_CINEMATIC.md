@@ -14,6 +14,8 @@ Mara and Kite have been partners for twelve years. Her existing right-temple int
 
 ## 2. Clip structure
 
+Use the [ordered review board](storyboard/server-room/review.html) for side-by-side comparison and larger manual views. It displays the eight current plates, their events, captions and draft timing. It is not the runtime opening or a timed animatic.
+
 | Clip                    | Target duration                     | Visible progression                                                                                                                                          | Transition                                                                                                  |
 | ----------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
 | **1 — Connection**      | **10 s:** S01 3 s, S02 3 s, S03 4 s | Mara enters the facility, settles at the station, authorizes the channel, and receives Kite's response.                                                      | Kite's attention accent leads toward one visible rack indicator.                                            |

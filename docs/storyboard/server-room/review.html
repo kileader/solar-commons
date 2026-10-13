@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Solar Commons — Opening storyboard review</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: 'Trebuchet MS', sans-serif;
+        background: #102325;
+        color: #f1f4e8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      main {
+        max-width: 1720px;
+        margin: auto;
+        padding: 28px 32px 24px;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+      .eyebrow {
+        color: #b6decd;
+        letter-spacing: 0.13em;
+        font-size: 14px;
+        text-transform: uppercase;
+        margin: 0 0 8px;
+      }
+      h1 {
+        font:
+          normal 36px/1.1 Georgia,
+          serif;
+        margin: 0 0 8px;
+      }
+      .subhead {
+        color: #d0dbd4;
+        font-size: 18px;
+        margin: 0;
+      }
+      .timing {
+        font-size: 16px;
+        color: #d8c59a;
+        max-width: 265px;
+        margin: 0;
+        line-height: 1.45;
+      }
+      .sequence {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+      figure {
+        margin: 0;
+        background: #183033;
+        border: 1px solid #34504e;
+        overflow: hidden;
+        border-radius: 4px;
+      }
+      .frame {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: #0c171a;
+        cursor: zoom-in;
+        aspect-ratio: 1672 / 941;
+      }
+      .frame img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid #c9ffe8;
+        outline-offset: 4px;
+      }
+      figcaption {
+        padding: 12px 14px 14px;
+      }
+      .phase {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        color: #b4d9c7;
+        font-size: 13px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .phase span:last-child {
+        color: #d8c59a;
+        white-space: nowrap;
+      }
+      h2 {
+        margin: 6px 0 6px;
+        font:
+          normal 23px/1.15 Georgia,
+          serif;
+      }
+      .event {
+        font-size: 16px;
+        line-height: 1.35;
+        color: #dce4db;
+        margin: 0;
+      }
+      footer {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        gap: 28px;
+        border-top: 1px solid #34504e;
+        padding-top: 16px;
+      }
+      footer p {
+        font-size: 16px;
+        line-height: 1.4;
+        margin: 0;
+        max-width: 950px;
+        color: #d0dbd4;
+      }
+      a {
+        color: #c1f3dc;
+      }
+      dialog {
+        padding: 0;
+        border: 1px solid #4a6860;
+        border-radius: 5px;
+        width: min(1420px, 94vw);
+        max-height: 94dvh;
+        background: #102325;
+        color: #f1f4e8;
+      }
+      dialog::backdrop {
+        background: rgb(4 10 12 / 90%);
+      }
+      .detail-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px 22px;
+      }
+      .detail-head h2 {
+        margin: 0;
+      }
+      .control {
+        border: 1px solid #54766a;
+        background: #1b3839;
+        color: #eef5e7;
+        border-radius: 4px;
+        padding: 10px 16px;
+        font: inherit;
+        font-size: 17px;
+        cursor: pointer;
+      }
+      .control:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      #detail-image {
+        display: block;
+        width: 100%;
+        max-height: 65dvh;
+        object-fit: contain;
+        background: #080f11;
+      }
+      .detail-bottom {
+        padding: 16px 22px 20px;
+      }
+      #detail-event {
+        font-size: 20px;
+        margin: 0 0 10px;
+        line-height: 1.45;
+      }
+      #detail-caption {
+        font:
+          italic 22px/1.4 Georgia,
+          serif;
+        color: #d8c59a;
+        margin: 0 0 16px;
+      }
+      .navigation {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      #position {
+        color: #c3d7cc;
+        font-size: 17px;
+      }
+      @media (max-width: 1100px) {
+        .sequence {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        header {
+          align-items: start;
+        }
+        h1 {
+          font-size: 32px;
+        }
+      }
+      @media (max-width: 600px) {
+        main {
+          padding: 22px 16px;
+        }
+        header,
+        footer {
+          display: block;
+        }
+        .timing {
+          margin-top: 14px;
+          max-width: none;
+        }
+        .sequence {
+          grid-template-columns: 1fr;
+        }
+        footer p + p {
+          margin-top: 12px;
+        }
+        .detail-head {
+          padding: 14px;
+        }
+        .detail-bottom {
+          padding: 14px;
+        }
+        .detail-head h2 {
+          font-size: 22px;
+        }
+      }
+      @media print {
+        :root {
+          color-scheme: light;
+          background: white;
+          color: black;
+        }
+        main {
+          padding: 0;
+        }
+        figure {
+          break-inside: avoid;
+        }
+        .sequence {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .timing,
+        .subhead,
+        .phase,
+        .event,
+        footer p {
+          color: #222;
+        }
+        figure {
+          background: white;
+        }
+        .eyebrow {
+          color: #333;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">Solar Commons · Opening storyboard</p>
+          <h1>Connection → Synchronization → Awakening</h1>
+          <p class="subhead">
+            Read left to right, then the next row. Select a frame for a larger view.
+          </p>
+        </div>
+        <p class="timing">
+          34-second draft<br />Still keyframes; interaction holds and motion are not built.
+        </p>
+      </header>
+      <div class="sequence" id="sequence" aria-label="Eight opening shots in order"></div>
+      <footer>
+        <p>
+          <strong>Art ready.</strong> Next: test the timing, build the opening player and two
+          shared-attention inputs, add captions and sound, then connect the studio → opening →
+          harbor handoff.
+        </p>
+        <p>
+          <a href="../../OPENING_CINEMATIC.md">Full shot plan</a> ·
+          <a href="README.md">Asset record</a>
+        </p>
+      </footer>
+    </main>
+    <dialog id="detail" aria-labelledby="detail-title">
+      <div class="detail-head">
+        <h2 id="detail-title"></h2>
+        <button type="button" class="control" id="close">Close</button>
+      </div>
+      <img id="detail-image" alt="" />
+      <div class="detail-bottom">
+        <p id="detail-event"></p>
+        <p id="detail-caption"></p>
+        <div class="navigation">
+          <button type="button" class="control" id="previous">← Previous</button>
+          <span id="position"></span>
+          <button type="button" class="control" id="next">Next →</button>
+        </div>
+      </div>
+    </dialog>
+    <script>
+      const shots = [
+        {
+          id: 'S01',
+          title: 'Civic machinery',
+          phase: 'Connection',
+          seconds: 3,
+          start: 0,
+          image: 's01-civic-compute-room-v1.png',
+          event: 'Mara enters the computing room and approaches the calibration station.',
+          alt: 'Mara walking beside teal server racks toward a green station chair.',
+          caption: '',
+        },
+        {
+          id: 'S02',
+          title: 'Permission',
+          phase: 'Connection',
+          seconds: 3,
+          start: 3,
+          image: 's02-permission-v1.png',
+          event: 'Seated now, she deliberately presses the consent control.',
+          alt: 'Close view of Mara’s fingertip pressing the mint control on an ivory workstation.',
+          caption: 'Mara: “A little wider, then.”',
+        },
+        {
+          id: 'S03',
+          title: 'A familiar partner',
+          phase: 'Connection',
+          seconds: 4,
+          start: 6,
+          image: 's03-familiar-partner-v1.png',
+          event: 'Kite responds. Two attention paths open outward.',
+          alt: 'Kite’s mint diamond avatar with separate cyan and gold paths against blurred rack lights.',
+          caption: 'Kite: “Your pace. Your choice.”',
+        },
+        {
+          id: 'S04',
+          title: 'The threshold',
+          phase: 'Synchronization',
+          seconds: 6,
+          start: 10,
+          image: 's04-threshold-v1.png',
+          event: 'Two offset cues approach one visible indicator. A partial model opens beyond it.',
+          alt: 'A rectangular rack light with separated round and diamond path endpoints and dashed model edges.',
+          caption: 'Kite: “Follow this.” · Planned input 1',
+        },
+        {
+          id: 'S05',
+          title: 'Shared cognition',
+          phase: 'Synchronization',
+          seconds: 6,
+          start: 16,
+          image: 's05-shared-cognition-v1.png',
+          event: 'The shared workspace expands; both paths settle into coordination.',
+          alt: 'Kite beside translucent jade planes and paired cyan and gold paths at a represented indicator.',
+          caption: 'Kite: “With you.” · Planned input 2',
+        },
+        {
+          id: 'S06',
+          title: 'Still human',
+          phase: 'Awakening',
+          seconds: 3,
+          start: 22,
+          image: 's06-still-human-v1.png',
+          event: 'Return to Mara’s natural eye and unchanged temple interface.',
+          alt: 'Close detail of Mara’s hazel eye, curls and ivory temple module with rack lights behind her.',
+          caption: '',
+        },
+        {
+          id: 'S07',
+          title: 'Into the living city',
+          phase: 'Awakening',
+          seconds: 5,
+          start: 25,
+          image: 's07-living-city-v1.png',
+          event: 'She walks through the doorway into a planted public passage.',
+          alt: 'Mara mid-step out of the computing facility into a sunny civic garden passage.',
+          caption: '',
+        },
+        {
+          id: 'S08',
+          title: 'The Harbor',
+          phase: 'Awakening',
+          seconds: 4,
+          start: 30,
+          image: '../../../public/art/harbor.webp',
+          event: 'Arrive at the harbor. The existing investigation begins after the opening.',
+          alt: 'Lush limestone terraces and ferries around a turquoise harbor beneath distant mountains.',
+          caption: 'Handoff: original harbor image, first narrator line, perception off.',
+        },
+      ]
+      const sequence = document.getElementById('sequence')
+      const detail = document.getElementById('detail')
+      const title = document.getElementById('detail-title')
+      const detailImage = document.getElementById('detail-image')
+      const event = document.getElementById('detail-event')
+      const caption = document.getElementById('detail-caption')
+      const previous = document.getElementById('previous')
+      const next = document.getElementById('next')
+      let current = 0
+      function show(index) {
+        current = Math.max(0, Math.min(shots.length - 1, index))
+        const shot = shots[current]
+        title.textContent = `${shot.id} — ${shot.title}`
+        detailImage.src = shot.image
+        detailImage.alt = shot.alt
+        event.textContent = shot.event
+        caption.textContent = shot.caption
+        caption.hidden = !shot.caption
+        document.getElementById('position').textContent =
+          `${current + 1} / 8 · ${shot.phase} · ${shot.seconds}s draft`
+        previous.disabled = current === 0
+        next.disabled = current === shots.length - 1
+        if (!detail.open) detail.showModal()
+      }
+      shots.forEach((shot, index) => {
+        const figure = document.createElement('figure')
+        const button = document.createElement('button')
+        button.type = 'button'
+        button.className = 'frame'
+        button.setAttribute('aria-label', `View ${shot.id}: ${shot.title}`)
+        const image = document.createElement('img')
+        image.src = shot.image
+        image.alt = shot.alt
+        image.width = 1672
+        image.height = 941
+        image.decoding = 'async'
+        button.append(image)
+        button.addEventListener('click', () => show(index))
+        const figcaption = document.createElement('figcaption')
+        const phase = document.createElement('div')
+        phase.className = 'phase'
+        const phaseName = document.createElement('span')
+        phaseName.textContent = `${shot.id} · ${shot.phase}`
+        const timing = document.createElement('span')
+        timing.textContent = `${shot.start}–${shot.start + shot.seconds}s`
+        phase.append(phaseName, timing)
+        const heading = document.createElement('h2')
+        heading.textContent = shot.title
+        const description = document.createElement('p')
+        description.className = 'event'
+        description.textContent = shot.event
+        figcaption.append(phase, heading, description)
+        figure.append(button, figcaption)
+        sequence.append(figure)
+      })
+      document.getElementById('close').addEventListener('click', () => detail.close())
+      previous.addEventListener('click', () => show(current - 1))
+      next.addEventListener('click', () => show(current + 1))
+      detail.addEventListener('keydown', (key) => {
+        if (key.key === 'ArrowLeft') {
+          key.preventDefault()
+          show(current - 1)
+        }
+        if (key.key === 'ArrowRight') {
+          key.preventDefault()
+          show(current + 1)
+        }
+      })
+    </script>
+  </body>
+</html>

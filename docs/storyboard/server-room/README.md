@@ -2,6 +2,12 @@
 
 This restarts the cinematic after Kevin requested a different room, stronger technological setting, varied views and visible events. See the [current plan](../../OPENING_CINEMATIC.md). The earlier harbor-alcove images remain in the parent folder as historical references.
 
+## Review the sequence
+
+Open the [ordered review board](review.html) to see all eight shots with their intended events and draft durations. Select a frame for a larger view; use Next/Previous or the arrow keys to walk through the sequence. This is a manual storyboard gallery, not timed cinematic playback. It can be opened directly as a local HTML file or at `/docs/storyboard/server-room/review.html` through the Vite development server.
+
+The planned sequence totals 34 seconds before interaction holds. Art is ready; remaining work is the timing animatic and motion, separable attention layers and two synchronization inputs, opening captions/audio, the studio → opening → harbor player and handoff, and browser/phone/controller verification. The running game currently mounts the harbor directly after the studio splash.
+
 ## S01 — Civic machinery
 
 [Working image, version 1](s01-civic-compute-room-v1.png) · [Exact generation prompt](s01-civic-compute-room-v1.prompt.txt)
