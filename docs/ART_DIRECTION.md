@@ -32,6 +32,8 @@ The first opening keyframe, **S01 — A room that belongs to the city**, was gen
 
 This is a storyboard candidate, stored separately from runtime art. The room stages synchronization rather than an implantation procedure. The exact biological mechanism and Kite's physical embodiment remain future design decisions.
 
+The second opening keyframe, [S02 — A little wider](storyboard/s02-consent-v1.png), uses S01 version 3 and the updated portrait as references. It shows a closer, same-axis consent-control press, with the approved temple module retained. Its [exact generation prompt](storyboard/s02-consent-v1.prompt.txt) and review notes are recorded with the storyboard assets. The in-game cinematic remains planned work.
+
 ## Replace the art
 
 1. Put licensed replacement assets in `public/art/`.

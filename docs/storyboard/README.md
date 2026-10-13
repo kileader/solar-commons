@@ -17,6 +17,16 @@ Generated on October 13, 2026 with the built-in image-generation tool for Solar 
 
 This image is stored with the storyboard documents and is not wired into the running game. See the [opening cinematic package](../OPENING_CINEMATIC.md) for shot order, prompts, QTE concept and future integration.
 
+## S02 — A little wider
+
+[Working image, version 1](s02-consent-v1.png) · [Exact generation prompt](s02-consent-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool, using S01 version 3 for the room/lighting/module and `public/art/mara-cybernetic.webp` for character identity. This closer frame shows Mara deliberately pressing the same green armrest control. The generated index-finger press was accepted as a natural staging refinement to the drafted thumb gesture.
+
+Reviewed against S01: face and temple hardware, costume, camera axis, chair and armrest, sill plant, harbor, light direction, and readable hand anatomy are consistent. This is the second keyframe of Clip 1; the authored caption is **“A little wider, then.”** Captions remain separate from the raster image.
+
+Master: PNG, 1672 × 941, 2,458,922 bytes. SHA-256: `2724c73139b928ed77b263c194e365c417833254556af181bdf9a6a66b237cad`.
+
 ## Mara visual anchor / runtime portrait
 
 [PNG master](mara-neural-interface-v1.png) · [Exact edit prompt](mara-neural-interface-v1.prompt.txt)
