@@ -14,7 +14,7 @@ Reviewed: face/curls, natural hand anatomy, ivory/coral clothing, left-chest bro
 
 Master: PNG, 1672 × 941, 2,492,497 bytes. SHA-256: `a8c26943840180ce798d6b4faf738e58cd0fa610da376650b6664b3082786212`.
 
-Status: the three Connection candidates S01–S03 and S04's completed perceptual-threshold preview are available. S05–S07 require new art and S08 will reuse the existing harbor. These images are not yet wired into runtime playback.
+Status: the three Connection candidates S01–S03 and both completed Synchronization previews S04–S05 are available. S06–S07 require new art and S08 will reuse the existing harbor. These images are not yet wired into runtime playback.
 
 ## S02 — Permission
 
@@ -45,3 +45,13 @@ Generated on October 13, 2026 with the built-in image-generation tool using new 
 Reviewed: matte teal panel, grille, brass fittings and rectangular indicator are coherent with the established racks. The tangible target remains single and intact. Solid contours follow visible edges; the continuation uses broken incomplete strokes. Paths depict shared attention, not cables or measured brain activity. No hidden circuitry or sensor values are introduced. This is a completed preview with the perceptual event visible, not an ordinary clean plate. Separating source layers and adding QTE timing remain future work.
 
 Master: PNG, 1672 × 941, 1,844,403 bytes. SHA-256: `c867fc8381dccc664d57a71b54f5500e4c44e3e9a26d61d379c989fa55594109`.
+
+## S05 — Shared cognition
+
+[Completed storyboard preview, version 1](s05-shared-cognition-v1.png) · [Exact generation prompt](s05-shared-cognition-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool using S04 for the rectangular target, the canonical Kite anchor for character geometry and S03 for attention-path design. The scene enters a rendered workspace of translucent jade/ivory planes, with Kite at left and the represented indicator at right. Cyan/gold paths coordinate near the same reference; round/diamond endpoints remain distinguishable. The aligned response is **“With you.”** Captions and QTE controls remain external.
+
+Reviewed: immersive composition differs clearly from the physical rack close-up and earlier Kite portrait. The full canonical Kite silhouette and two tails remain visible at supporting scale. The indicator's rectangular identity persists; adjacent endpoint registration and matched final path directions show the result of coordination. The bezel and planes are represented interface geometry, not newly observed objects or a literal room transformation. No neural readouts, hidden circuitry, upload imagery or server-power changes are depicted. This completed preview is the coordinated result reference; timing, partial-miss variations and production source-layer separation remain future work.
+
+Master: PNG, 1672 × 941, 1,837,259 bytes. SHA-256: `70f2800746c54a63be3bd66773d80b22d715ac6a3f9b7bf5bea91fe124f7815b`.
