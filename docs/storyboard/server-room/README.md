@@ -14,7 +14,7 @@ Reviewed: face/curls, natural hand anatomy, ivory/coral clothing, left-chest bro
 
 Master: PNG, 1672 × 941, 2,492,497 bytes. SHA-256: `a8c26943840180ce798d6b4faf738e58cd0fa610da376650b6664b3082786212`.
 
-Status: the three Connection candidates S01–S03 are available. S04–S07 require new art and S08 will reuse the existing harbor. These images are not yet wired into runtime playback.
+Status: the three Connection candidates S01–S03 and S04's completed perceptual-threshold preview are available. S05–S07 require new art and S08 will reuse the existing harbor. These images are not yet wired into runtime playback.
 
 ## S02 — Permission
 
@@ -35,3 +35,13 @@ Generated on October 13, 2026 with the built-in image-generation tool using the 
 Reviewed against the anchor: tall mint/teal diamond, broad folded fins, dark central diamond, gold slit/lower bar, detached top ornament and exactly two asymmetric ribbon tails remain intact and fully framed. Slight posture/fin asymmetry conveys response. Dark defocused rack structure and amber/mint bokeh continue the new setting without a room panorama. No chassis, projector, cast physical shadow or environmental light spill establishes a physical body. The paths depict shared attention, not measurements or cables.
 
 Master: PNG, 1672 × 941, 1,680,721 bytes. SHA-256: `df0945f329d8e26d162a97ea0791ad8459576a109659218211f7c02b0cff8636`.
+
+## S04 — The threshold
+
+[Completed storyboard preview, version 1](s04-threshold-v1.png) · [Exact generation prompt](s04-threshold-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool using new S01 for physical rack hardware and S03 for attention-path design. A close oblique first-person view centers one recessed rectangular mint status indicator beside the rack grille. Two cyan/gold cues approach with separated round/diamond endpoints as a partial dashed panel reconstruction opens into darker space. The authored caption is **“Follow this.”** Captions and QTE controls remain external.
+
+Reviewed: matte teal panel, grille, brass fittings and rectangular indicator are coherent with the established racks. The tangible target remains single and intact. Solid contours follow visible edges; the continuation uses broken incomplete strokes. Paths depict shared attention, not cables or measured brain activity. No hidden circuitry or sensor values are introduced. This is a completed preview with the perceptual event visible, not an ordinary clean plate. Separating source layers and adding QTE timing remain future work.
+
+Master: PNG, 1672 × 941, 1,844,403 bytes. SHA-256: `c867fc8381dccc664d57a71b54f5500e4c44e3e9a26d61d379c989fa55594109`.
