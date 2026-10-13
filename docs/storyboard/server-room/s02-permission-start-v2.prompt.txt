@@ -1,0 +1,11 @@
+Use case: precise-object-edit.
+Asset type: Solar Commons opening S02, corrected FIRST FRAME immediately before a button press.
+Input image 1 is the EDIT TARGET and exact camera/composition reference.
+
+Change only the index finger from already touching the button to READY TO PRESS. Keep the same hand, wrist, forearm, other fingers and thumb in their existing positions. Raise ONLY the index fingertip a small natural amount by adjusting its joints, leaving a clearly visible 5 to 8 millimeter AIR GAP between the finger pad and the CENTER of the same mint cap. The fingertip is directly above the center and poised to descend vertically onto it, not pointing past it, stroking it, hovering far away or approaching from the side. Its nail and knuckles retain the same shape and natural skin. Use a believable relaxed ready pose, not a stiff pointing gesture. Exactly the same hand with natural anatomy and digit count.
+
+The circular mint cap is in its ordinary RAISED position as in the source, with its small exposed sidewall visible above the ivory rim. The surrounding indicator ring is dim and unobtrusive rather than bright, awaiting consent. The button's base stays fixed, the cap stays concentric, and its perspective ellipse remains the same.
+
+Preserve everything else from image 1 as exactly as possible: ivory ceramic housing, fine brass lower rim, pale textured desk and edge, sage-green chair, rolled ivory/coral sleeve and its brass/seams, seated torso and lap fragments, straps and fittings, defocused teal racks and amber bokeh, painterly style, lighting, shadows, focus, crop, camera and perspective. No zoom, new props, furniture movement, different skin tone or changed hand size. No head/face, extra fingers, glow blast, text, UI, caption, logo or watermark.
+
+Output one full matching landscape 16:9 frame. This is the starting pose before one straight downward button press; the index pad must NOT already touch the cap.

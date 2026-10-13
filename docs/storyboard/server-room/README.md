@@ -48,13 +48,25 @@ Master: PNG, 1672 × 941, 2,320,069 bytes. SHA-256: `1028c24aaaf1188051731c8f31e
 
 ## S02 — Permission
 
-[Working image, version 1](s02-permission-v1.png) · [Exact generation prompt](s02-permission-v1.prompt.txt)
+[Original contact image, now archived for video](s02-permission-v1.png) · [Exact generation prompt](s02-permission-v1.prompt.txt). Use the matching pair below for the current review and video attempt.
 
 Generated on October 13, 2026 with the built-in image-generation tool using new S01 for the workstation/control/chair and the current Mara portrait for skin and clothing. A tight diagonal hand/control insert shows Mara now seated, deliberately pressing the same mint consent cap. Its restrained indicator responds; the authored caption is **“A little wider, then.”** Captions remain outside the raster.
 
 Reviewed against S01: index fingertip contact, natural overlapping fingers, ivory/brass control, pale worktop, green upholstery, seated torso/lap and rolled ivory/coral sleeve are coherent. The face and broad room view are cropped out; defocused teal racks preserve location context. This visibly advances the action from entry to authorization. The control grants permission without operating server power or cooling.
 
 Master: PNG, 1672 × 941, 2,163,208 bytes. SHA-256: `de606f0c60290bcafd7341dbcc8af8421ae9015484ce32f62c264ca8ee7a9c3d`.
+
+### S02 press and pulse keyframes
+
+[Current First frame, version 2](s02-permission-start-v2.png) · [Last frame, pressed version 1](s02-permission-pressed-v1.png) · [Current video motion prompt](s02-permission-v2.motion.txt)
+
+Generated October 13, 2026 with the built-in image-generation tool. Both edits use the original S02 as the exact hand, room and camera target. Kevin reported that the original first-frame-only video rubbed the cap instead of pressing it and requested an explicit press/pulse frame. The [start-image prompt](s02-permission-start-v2.prompt.txt) raises only the index pad just above the cap and dims the ring; the [pressed-image prompt](s02-permission-pressed-v1.prompt.txt) lowers the finger/cap and shows the mint ring at its acknowledgement pulse peak.
+
+Reviewed: a visible air gap before contact, centered contact afterward, natural hand anatomy, matching button/desk/chair/sleeve composition and stronger light confined to the device rim. The cap travel is small; the clear fingertip gap and illumination change carry the action. The pulse peak is a still, not a generated animation. Interpolation must still be checked for sliding, finger deformation or unwanted release. The motion prompt calls for one downward press and a held contact; the release is left to the cut. The review board and animatic now show the ready-to-press first image. Files are supplied individually, without creating another upload kit.
+
+First master: PNG, 1672 × 941, 2,155,633 bytes. SHA-256: `44c935349de05c7c4516f0e15dfcabfcfd04a8a21e270dc4c00870057303c187`.
+
+Last master: PNG, 1672 × 941, 2,199,150 bytes. SHA-256: `30912740140555d9fefb85d3b719a8d04266abd5e117b2e96e72644f080cbf13`.
 
 ## S03 — A familiar partner
 

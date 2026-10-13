@@ -1,0 +1,13 @@
+Use case: precise-object-edit.
+Asset type: Solar Commons opening S02, matching LAST FRAME showing a definite button press and the peak of its acknowledgement light.
+Input image 1 is the EDIT TARGET and exact FIRST FRAME. Preserve its camera, composition and almost all pixels; create only the small physical press and indicator response described below.
+
+Primary request: the same human index finger has pushed STRAIGHT DOWN on the center of the same mint button. Show a clearly depressed mechanical button, not a fingertip stroking a surface. The mint-green circular cap is lowered a few millimeters vertically into the existing ivory ceramic housing. Its formerly visible raised mint sidewall is now almost hidden; the cap's top sits nearly flush with the upper ivory/brass rim. Keep the cap concentric with the housing and the button base exactly fixed on the desk. Its circular shape appears as the same natural perspective ellipse.
+
+Hand action: the fingertip stays at the SAME center contact point in screen coordinates, with a small realistic lowering and slight flattening of the soft finger pad indicating pressure. The nail and index-finger joints remain anatomically believable. The index finger's long axis and posture stay close to the source. The wrist, forearm, thumb and other fingers remain relaxed in their existing positions. Exactly the same hand, same fingers, same skin tone, same sleeve. No sideways slide, sweeping gesture, replacement hand, additional digits or exaggerated finger bending.
+
+Pulse peak: the existing narrow mint indicator ring around the cap is noticeably brighter than in the first frame, a crisp luminous continuous mint-cyan ring representing ONE restrained acknowledgement pulse at its brightest instant. Keep it contained at the device rim. Add only a faint believable mint bounce at the contacting fingertip and immediately adjacent ceramic, not a room-wide glow. This is a physical status light, not magical energy, a hologram or a shock wave.
+
+Invariants: preserve the exact original ivory ceramic button base, fine brass lower ring, pale textured desktop and its edge, sage-green upholstered chair, rolled ivory/coral sleeve, jacket seams, existing strap/brass hardware, seated torso/lap fragment, defocused teal racks and amber bokeh, original lighting and painterly cinematic rendering. No camera move, crop, lens change, zoom, furniture movement or new objects. Keep the original shallow depth of field and focus on the hand/button. Head and face remain out of frame.
+
+Output: one complete landscape 16:9 frame matching input image 1's framing and dimensions. The final pose HOLDS the button down while the mint ring is bright. No labels, caption, UI, text, watermark, logo, Kite or new neural graphics.

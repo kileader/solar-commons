@@ -2,14 +2,14 @@
 
 Prepared October 13, 2026. Use the approved **server-room restart** images. Start with S01.
 
-Bring **one shot PNG and its matching motion prompt** per generation, plus the matching end image for S01. Upload kit v3 contains S01's corrected starting image and matching end image, S02–S07 images, seven motion text files, this guide and S08's harbor still. Generate each shot separately; we will assemble the edit afterward.
+Use the **individual image and motion-prompt files linked below**. S01 and S02 each have matching First and Last images; S03–S07 currently have one starting image each. S08 remains the original harbor still. Generate each shot separately; we will assemble the edit afterward.
 
 ## Firefly recipe
 
 1. Open [Adobe Firefly](https://firefly.adobe.com/) → **Video → Generate video**.
 2. Select **Firefly Video**, if available in your account.
-3. Under **Frame → First**, upload the PNG for the current shot. For **S01**, also upload the matching `S01-end.png` under **Last**. Leave Last empty for S02–S07.
-4. Set **16:9**, choose **1080p** if available, and use **Camera → Motion → Static** when the control is available. Adding a Last frame disables Firefly's camera-motion selector; the S01 prompt requests a stationary camera.
+3. Under **Frame → First**, upload the PNG for the current shot. For **S01 and S02**, also upload their matching end image under **Last**. Leave Last empty for S03–S07.
+4. Set **16:9**, choose **1080p** if available, and use **Camera → Motion → Static** when the control is available. Adding a Last frame disables Firefly's camera-motion selector; the S01/S02 prompts request a stationary camera.
 5. Paste the matching motion prompt below. Keep **Enhance prompt off** so the intended small movement is not expanded.
 6. Generate S01 first, then download the result. Firefly's image/keyframe and camera controls are described in [Adobe's official guide](https://helpx.adobe.com/firefly/web/work-with-audio-and-video/work-with-video/generate-videos-using-images.html).
 7. If the first result preserves Mara and the room, continue through S07. Save the downloads as **S01.mp4**, **S02.mp4**, … **S07.mp4**.
@@ -26,13 +26,13 @@ Use the available default clip length. The durations below are editing targets. 
 
 Firefly offers limited free daily generations on a curated set of models; paid plans provide credits and expanded access. Check the model and credit cost in your account before generating. Start with one available test rather than buying a large plan for this seven-shot prototype. [Adobe plan details](https://www.adobe.com/products/firefly/plans.html), [generative-credit FAQ](https://helpx.adobe.com/creative-cloud/apps/generative-ai/generative-credits-faq.html).
 
-If Firefly Video is unavailable on your free account, this kit can still be used with an image-to-video model you can access. Its labels/settings may differ; the instruction remains one starting image plus one motion prompt.
+If Firefly Video is unavailable on your account, these individual assets can be used with another image-to-video model you can access. S01/S02 need a model supporting both First and Last inputs; other shots currently use a starting image plus motion prompt.
 
 ## Shot uploads and copyable prompts
 
 ### S01 — Civic machinery
 
-First: [s01-civic-compute-room-start-v2.png](s01-civic-compute-room-start-v2.png). Last: [s01-civic-compute-room-end-v1.png](s01-civic-compute-room-end-v1.png). In upload kit v3 these are **S01.png** and **S01-end.png**. Editing target: **3 seconds**. Generate **5 seconds**, then download as **S01.mp4**. The [matching motion prompt](s01-civic-compute-room-v3.motion.txt) is also included in the kit as `S01-motion.txt`.
+First: [s01-civic-compute-room-start-v2.png](s01-civic-compute-room-start-v2.png). Last: [s01-civic-compute-room-end-v1.png](s01-civic-compute-room-end-v1.png). Editing target: **3 seconds**. Generate **5 seconds**, then download as **S01.mp4**. Use the [matching motion prompt](s01-civic-compute-room-v3.motion.txt).
 
 ```text
 The woman completes a small step toward the green chair on the left and gently rests her left hand on the chair back, settling into the pose shown in the final frame. Subtle natural breathing and hair movement. Locked camera. The room remains still.
@@ -40,10 +40,12 @@ The woman completes a small step toward the green chair on the left and gently r
 
 ### S02 — Permission
 
-Upload: [s02-permission-v1.png](s02-permission-v1.png). Editing target: **3 seconds**. Download name: **S02.mp4**.
+First: [s02-permission-start-v2.png](s02-permission-start-v2.png), with the index fingertip just above the raised cap and the indicator dim. Last: [s02-permission-pressed-v1.png](s02-permission-pressed-v1.png), with centered fingertip contact, a lower cap and bright mint acknowledgement ring. Editing target: **3 seconds**. Generate **5 seconds**, then download as **S02.mp4**. Use the [matching motion prompt](s02-permission-v2.motion.txt).
+
+This pair replaces the original already-touching start image after the first video test produced stroking instead of a clear press. Keep the final finger contact held; a release can be implied by the cut to S03. The bright end image represents the pulse peak, not animation by itself.
 
 ```text
-Locked close-up camera. The index finger completes a gentle press of the mint consent control, holds briefly, then relaxes slightly. The small mint indicator responds with a soft pulse. Preserve natural hand anatomy, the ivory and brass control, sleeve and green chair. One continuous close-up.
+Locked close-up camera. The index finger moves straight down onto the center of the mint button and depresses the cap once. The mint ring brightens with one soft acknowledgement pulse. The fingertip stays planted on the center and holds the button down. The rest of the hand, device and room remain still.
 ```
 
 ### S03 — A familiar partner
@@ -88,7 +90,7 @@ Static wide camera from behind. The woman takes two unhurried steps farther thro
 
 ### S08 — The Harbor
 
-Keep the original harbor still for the final **4 seconds**; skip video generation for this shot. In the kit it is `S08-harbor.webp`. The game will use its existing panorama for the handoff.
+Keep the [original harbor still](../../../public/art/harbor.webp) for the final **4 seconds**; skip video generation for this shot. The game will use its existing panorama for the handoff.
 
 ## Bring back the results
 
