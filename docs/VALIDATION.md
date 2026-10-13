@@ -11,7 +11,7 @@ Verified locally on October 13, 2026.
 - Assets: harbor and Mara load from project-owned WebP files. The portrait retains alpha transparency.
 - Console: no warning or error logs in the final browser walkthrough.
 
-Browser interaction checks used the Vite development server. Production output was built successfully; it has not been deployed to a public host. No live AI calls are part of the prototype.
+Initial browser interaction checks used the Vite development server. No live AI calls are part of the prototype.
 
 ## Audio and controller pass
 
@@ -23,3 +23,11 @@ Browser interaction checks used the Vite development server. Production output w
 - Physical controller hardware was not exercised in the browser verification session. Hardware mapping, Bluetooth behavior, and controller-specific feel remain to be checked with Kevin's controller.
 - A fresh page load, audio activation, and local voice test produced no new console warnings or errors. An earlier hot-reload hook-order error during development did not recur on the fresh load.
 - All audio is generated locally or uses a local speech service. No paid calls, cloud speech fallback, or unlicensed music assets were used.
+
+## Studio startup and Pages
+
+- Production build and all 33 tests pass, including five startup boundary tests. Startup waits for the image, runs once, consumes keyboard holds and mouse clicks, ignores held controller buttons and stick drift, and cleans up timers/polling under Strict Mode.
+- Browser: the supplied logo fits a centered rectangle exactly 70% of viewport width and height with `object-fit: contain`; full-opacity hold observed on black. Natural completion enters the harbor.
+- Native Enter and mouse skip leave the opening narrator line unchanged and audio locked.
+- The supplied `studio/` source files remain unchanged. Reduced-motion CSS removes fades while retaining the presentation interval.
+- GitHub Actions runs the full tests and production build before publishing the static output to Pages.

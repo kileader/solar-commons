@@ -4,6 +4,10 @@ A short hard-science-fiction solarpunk visual novel about sharing a point of vie
 
 Mara and Kite investigate an unexpected structure beneath the harbor of Larkhaven. Sonar, temperature readings, and an incomplete historical survey point toward different possibilities. The player examines the evidence and chooses how to proceed.
 
+[Play in your browser](https://kileader.github.io/solar-commons/).
+
+The game opens with the silent Phicid Productions studio splash: a centered logo on black, 0.45-second fade in, 1.5-second hold, and 0.45-second fade out. A fresh keyboard, mouse/touch, or controller button skips it without advancing the opening dialogue. Reduced motion shows the logo without fades. Scene replay stays in the harbor.
+
 ## Play locally
 
 Requires Node.js 22.12 or newer (developed with Node.js 24).
@@ -69,6 +73,8 @@ npm run preview
 - `src/state/scene.ts`: guarded progression, clue inspection, perception, and replay.
 - `src/state/scene.test.ts`: meaningful progression and reset tests.
 - `src/App.tsx`: scene presentation and input.
+- `src/Startup.tsx` and `src/components/StudioSplash.tsx`: startup presentation and consumed skip input; gameplay mounts only after the splash.
+- `studio/`: supplied, unchanged Phicid Productions logo and reusable splash sources. The browser imports the original logo directly.
 - `src/components/`: Kite, scientific overlays, and accessible modal shell.
 - `src/art.ts` and `public/art/`: replaceable art manifest and optimized assets.
 - `src/audio/`: original score, synthesized cues, local voice playback, and validated preferences.
@@ -76,6 +82,12 @@ npm run preview
 - `src/input/` and `src/hooks/useGamepad.ts`: controller sampling, focus navigation, and integration tests.
 
 The investigation has one canonical state. Viewing evidence is idempotent; unknown choices and out-of-phase actions are ignored; the final choice is gated on all three distinct clues. Dialogue content does not own presentation or mutate state.
+
+## Publishing
+
+The public repository is [kileader/solar-commons](https://github.com/kileader/solar-commons). Pushes to `main` run the tests and production build, then publish `dist/` to GitHub Pages through `.github/workflows/pages.yml`. The workflow also supports manual runs. It uses Node.js 24 and `npm ci`; Vite's relative asset base supports the `/solar-commons/` project path. Only the static game is deployed.
+
+For another repository, enable GitHub Pages with **GitHub Actions** as its source and update the play link. The workflow follows [GitHub's custom Pages workflow guidance](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 ## Art and science
 
