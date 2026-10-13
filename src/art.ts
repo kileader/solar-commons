@@ -7,5 +7,5 @@ export const harborArt = {
 }
 
 export const characterArt = {
-  mara: `${import.meta.env.BASE_URL}art/mara.webp`,
+  mara: `${import.meta.env.BASE_URL}art/mara-cybernetic.webp`,
 }

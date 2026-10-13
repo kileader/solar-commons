@@ -33,3 +33,11 @@ Initial browser interaction checks used the Vite development server. No live AI 
 - GitHub Actions runs the full tests and production build before publishing the static output to Pages.
 - Public Pages verification: `https://kileader.github.io/solar-commons/` loads the studio logo, transitions to the opening narrator line, and loads both harbor and Mara images from the project path. Continue advances dialogue and Cognitive Perception toggles through actual controls. No browser warnings or errors were observed.
 - The first hosted run passed all 33 tests, built the production bundle, and deployed successfully. Pages actions were subsequently updated to their official Node.js 24 releases to remove the runtime deprecation notice.
+
+## Mara's temple module and first storyboard image
+
+- Built-in imagegen produced S01 from the existing Mara and harbor references, followed by targeted hand/control separation and the approved temple-module edit. The room master, portrait master and exact prompts are preserved in `docs/storyboard/`.
+- The in-game portrait matches the storyboard's anatomical right-temple ivory/brass plate, upper mint indicator and lower teal contact. Character identity, pose, costume, brooch/strap orientation and module matching were visually reviewed against the references.
+- Runtime WebP is 600 × 800, 157,322 bytes, RGBA with alpha spanning 0–255 and transparent top corners. The original portrait remains available.
+- All 33 tests and the production build pass. Browser inspection confirmed the new portrait URL loads, the module appears beside her eye, transparency blends into the scene, the current dialogue is unchanged, and no warnings/errors were observed.
+- Only the portrait asset reference and accessible image description changed in the game. The cinematic and QTE remain planned work; S01 is a storyboard asset.

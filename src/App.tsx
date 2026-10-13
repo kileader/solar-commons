@@ -495,7 +495,7 @@ export default function App() {
             <img
               className="mara-portrait"
               src={characterArt.mara}
-              alt="Mara, a coastal researcher with dark curly hair and an ivory jacket"
+              alt="Mara, a coastal researcher with dark curly hair, an ivory jacket, and a mint-lit temple module"
             />
           ) : (
             <Kite active={state.perception} compact />
