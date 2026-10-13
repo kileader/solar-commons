@@ -14,7 +14,7 @@ Reviewed: face/curls, natural hand anatomy, ivory/coral clothing, left-chest bro
 
 Master: PNG, 1672 × 941, 2,492,497 bytes. SHA-256: `a8c26943840180ce798d6b4faf738e58cd0fa610da376650b6664b3082786212`.
 
-Status: S01–S06 are available, including the Connection frames, both Synchronization previews and the first Awakening frame. S07's physical departure requires new art; S08 will reuse the existing harbor. These images are not yet wired into runtime playback.
+Status: all eight working plates are available: seven newly generated restart frames S01–S07 and the existing harbor reused as S08. Review them together before the timing animatic. These images are not yet wired into runtime playback.
 
 ## S02 — Permission
 
@@ -65,3 +65,17 @@ Generated on October 13, 2026 with the built-in image-generation tool using the 
 Reviewed: natural hazel iris and ordinary catchlight, relaxed expression, warm brown skin/freckles, curls and recognizable facial proportions are preserved. The small ivory/brass plaque remains on her anatomical right temple with its upper mint indicator and lower teal contact. No reflected data, glowing iris, new hardware, surgical imagery or perceptual paths appear. This is the reaction keyframe; animating the eye opening remains future work.
 
 Master: PNG, 1672 × 941, 2,323,928 bytes. SHA-256: `5f139b02fb10c252d44ffef62c7a7d0a8193543436a2862a6d48a0955c52bb4f`.
+
+## S07 — Into the living city
+
+[Working image, version 1](s07-living-city-v1.png) · [Exact generation prompt](s07-living-city-v1.prompt.txt)
+
+Generated on October 13, 2026 with the built-in image-generation tool using new S01 for clothing/facility continuity, the current Mara portrait for identity, and the original harbor for civic materials and palette only. A wide rear three-quarter view captures Mara walking through a glazed doorway into a bright planted public passage. The near rack edge establishes departure; trees, shade, benches and distant residents establish the new place without a harbor vista.
+
+Reviewed: the trailing heel lifts as the front foot advances beyond the threshold, making the crossing legible. Curls, ivory/coral clothes, boots, left-shoulder-to-right-hip strap, olive bag and naturally visible right-temple module remain coherent. No physical implant relocation, seated pose, perception graphics or early anomaly appears. This completes the new generated storyboard frames; movement animation remains future work.
+
+Master: PNG, 1672 × 941, 2,768,433 bytes. SHA-256: `4d5c9a5655be3b347fc3e1861dd0f81d63cf4dfef5e80f2abf675fa124d57d48`.
+
+## S08 — The Harbor
+
+Reuse the [original runtime harbor panorama](../../../public/art/harbor.webp) directly. No new generation is needed. Its [original prompt and provenance](../../ART_DIRECTION.md#harbor-generation-prompt) remain recorded. Match the runtime crop and focal point from `src/art.ts`; remove cinematic captions and any remaining attention graphics before mounting the existing first narrator line. This is the destination after the computing room, shared workspace and public passage.
