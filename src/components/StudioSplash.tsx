@@ -18,7 +18,7 @@ export function StudioSplash({ onComplete }: { onComplete: () => void }) {
     const previous = new Map<number, boolean[]>()
 
     // Keep consuming the gesture through release and its synthetic click. The
-    // harbor mounts on the next frame, with no chance to reuse the skip input.
+    // next presentation mounts on the next frame, without reusing the skip input.
     const enter = () => {
       if (finished && !keys.size && !pointers.size && !transition) {
         transition = requestAnimationFrame(() => {

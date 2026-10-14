@@ -28,6 +28,8 @@ The current runtime portrait is `public/art/mara-cybernetic.webp`, a 600 × 800 
 
 ## Current opening — civic computing room
 
+**Runtime update, October 14, 2026:** the [opening player](OPENING_CINEMATIC.md) now uses eight WebP derivatives of these masters, Kevin's accepted S01 video with finished audio, and local camera/light/sound effects. No additional art or paid video generation was used. The production notes below record the original image-generation stage; references to future playback, eye animation and QTEs describe that earlier plan, not current features. QTEs and independent character animation are outside this slice.
+
 Kevin requested a full visual restart after the first sequence repeated the harbor setting and deferred visible integration to future overlays. The [current opening plan](OPENING_CINEMATIC.md) now moves through a computing room, a rendered shared-perception space, a public passage and finally the harbor. Each shot must depict an event or a changed perceptual state, rather than only a different portrait crop.
 
 The original [S01 — Civic machinery](storyboard/server-room/s01-civic-compute-room-v1.png) was generated with built-in imagegen on October 13, 2026, using the current Mara portrait for identity only. Its [exact prompt](storyboard/server-room/s01-civic-compute-room-v1.prompt.txt) establishes teal server cabinets, coolant hardware, a calibration workstation and Mara entering the facility. The [asset record](storyboard/server-room/README.md) contains dimensions, hash and review notes. This replaces the old room as the opening's working location reference. Seven new restart frames are now available; S08 reuses the existing harbor.

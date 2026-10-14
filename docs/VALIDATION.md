@@ -1,5 +1,19 @@
 # First-slice validation
 
+## Opening cinematic — October 14, 2026
+
+- All **46 tests** pass, including the unchanged harbor progression/controller/voice coverage, the studio boundary, three authored-timeline checks and ten cinematic integration checks.
+- TypeScript and the production Vite build pass. The eight optimized stills total 1,460,508 bytes. The preparation script reproduces them from the recorded masters.
+- Startup follows studio → opening → harbor. Tests exercise the complete 34-second sequence, pause/resume, foreground loss, saved mute/clip levels, failed-video fallback, reduced motion, controller confirmation and completion through keyboard/pointer/controller release. Strict Mode unmount leaves no polling frames or cinematic audio engine.
+- Browser: S01 reaches native media ready state 4, reports 5.042-second duration, advances unmuted after Begin with sound, and stops at the first cut. Only its first three seconds are used. The checked-in clip matches Kevin's supplied finished file: SHA-256 `0ac6d01f35658ef8fce0e0bd49cb4aee7012bbeaa0f6e46d3855615f85f3f7d4`.
+- Desktop 1280 × 720, phone 390 × 844 and narrow phone 320 × 568 framing inspected. The narrow invitation was corrected to separate text from the image and retain both start buttons. No horizontal overflow or unloaded image assets observed.
+- Browser reduced motion: all eight camera transforms compute to `none`, no animated effect SVG exists and native video remains paused. Captions and the partial-model label remain legible.
+- Actual-control seeking inspected consent acknowledgement, the threshold, shared workspace and city departure. Natural completion reaches the exact original first narrator line, with zero clues and Cognitive Perception off. No console warnings or errors observed during this walkthrough.
+- Audio preferences and video transport were checked; the new synthesized mix has not received a human listening review. Controller lifecycle tests use a simulated standard pad; physical hardware remains to be tried.
+- No new image/video generation, paid calls, new animation dependencies or upload kits were used. The cinematic does not change harbor story state or establish additional Unbinding history.
+
+The notes below record earlier validation stages.
+
 Verified locally on October 13, 2026.
 
 - `npm run build`: TypeScript check and production Vite bundle pass.

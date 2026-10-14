@@ -6,7 +6,9 @@ Mara and Kite investigate an unexpected structure beneath the harbor of Larkhave
 
 [Play in your browser](https://kileader.github.io/solar-commons/).
 
-The game opens with the silent Phicid Productions studio splash: a centered logo on black, 0.45-second fade in, 1.5-second hold, and 0.45-second fade out. A fresh keyboard, mouse/touch, or controller button skips it without advancing the opening dialogue. Reduced motion shows the logo without fades. Scene replay stays in the harbor.
+The silent Phicid Productions studio splash leads into a **34-second cinematic**: Mara authorizes a deeper connection with Kite, their attention coordinates in a shared perceptual workspace, and they return to the living city. Existing illustrations, one finished clip, camera movement, animated light and an original local score carry the sequence. No paid AI generation is needed. [Opening sequence and asset workflow](docs/OPENING_CINEMATIC.md).
+
+Choose **Begin with sound** or **Watch silently**. Pause, seek, Restart, sound levels, reduced motion and Skip are available. Space pauses/resumes; Escape skips. System reduced motion uses stills without camera or light animation. Startup and skip input is consumed before gameplay mounts. Scene replay stays in the harbor.
 
 ## Play locally
 
@@ -17,7 +19,7 @@ npm install
 npm run dev
 ```
 
-Open the URL printed by Vite. Click **Continue**, choose a way into the investigation, and examine the three harbor markers. **Cognitive Perception** reveals Kite’s shared sensorium. Once all three clues are recorded, choose an approach to reach one of two endings. **Field notes** summarizes the evidence.
+Open the URL printed by Vite. Watch or skip the opening, then click **Continue**, choose a way into the investigation, and examine the three harbor markers. **Cognitive Perception** reveals Kite’s shared sensorium. Once all three clues are recorded, choose an approach to reach one of two endings. **Field notes** summarizes the evidence.
 
 Keyboard: **Enter/Space** continues dialogue; **C** toggles perception; **J** opens notes; **1/2** selects a story choice; **Escape** closes a panel. Every control also works with Tab and Enter. Settings offer reduced motion and larger dialogue; system reduced-motion preferences are respected automatically.
 
@@ -73,7 +75,8 @@ npm run preview
 - `src/state/scene.ts`: guarded progression, clue inspection, perception, and replay.
 - `src/state/scene.test.ts`: meaningful progression and reset tests.
 - `src/App.tsx`: scene presentation and input.
-- `src/Startup.tsx` and `src/components/StudioSplash.tsx`: startup presentation and consumed skip input; gameplay mounts only after the splash.
+- `src/Startup.tsx`, `src/components/StudioSplash.tsx` and `src/components/OpeningCinematic.tsx`: studio → opening → harbor, isolated media and consumed skip input.
+- `src/content/opening.ts`: authored cinematic timing, captions and replaceable asset URLs.
 - `studio/`: supplied, unchanged Phicid Productions logo and reusable splash sources. The browser imports the original logo directly.
 - `src/components/`: Kite, scientific overlays, and accessible modal shell.
 - `src/art.ts` and `public/art/`: replaceable art manifest and optimized assets.

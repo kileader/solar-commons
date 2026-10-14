@@ -4,24 +4,26 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Startup from './Startup'
 
-const gameplay = vi.hoisted(() => ({ mount: vi.fn(), input: vi.fn() }))
-vi.mock('./App', async () => {
+const presentation = vi.hoisted(() => ({ mount: vi.fn(), input: vi.fn() }))
+// Isolate the established studio release boundary from the cinematic's own clock.
+vi.mock('./components/OpeningCinematic', async () => {
   const { useEffect } = await import('react')
   return {
-    default: function Game() {
+    OpeningCinematic: function Opening() {
       useEffect(() => {
-        gameplay.mount()
-        document.addEventListener('keydown', gameplay.input)
-        document.addEventListener('click', gameplay.input)
+        presentation.mount()
+        document.addEventListener('keydown', presentation.input)
+        document.addEventListener('click', presentation.input)
         return () => {
-          document.removeEventListener('keydown', gameplay.input)
-          document.removeEventListener('click', gameplay.input)
+          document.removeEventListener('keydown', presentation.input)
+          document.removeEventListener('click', presentation.input)
         }
       }, [])
-      return <button>Harbor</button>
+      return <button>Opening</button>
     },
   }
 })
+vi.mock('./App', () => ({ default: () => <button>Harbor</button> }))
 
 let root: Root
 let container: HTMLDivElement
@@ -56,8 +58,8 @@ function controller(pressed: boolean, axis = 0) {
 beforeEach(() => {
   vi.useFakeTimers()
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
-  gameplay.mount.mockClear()
-  gameplay.input.mockClear()
+  presentation.mount.mockClear()
+  presentation.input.mockClear()
   frames = new Map()
   frameId = 0
   pads = []
@@ -82,19 +84,19 @@ afterEach(() => {
 })
 
 describe('studio startup boundary', () => {
-  it('waits for the image and full presentation before mounting gameplay once', () => {
+  it('waits for the image and full presentation before mounting the opening once', () => {
     act(() => vi.advanceTimersByTime(1000))
-    expect(gameplay.mount).not.toHaveBeenCalled()
+    expect(presentation.mount).not.toHaveBeenCalled()
     load()
     act(() => vi.advanceTimersByTime(2399))
     tick()
-    expect(gameplay.mount).not.toHaveBeenCalled()
+    expect(presentation.mount).not.toHaveBeenCalled()
     act(() => vi.advanceTimersByTime(1))
     tick()
-    expect(gameplay.mount).toHaveBeenCalledTimes(1)
+    expect(presentation.mount).toHaveBeenCalledTimes(1)
     act(() => vi.advanceTimersByTime(8000))
     tick()
-    expect(gameplay.mount).toHaveBeenCalledTimes(1)
+    expect(presentation.mount).toHaveBeenCalledTimes(1)
   })
   it('consumes keyboard skip and held repeats through release', () => {
     expect(key('keydown').defaultPrevented).toBe(true)
@@ -102,37 +104,37 @@ describe('studio startup boundary', () => {
     tick()
     key('keydown', true)
     tick()
-    expect(gameplay.mount).not.toHaveBeenCalled()
+    expect(presentation.mount).not.toHaveBeenCalled()
     key('keyup')
     tick()
-    expect(gameplay.mount).toHaveBeenCalledTimes(1)
-    expect(gameplay.input).not.toHaveBeenCalled()
+    expect(presentation.mount).toHaveBeenCalledTimes(1)
+    expect(presentation.input).not.toHaveBeenCalled()
     key('keydown')
-    expect(gameplay.input).toHaveBeenCalledTimes(1)
+    expect(presentation.input).toHaveBeenCalledTimes(1)
   })
-  it('consumes the pointer gesture and resulting click before mounting gameplay', () => {
+  it('consumes the pointer gesture and resulting click before mounting presentation', () => {
     act(() => {
       document.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, cancelable: true }))
     })
     tick()
-    expect(gameplay.mount).not.toHaveBeenCalled()
+    expect(presentation.mount).not.toHaveBeenCalled()
     act(() => {
       document.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
       document.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
     })
     tick()
-    expect(gameplay.mount).toHaveBeenCalledTimes(1)
-    expect(gameplay.input).not.toHaveBeenCalled()
+    expect(presentation.mount).toHaveBeenCalledTimes(1)
+    expect(presentation.input).not.toHaveBeenCalled()
   })
   it('ignores held controller buttons and stick drift, then skips on a fresh button', () => {
     controller(true, 0.8)
     tick()
-    expect(gameplay.mount).not.toHaveBeenCalled()
+    expect(presentation.mount).not.toHaveBeenCalled()
     controller(false, -0.8)
-    expect(gameplay.mount).not.toHaveBeenCalled()
+    expect(presentation.mount).not.toHaveBeenCalled()
     controller(true)
     tick()
-    expect(gameplay.mount).toHaveBeenCalledTimes(1)
+    expect(presentation.mount).toHaveBeenCalledTimes(1)
   })
   it('does not leave stale polling or timers under Strict Mode or unmount', () => {
     act(() =>
@@ -147,6 +149,6 @@ describe('studio startup boundary', () => {
     act(() => vi.advanceTimersByTime(10000))
     tick()
     expect(frames.size).toBe(0)
-    expect(gameplay.mount).not.toHaveBeenCalled()
+    expect(presentation.mount).not.toHaveBeenCalled()
   })
 })
