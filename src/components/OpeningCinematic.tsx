@@ -202,11 +202,11 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
     setPreferences((p) => ({ ...p, muted: !p.muted }))
   }
 
-  // One clock owns the camera, captions, light and sound cues. Background tabs pause.
+  // One clock owns the camera, captions, light and sound cues, including in hidden tabs.
   useEffect(() => {
     let frame = 0
     let completed = false
-    const tick = (now: number) => {
+    const update = (now: number) => {
       if (playbackRef.current === 'finishing') {
         const heldPad = heldGamepadButton()
         if (!keys.current.size && !pointers.current.size && !heldPad && !completed) {
@@ -225,25 +225,24 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
           audio.current?.update(next)
           if (next === openingDuration) finish()
         }
-        lastFrame.current = now
+        lastFrame.current = Math.max(lastFrame.current ?? now, now)
       }
-      frame = requestAnimationFrame(tick)
     }
+    const tick = (now: number) => {
+      update(now)
+      if (!completed) frame = requestAnimationFrame(tick)
+    }
+    // Hidden pages don't receive animation frames. Keep the same timeline ticking
+    // so recordings and captions stay together instead of jumping on focus return.
+    const background = window.setInterval(() => {
+      if (document.hidden) update(performance.now())
+    }, 250)
     frame = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame)
-  }, [finish, onComplete])
-
-  useEffect(() => {
-    const hidden = () => {
-      if (document.hidden) pause()
-    }
-    window.addEventListener('blur', pause)
-    document.addEventListener('visibilitychange', hidden)
     return () => {
-      window.removeEventListener('blur', pause)
-      document.removeEventListener('visibilitychange', hidden)
+      cancelAnimationFrame(frame)
+      window.clearInterval(background)
     }
-  }, [pause])
+  }, [finish, onComplete])
 
   useEffect(() => {
     const element = video.current

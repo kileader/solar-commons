@@ -13,7 +13,6 @@ vi.mock('../audio/HarborAudio', () => ({
     unlock() {
       this.report({ state: 'running', peak: 0 })
     }
-    setForeground() {}
     setSpeaking() {}
     setCognitive() {}
     play() {}
@@ -128,6 +127,62 @@ afterEach(() => {
 })
 
 describe('scene input integration', () => {
+  it('keeps voice and Auto running across focus changes without restarting a recording', () => {
+    vi.useFakeTimers()
+    try {
+      const clips: HTMLMediaElement[] = []
+      vi.mocked(HTMLMediaElement.prototype.play).mockImplementation(function (
+        this: HTMLMediaElement,
+      ) {
+        clips.push(this)
+        return Promise.resolve()
+      })
+      const hidden = vi.spyOn(document, 'hidden', 'get').mockReturnValue(false)
+      const wait = (ms: number) => act(() => vi.advanceTimersByTime(ms))
+      act(() => container.querySelector<HTMLButtonElement>('.auto-toggle')!.click())
+      const first = clips.at(-1)!
+      act(() => first.dispatchEvent(new Event('playing')))
+      expect(container.querySelector('main')?.dataset.voiceState).toBe('speaking')
+      vi.mocked(HTMLMediaElement.prototype.pause).mockClear()
+      focused = false
+      act(() => window.dispatchEvent(new Event('blur')))
+      hidden.mockReturnValue(true)
+      act(() => document.dispatchEvent(new Event('visibilitychange')))
+      wait(60000)
+      expect(container.querySelector('main')?.dataset.voiceState).toBe('speaking')
+      expect(HTMLMediaElement.prototype.pause).not.toHaveBeenCalled()
+      expect(clips).toHaveLength(1)
+      expect(first.src).toContain('arrival')
+      act(() => first.dispatchEvent(new Event('ended')))
+      wait(999)
+      expect(text()).toContain('harbor terraces')
+      wait(1)
+      expect(text()).toContain('feel where you’re looking')
+      expect(clips).toHaveLength(2)
+      const second = clips.at(-1)!
+      act(() => second.dispatchEvent(new Event('playing')))
+      hidden.mockReturnValue(false)
+      focused = true
+      act(() => {
+        document.dispatchEvent(new Event('visibilitychange'))
+        window.dispatchEvent(new Event('focus'))
+      })
+      expect(clips).toHaveLength(2)
+      expect(second.src).toContain('integration')
+      expect(container.querySelector('main')?.dataset.voiceState).toBe('speaking')
+      // Focus changes during the gap must not restart its countdown either.
+      act(() => second.dispatchEvent(new Event('ended')))
+      wait(900)
+      focused = false
+      act(() => window.dispatchEvent(new Event('blur')))
+      wait(100)
+      expect(text()).toContain('Twelve years')
+      act(() => container.querySelector<HTMLButtonElement>('.auto-toggle')!.click())
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('autoplays recorded lines after the gap and waits for choices and evidence input', () => {
     vi.useFakeTimers()
     try {
@@ -265,8 +320,14 @@ describe('scene input integration', () => {
     // Exhibit narration is opt-in, sequential, and never advances the scene.
     clickButton('[aria-label="Listen to Before the water"]')
     expect(latestClip().src).toContain('exhibit-0-heading')
+    const readingClip = latestClip()
+    focused = false
+    act(() => window.dispatchEvent(new Event('blur')))
     endClip()
     expect(latestClip().src).toContain('exhibit-0-0')
+    expect(readingClip.src).toContain('exhibit-0-heading')
+    focused = true
+    act(() => window.dispatchEvent(new Event('focus')))
     endClip()
     expect(latestClip().src).toContain('exhibit-0-1')
     endClip()
@@ -336,6 +397,18 @@ describe('scene input integration', () => {
     expect(text()).toContain('feel where you’re looking')
     press(0)
     expect(text()).toContain('Twelve years')
+  })
+  it('shows narration without a character portrait and restores each actual speaker', () => {
+    connect()
+    expect(container.querySelector('.speaker-name')?.textContent).toBe('NARRATION')
+    expect(container.querySelector('.companion-portrait')).toBeNull()
+    expect(container.querySelector('.dialogue-text .narration')).toBeTruthy()
+    press(0)
+    expect(container.querySelector('.speaker-name')?.textContent).toBe('Mara')
+    expect(container.querySelector('.companion-portrait .mara-portrait')).toBeTruthy()
+    press(0)
+    expect(container.querySelector('.speaker-name')?.textContent).toBe('Kite')
+    expect(container.querySelector('.companion-portrait .kite-portrait')).toBeTruthy()
   })
   it('navigates choices, inspects evidence, and closes it without advancing the story', () => {
     connect()

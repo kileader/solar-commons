@@ -16,7 +16,6 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
   const [status, setStatus] = useState<AudioStatus>({ state: 'locked', peak: 0 })
   const [voice, setVoice] = useState<{ key: string; state: VoiceState }>({ key: '', state: 'idle' })
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
-  const [foreground, setForeground] = useState(() => !document.hidden)
   const [replay, setReplay] = useState(0)
   const audio = useRef<HarborAudio | null>(null)
   const speech = useRef<VoicePlayback | null>(null)
@@ -48,20 +47,8 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
     const refreshVoices = () => setVoices(service ? localEnglishVoices(service.getVoices()) : [])
     refreshVoices()
     service?.addEventListener('voiceschanged', refreshVoices)
-    const setActive = () => {
-      const active = !document.hidden && document.hasFocus()
-      setForeground(active)
-      engine.setForeground(active)
-      if (!active) player.stop()
-    }
-    document.addEventListener('visibilitychange', setActive)
-    window.addEventListener('blur', setActive)
-    window.addEventListener('focus', setActive)
     return () => {
       service?.removeEventListener('voiceschanged', refreshVoices)
-      document.removeEventListener('visibilitychange', setActive)
-      window.removeEventListener('blur', setActive)
-      window.removeEventListener('focus', setActive)
       player.stop()
       engine.dispose()
       if (audio.current === engine) audio.current = null
@@ -78,13 +65,13 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
     audio.current?.setCognitive(cognitive)
   }, [cognitive])
   useEffect(() => {
-    if (paused || !foreground || status.state !== 'running') {
+    if (paused || status.state !== 'running') {
       speech.current?.stop()
       return
     }
     speech.current?.say(linesRef.current, preferences)
     return () => speech.current?.stop()
-  }, [speechKey, paused, foreground, status.state, preferences, localVoiceKey, replay])
+  }, [speechKey, paused, status.state, preferences, localVoiceKey, replay])
 
   const unlock = useCallback(() => audio.current?.unlock(), [])
   const play = useCallback((cue: SoundCue) => audio.current?.play(cue), [])
@@ -108,7 +95,6 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
     (preferences.deviceVoiceFallback && voices.length > 0)
   const voiceActive =
     !paused &&
-    foreground &&
     status.state === 'running' &&
     preferences.voiceEnabled &&
     !preferences.muted &&
@@ -121,7 +107,6 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
       : voice.key === speechKey
         ? voice.state
         : ('loading' as const),
-    foreground,
     hasVoice,
     voices,
     unlock,

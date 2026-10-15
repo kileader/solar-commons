@@ -198,7 +198,7 @@ export default function App() {
   useAutoAdvance(
     currentLine,
     auto,
-    panel !== null || !!activeClue || !!readAloud || !audio.foreground,
+    panel !== null || !!activeClue || !!readAloud,
     audio.voiceState,
     reading,
     () => perform({ type: 'NEXT' }),
@@ -642,30 +642,32 @@ export default function App() {
 
       {state.phase !== 'museum-model' && (
         <section
-          className={`dialogue-stage ${isChoice ? 'has-choices' : ''}`}
+          className={`dialogue-stage ${isChoice ? 'has-choices' : ''} ${speaker === 'Narrator' ? 'is-narration' : ''}`}
           aria-label="Story and player choices"
         >
-          <div
-            className={`companion-portrait speaker-${speaker.toLowerCase()} ${audio.voiceState === 'speaking' && !readAloud ? 'is-speaking' : ''}`}
-          >
-            <div className="portrait-orbit" />
-            <div className="portrait-disc" />
-            {speaker === 'Mara' ? (
-              <img
-                className="mara-portrait"
-                src={characterArt.mara}
-                alt="Mara, a coastal researcher with dark curly hair, an ivory jacket, and a mint-lit temple module"
-              />
-            ) : (
-              <Kite active={state.perception} compact />
-            )}
-            <span className="portrait-caption">{speaker === 'Mara' ? 'MARA' : 'KITE'}</span>
-          </div>
+          {speaker !== 'Narrator' && (
+            <div
+              className={`companion-portrait speaker-${speaker.toLowerCase()} ${audio.voiceState === 'speaking' && !readAloud ? 'is-speaking' : ''}`}
+            >
+              <div className="portrait-orbit" />
+              <div className="portrait-disc" />
+              {speaker === 'Mara' ? (
+                <img
+                  className="mara-portrait"
+                  src={characterArt.mara}
+                  alt="Mara, a coastal researcher with dark curly hair, an ivory jacket, and a mint-lit temple module"
+                />
+              ) : (
+                <Kite active={state.perception} compact />
+              )}
+              <span className="portrait-caption">{speaker === 'Mara' ? 'MARA' : 'KITE'}</span>
+            </div>
+          )}
           <div className="dialogue-card">
             <div className="dialogue-topline">
               <span className="speaker-name">
                 <i />
-                {speaker === 'Narrator' ? 'LARKHAVEN' : speaker}
+                {speaker === 'Narrator' ? 'NARRATION' : speaker}
               </span>
               <span className="scene-progress">
                 {state.phase === 'investigation'

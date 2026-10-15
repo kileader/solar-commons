@@ -12,7 +12,7 @@ Recordings take priority over device speech. Missing or failed clips leave text 
 
 The opening captions begin at 3.15, 6.45, 11, and 18.1 seconds. Their supplied durations (2.24, 2.32, 1.52, and 1.36 seconds) fit the existing shots. Pause, seek, skip, mute, and voice volume apply to these clips. The original S01 video's embedded sound stays on the effects channel.
 
-Character voice stops when a line is skipped, a panel opens, the page loses focus, or playback settings change. Returning to a line restarts its recording. Evidence conversations play sequentially without closing their panel. Listen replays the current line. Autoplay waits until the selected performance finishes, then uses the configured gap.
+Character voice stops when a line is skipped, a panel opens, or playback settings change. Switching tabs or focusing another window keeps recordings, optional readings, music, and Auto running. The opening cinematic uses a background timer to keep its timeline and sound moving when animation frames are unavailable. Browser or operating-system suspension can still interrupt background playback. Returning to a line restarts its recording; returning focus to the game does not. Evidence conversations play sequentially without closing their panel. Listen replays the current line. Autoplay waits until the selected performance finishes, then uses the configured gap.
 
 ## Optional museum narration
 

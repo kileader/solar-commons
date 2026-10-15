@@ -693,6 +693,7 @@ button {
   filter: drop-shadow(0 6px 8px #163d3080);
 }
 .dialogue-card {
+  grid-column: 2;
   position: relative;
   color: var(--ink);
   background: linear-gradient(112deg, #f8f4e6f5, #f3f0e4ef);
@@ -719,6 +720,9 @@ button {
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 16px;
+}
+.is-narration .dialogue-topline {
+  padding-left: 0;
 }
 .speaker-name {
   display: flex;

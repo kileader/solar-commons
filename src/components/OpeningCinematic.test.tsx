@@ -97,6 +97,7 @@ const position = () => Number(container.querySelector<HTMLInputElement>('.openin
 
 beforeEach(() => {
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
+  vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
   vi.clearAllMocks()
   frames = new Map()
   nextId = 0
@@ -116,6 +117,7 @@ beforeEach(() => {
   }))
   vi.spyOn(document, 'hasFocus').mockReturnValue(true)
   vi.spyOn(document, 'hidden', 'get').mockReturnValue(false)
+  vi.spyOn(performance, 'now').mockImplementation(() => now)
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue()
   vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {})
   Object.defineProperty(navigator, 'getGamepads', { configurable: true, value: () => pads })
@@ -127,6 +129,8 @@ beforeEach(() => {
 })
 afterEach(() => {
   act(() => root.unmount())
+  expect(vi.getTimerCount()).toBe(0)
+  vi.useRealTimers()
   container.remove()
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
@@ -160,7 +164,7 @@ describe('cinematic startup and lifecycle', () => {
     tick(5000)
     expect(calls.mount).toHaveBeenCalledTimes(1)
   })
-  it('freezes the clock and media while paused or hidden, resuming only explicitly', () => {
+  it('freezes the clock and media only when explicitly paused', () => {
     click('Watch silently')
     tick(0)
     tick(4100)
@@ -173,10 +177,50 @@ describe('cinematic startup and lifecycle', () => {
     tick(2000)
     expect(position()).toBeCloseTo(6.1)
     act(() => window.dispatchEvent(new Event('blur')))
-    tick(10000)
-    expect(position()).toBeCloseTo(6.1)
-    expect(opening().getAttribute('data-playback')).toBe('paused')
+    tick(1000)
+    expect(position()).toBeCloseTo(7.1)
+    expect(opening().getAttribute('data-playback')).toBe('playing')
     expect(JSON.parse(localStorage.getItem(audioStorageKey)!).muted).toBe(true)
+  })
+  it('keeps the cinematic clock and sound in sync without animation frames in a hidden tab', () => {
+    click('Begin with sound')
+    tick(0)
+    tick(4100)
+    const pauses = calls.pause.mock.calls.length
+    vi.spyOn(document, 'hasFocus').mockReturnValue(false)
+    vi.spyOn(document, 'hidden', 'get').mockReturnValue(true)
+    act(() => {
+      window.dispatchEvent(new Event('blur'))
+      document.dispatchEvent(new Event('visibilitychange'))
+      now += 2000
+      vi.advanceTimersByTime(2000)
+    })
+    expect(position()).toBeCloseTo(6.1)
+    expect(calls.update).toHaveBeenLastCalledWith(6.1)
+    expect(calls.pause).toHaveBeenCalledTimes(pauses)
+    expect(opening().getAttribute('data-playback')).toBe('playing')
+    vi.spyOn(document, 'hidden', 'get').mockReturnValue(false)
+    vi.spyOn(document, 'hasFocus').mockReturnValue(true)
+    act(() => window.dispatchEvent(new Event('focus')))
+    tick(1000)
+    expect(position()).toBeCloseTo(7.1)
+    vi.spyOn(document, 'hidden', 'get').mockReturnValue(true)
+    click('Pause')
+    act(() => {
+      now += 5000
+      vi.advanceTimersByTime(5000)
+    })
+    expect(position()).toBeCloseTo(7.1)
+    click('Resume')
+    tick(0)
+    act(() => {
+      now += 28000
+      vi.advanceTimersByTime(28000)
+    })
+    expect(calls.mount).toHaveBeenCalledTimes(1)
+    expect(container.textContent).toBe('First harbor line')
+    expect(vi.getTimerCount()).toBe(0)
+    expect(frames.size).toBe(0)
   })
   it('consumes Escape and held keys until release before mounting gameplay', () => {
     key('keydown', 'Escape')

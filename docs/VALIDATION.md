@@ -1,5 +1,13 @@
 # Validation
 
+## Background playback and narration — October 15, 2026
+
+- All **108 tests** pass, and TypeScript plus the production Vite build pass. New regressions cover an uninterrupted recording through blur/visibility changes, progression to the next voiced line in the background, returning focus without replay, and retaining the remainder of the Auto delay. Optional museum narration also continues across focus changes.
+- The cinematic keeps its existing timeline moving on a 250 ms background timer when animation frames are unavailable. Tests cover hidden-tab progress, explicit pause/resume, natural completion exactly once, and timer/frame disposal. Controller focus and held-input protections remain in place.
+- Narrator lines have an explicit **NARRATION** heading and no character portrait. Speaker transitions restore Mara's approved portrait or Kite's existing design. The dialogue card retains its desktop column and narration removes the mobile heading's portrait inset.
+- Browser verification: the cinematic completes with another tab open; voiced Auto progresses from the narrator through Mara/Kite dialogue and waits at the first two-choice menu. The narrator view was visually inspected at 1280 × 720 and 390 × 844; the phone view has no horizontal overflow. Continue restores Mara's portrait. No new browser warnings or errors were observed. These are transport/layout checks, not a human listening review.
+- Explicit panels still pause story playback and Auto; choices, evidence, and museum interactions continue to require player input. Browsers or the operating system can still throttle or suspend background pages; device sleep and mobile background policies have not been verified.
+
 ## Museum recordings — October 15, 2026
 
 - All **105 tests** pass. The complete 94-track script is matched against current authored words and speakers across both harbor endings, both museum approaches, written/model discovery, both gate positions, and both leads. Explicit assertions protect every `--v1`/`--v2`/`--v3` selection, and changed words or speakers cannot reuse an old recording.

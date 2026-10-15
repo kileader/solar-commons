@@ -25,9 +25,7 @@ export function useAutoAdvance(
     const delay =
       preferences.autoDelay * 1000 +
       (voiceState === 'ended' ? 0 : readingTime(text, preferences.readingSpeed))
-    const timer = window.setTimeout(() => {
-      if (!document.hidden && document.hasFocus()) action.current()
-    }, delay)
+    const timer = window.setTimeout(() => action.current(), delay)
     return () => window.clearTimeout(timer)
   }, [key, text, enabled, paused, voiceState, preferences.autoDelay, preferences.readingSpeed])
 }

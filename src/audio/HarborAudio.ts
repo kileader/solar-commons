@@ -41,7 +41,6 @@ export class HarborAudio {
   private bellIndex = 0
   private lastCue = new Map<SoundCue, number>()
   private ducked = false
-  private foreground = true
   private cognitive = false
   private onStateChange = () => this.report()
 
@@ -101,16 +100,6 @@ export class HarborAudio {
     this.report()
   }
 
-  setForeground(foreground: boolean) {
-    this.foreground = foreground
-    if (!foreground) {
-      if (this.timer) clearInterval(this.timer)
-      this.timer = null
-      void this.context?.suspend().catch(() => {})
-      this.onStatus({ state: this.context ? 'suspended' : 'locked', peak: 0 })
-    } else if (this.context) this.unlock()
-  }
-
   setSpeaking(speaking: boolean) {
     this.ducked = speaking
     if (this.music)
@@ -132,7 +121,6 @@ export class HarborAudio {
       !ctx ||
       ctx.state !== 'running' ||
       this.preferences.muted ||
-      !this.foreground ||
       !this.effects ||
       this.preferences.effects === 0
     )
@@ -232,7 +220,7 @@ export class HarborAudio {
   }
 
   private startTimer() {
-    if (this.timer || !this.foreground) return
+    if (this.timer) return
     this.timer = setInterval(() => {
       this.schedule()
       this.report()
@@ -294,7 +282,7 @@ export class HarborAudio {
   }
 
   private schedule() {
-    if (!this.context || !this.music || !this.foreground) return
+    if (!this.context || !this.music) return
     const now = this.context.currentTime
     const chords = [
       [130.81, 196, 246.94, 293.66],
