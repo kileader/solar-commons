@@ -1,4 +1,6 @@
-# React to Ren’Py migration
+# Engine experiment and return to React
+
+**Current decision (October 15, 2026):** Kevin chose to restore React after reviewing the Ren’Py build. The original browser presentation is active at the repository root again. The native project is preserved in `legacy/renpy/`; the React source and assets were moved back without replacing the original cinematic or harbor implementation. The notes below describe the archived migration, not the active runtime.
 
 Kevin authorized moving to Ren’Py during the museum addition on October 15, 2026. Ren’Py 8.5.3 is pinned to a published release, including SDK and web-package hashes. The root `game/` is the active project; `legacy/react/` preserves the previous implementation.
 

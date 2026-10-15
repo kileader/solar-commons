@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import logo from '../../../../studio/phicid_logo.png'
+import logo from '../../studio/phicid_logo.png'
 import './studio-splash.css'
 
 export const SPLASH_DURATION = 2400

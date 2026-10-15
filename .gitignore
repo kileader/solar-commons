@@ -5,10 +5,10 @@ dist.zip
 *.tsbuildinfo
 .qa/
 .tools/
-game/cache/
-game/saves/
-game/**/*.rpyc
-game/**/*.rpyb
+**/game/cache/
+**/game/saves/
+**/*.rpyc
+**/*.rpyb
 tests/screenshots/
 log.txt
 traceback.txt

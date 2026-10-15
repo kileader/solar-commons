@@ -5,8 +5,9 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
+$repositoryRoot = Split-Path -Parent (Split-Path -Parent $projectRoot)
 $version = '8.5.3'
-if (-not $SdkPath) { $SdkPath = Join-Path $projectRoot ".tools/renpy-$version-sdk" }
+if (-not $SdkPath) { $SdkPath = Join-Path $repositoryRoot ".tools/renpy-$version-sdk" }
 $sdkParent = Split-Path -Parent $SdkPath
 
 if ($Command -eq 'setup') {
@@ -32,7 +33,7 @@ if ($Command -eq 'setup') {
 $runtime = Join-Path $SdkPath 'lib/py3-windows-x86_64/python.exe'
 $entry = Join-Path $SdkPath 'renpy.py'
 if (-not (Test-Path -LiteralPath $runtime)) { throw 'Run tools/renpy.ps1 setup, or set RENPY_SDK to an installed Ren''Py 8.5.3 SDK.' }
-$qaPath = Join-Path $projectRoot '.qa'
+$qaPath = Join-Path $repositoryRoot '.qa/renpy'
 New-Item -ItemType Directory -Force -Path $qaPath | Out-Null
 switch ($Command) {
     'lint' { & $runtime $entry --savedir "$qaPath/saves" $projectRoot lint --error-code }
