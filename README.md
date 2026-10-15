@@ -1,103 +1,72 @@
 # Solar Commons
 
-A short hard-science-fiction solarpunk visual novel about sharing a point of view with an AI you have known for years.
+A short solarpunk visual novel about Mara, a coastal researcher, and Kite, the AI she has known for twelve years. They share a point of view while investigating an unexpected structure under Larkhaven’s harbor.
 
-Mara and Kite investigate an unexpected structure beneath the harbor of Larkhaven. Sonar, temperature readings, and an incomplete historical survey point toward different possibilities. The player examines the evidence and chooses how to proceed.
+The playable project now uses **Ren’Py 8.5.3**. The original React prototype is preserved in [`legacy/react`](legacy/react/README.md). The public [browser release](https://kileader.github.io/solar-commons/) updates when changes are pushed to `main`; a local commit alone does not update it.
 
-[Play in your browser](https://kileader.github.io/solar-commons/).
+## Play and develop
 
-The silent Phicid Productions studio splash leads into a **34-second cinematic**: Mara authorizes a deeper connection with Kite, their attention coordinates in a shared perceptual workspace, and they return to the living city. Existing illustrations, one finished clip, camera movement, animated light and an original local score carry the sequence. No paid AI generation is needed. [Opening sequence and asset workflow](docs/OPENING_CINEMATIC.md).
+On Windows, install the pinned official SDK and web support, then launch:
 
-Choose **Begin with sound** or **Watch silently**. Pause, seek, Restart, sound levels, reduced motion and Skip are available. Space pauses/resumes; Escape skips. System reduced motion uses stills without camera or light animation. Startup and skip input is consumed before gameplay mounts. Scene replay stays in the harbor.
-
-## Play locally
-
-Requires Node.js 22.12 or newer (developed with Node.js 24).
-
-```sh
-npm install
-npm run dev
+```powershell
+./tools/renpy.ps1 setup
+./tools/renpy.ps1 run
 ```
 
-Open the URL printed by Vite. Watch or skip the opening, then click **Continue**, choose a way into the investigation, and examine the three harbor markers. **Cognitive Perception** reveals Kite’s shared sensorium. Once all three clues are recorded, choose an approach to reach one of two endings. **Field notes** summarizes the evidence.
+Setup downloads the free SDK from renpy.org into ignored `.tools/` and verifies the official SHA-256 checksums. Alternatively, select this repository as a project in the Ren’Py launcher, or set `RENPY_SDK` to an existing 8.5.3 SDK. No Python, Node, accounts, API keys, or paid services are required to play.
 
-Keyboard: **Enter/Space** continues dialogue; **C** toggles perception; **J** opens notes; **1/2** selects a story choice; **Escape** closes a panel. Every control also works with Tab and Enter. Settings offer reduced motion and larger dialogue; system reduced-motion preferences are respected automatically.
+**Begin the story** leads through the studio splash and existing eight-shot opening, the harbor, and the Hall of Waters. The chapter takes roughly 15 minutes, depending on optional reading.
 
-## Scope
+- Inspect the three original harbor readings, then choose either the careful survey or the optical greeting. Both continue to the museum.
+- Read the optional history wall at your pace. It introduces the Unbinding and the Night of Two Waters without a quiz.
+- Try a small flood reconstruction: follow storm tide, hill runoff, and dawn; open or close the sea gate and examine the competing pressures.
+- Inspect an unexplained observation at dawn to find a handover record and choose your next investigation lead. The chapter ends before that next investigation.
+- Leave the reconstruction whenever you like and revisit it from the chapter ending. Field notes retain evidence and your chosen lead.
 
-- One harbor scene, about five minutes, with two entry choices and two endings.
-- Original illustrated environment and transparent human portrait, layered with parallax, water light, and atmospheric motion.
-- A procedural SVG portrait of Kite with a faceted silhouette and animated connections.
-- A cybernetic perception layer with scientific traces and a partial reconstruction of the anomaly.
-- Three evidence inspections separating observations, modeled explanations, and unresolved questions.
-- Responsive presentation, native modal focus handling, and reduced-motion support.
+The new history, refuge record, and flood interaction are **provisional authored fiction**. The water display is a simplified museum illustration, not a hydrodynamic model. The discovery does not identify or date the present-day structure, explain its warmth, or establish that the lights were a reply.
 
-This is a browser-local, authored story. It makes no AI requests, collects no telemetry, and has no backend. Scene progress resets on reload; sound preferences persist on this device. There is no story save system or additional chapter in this slice.
+## Controls
 
-## Sound and controllers
+| Input | Action |
+| --- | --- |
+| Click / Enter / Space | Continue dialogue or activate a focused control |
+| 1 / 2 | Choose a dialogue option |
+| 1 / 2 / 3 at the reconstruction | Select a historical moment |
+| C | Toggle Cognitive Perception |
+| J | Open field notes |
+| Escape | Close reading panels or open the game menu |
+| Mouse wheel up / Page Up / Back | Roll back the story |
+| Mouse wheel / arrows / Page Up and Down in a reading panel | Scroll the exhibit |
+| V on supported desktops | Ren’Py self-voicing |
 
-Click **Enable sound**, or use the scene controls, to start audio. The original ambient score layers a continuous shore texture, slowly changing chords, and sparse glass tones. It ducks beneath spoken dialogue. Focus, dialogue, choices, evidence, perception, panels, settings, and endings have their own restrained feedback.
+The menu provides six manual save slots, loading, dialogue history, music/effects volumes, mute, text speed, larger text, fullscreen, and reduced motion. Ren’Py handles normal controller navigation and confirmation; physical controller testing remains outstanding. Browser play works best in landscape on small screens.
 
-**Listen** replays the current dialogue. Mara and Kite use different local device voices when available. Opening an evidence panel plays its character dialogue; advancing, closing a panel, muting, or leaving the foreground cancels old speech. Dialogue never advances automatically.
+The original browser-specific character speech and cinematic seek/pause player are retained in the legacy prototype. The Ren’Py opening supports skipping and click-to-advance; its native desktop self-voicing replaces browser character voices. Sound uses original locally rendered synthesis and the accepted opening clip’s embedded audio. No third-party music or voice service is called.
 
-Settings include **Master**, **Music**, **Voice**, and **Sound effects** volumes, a mute switch, automatic dialogue playback, local voice selection, and a voice test. Preferences are stored locally. Voices must be reported by the browser as local English voices; remote voices are excluded, with no fallback to a cloud speech service. Availability and voice quality depend on the device and browser. See [MDN: local speech services](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService).
+## Verify and build
 
-Standard-mapped Xbox and PlayStation controllers use the following controls:
-
-| Control                                       | Action                      |
-| --------------------------------------------- | --------------------------- |
-| D-pad / left stick                            | Move focus                  |
-| A / Cross                                     | Continue or select          |
-| B / Circle                                    | Close a panel               |
-| X / Square                                    | Cognitive Perception        |
-| Y / Triangle                                  | Field notes                 |
-| Start / Options                               | Settings                    |
-| LB / L1                                       | Replay dialogue             |
-| RB / R1                                       | Mute or unmute              |
-| Right stick                                   | Scroll the scene or a panel |
-| Left/right on a selected slider or voice list | Adjust it                   |
-
-Press a controller button to let the browser detect it. The first detected held press is consumed; held face buttons cannot skip multiple lines. Stick dead zones, delayed navigation repeats, disconnect handling, and background input isolation keep controller actions predictable. Controller focus receives a visible cyan outline. Some browsers require one mouse/keyboard interaction to unlock sound: click **Enable sound** if necessary.
-
-Controller wiring is exercised by simulated gamepad input against the actual React scene; physical hardware testing remains outstanding. Browser API requirements are described in [MDN: Gamepad API](https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API).
-
-## Engineering
-
-React, TypeScript, Vite, Lucide icons, and Vitest. The scene is a small deterministic reducer, not an AI conversation.
-
-```sh
-npm test
-npm run build
-npm run preview
+```powershell
+./tools/renpy.ps1 lint
+./tools/renpy.ps1 test
+./tools/renpy.ps1 web
+./tools/renpy.ps1 desktop
 ```
 
-- `src/content/harbor.ts`: dialogue, choices, evidence, and authored scene copy.
-- `src/state/scene.ts`: guarded progression, clue inspection, perception, and replay.
-- `src/state/scene.test.ts`: meaningful progression and reset tests.
-- `src/App.tsx`: scene presentation and input.
-- `src/Startup.tsx`, `src/components/StudioSplash.tsx` and `src/components/OpeningCinematic.tsx`: studio → opening → harbor, isolated media and consumed skip input.
-- `src/content/opening.ts`: authored cinematic timing, captions and replaceable asset URLs.
-- `studio/`: supplied, unchanged Phicid Productions logo and reusable splash sources. The browser imports the original logo directly.
-- `src/components/`: Kite, scientific overlays, and accessible modal shell.
-- `src/art.ts` and `public/art/`: replaceable art manifest and optimized assets.
-- `src/audio/`: original score, synthesized cues, local voice playback, and validated preferences.
-- `src/hooks/useAudio.ts`: audio lifecycle, voice cancellation, foreground handling, and music ducking.
-- `src/input/` and `src/hooks/useGamepad.ts`: controller sampling, focus navigation, and integration tests.
+The native suite exercises all 16 combinations of harbor entry, harbor ending, gate choice, and museum lead; optional reading and leaving/revisiting; duplicate evidence; perception; new-game reset; save/load; rollback; opening sound modes; and preferences. Test saves and captures stay in ignored folders. See [`docs/VALIDATION.md`](docs/VALIDATION.md) for verified results and limits.
 
-The investigation has one canonical state. Viewing evidence is idempotent; unknown choices and out-of-phase actions are ignored; the final choice is gated on all three distinct clues. Dialogue content does not own presentation or mutate state.
+The web build goes to `dist/`. Serve it with any static web server, for example `python -m http.server 4174 --directory dist`. Desktop archives go to `.qa/releases/`. GitHub Actions downloads the pinned SDK, checks the script, runs the native suite under Xvfb, builds the browser game, and publishes it to Pages.
 
-## Publishing
+## Project layout
 
-The public repository is [kileader/solar-commons](https://github.com/kileader/solar-commons). Pushes to `main` run the tests and production build, then publish `dist/` to GitHub Pages through `.github/workflows/pages.yml`. The workflow also supports manual runs. It uses Node.js 24 and `npm ci`; Vite's relative asset base supports the `/solar-commons/` project path. Only the static game is deployed.
+- `game/script.rpy`: native scene progression and saved story variables.
+- `game/dialogue.rpy`: the preserved harbor dialogue and new museum conversations, using native characters, menus, and labels.
+- `game/screens.rpy`: story presentation, evidence, notes, exhibits, flood controls, and standard game menus.
+- `game/content/`: authored evidence readings and optional historical text.
+- `game/opening.rpy`: the existing opening adapted to native playback.
+- `game/images/`: original harbor/Mara/Kite art and four supplied museum backgrounds. The Mara temple module and Kite silhouette are unchanged.
+- `game/tests/story.rpy`: native interaction and branching tests, excluded from distributions.
+- `tools/`: reproducible SDK commands, opening-art encoding, and original audio rendering.
+- `docs/HALL_OF_WATERS.md`: bounded museum design and provisional story decisions.
+- `docs/MIGRATION.md`: migration mapping and presentation differences.
 
-For another repository, enable GitHub Pages with **GitHub Actions** as its source and update the play link. The workflow follows [GitHub's custom Pages workflow guidance](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
-
-## Art and science
-
-See [art direction and asset provenance](docs/ART_DIRECTION.md) for the asset prompts and replacement workflow. Harbor and Mara art were generated specifically for this project with the built-in image generation tool; no third-party artwork or downloaded fonts are included. Kite and the interface geometry are original SVG/CSS. Lucide icons are used under their ISC license.
-
-All sensor values and historical records are fictional. The presentation keeps direct measurements distinct from model outputs: solid traces identify observations and dashed traces identify reconstructions. A shape does not establish age, warmth does not establish intelligence, and a survey with incomplete coverage does not establish absence.
-
-The short-range blue-light greeting is grounded in demonstrated underwater optical communication; range and clarity matter. Background reading: [Woods Hole Oceanographic Institution: Can You Hear Me Now?](https://www.whoi.edu/ocean-learning-hub/multimedia/can-you-hear-me-now/). The delayed emission in the story remains an ambiguous fictional observation.
-
-Recorded character clips can replace `VoicePlayback` using the existing stable dialogue IDs. Commissioned or licensed music can replace the score in `HarborAudio` while retaining its mixing and ducking. Neither change needs a new story-state system. The next useful step is refining the characters, voice, and visual identity through this scene before adding more chapters.
+This is a deterministic, authored story. It has no backend, telemetry, live AI, or external messaging. Game saves and preferences stay on the device. Art provenance is in [`docs/ART_DIRECTION.md`](docs/ART_DIRECTION.md); original storyboard masters and studio sources remain in the repository.

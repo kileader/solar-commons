@@ -1,4 +1,19 @@
-# First-slice validation
+# Validation
+
+## Ren’Py migration and Hall of Waters — October 15, 2026
+
+- Ren’Py **8.5.3.26051504** lint passes with no reported problems: 60 dialogue blocks, three menus, seven named images, and 29 screens.
+- **20 native test cases and 241 assertions pass**. Sixteen parameterized full routes combine both harbor entry choices, both harbor endings, both gate positions, and both museum leads. Additional cases cover new-game reset, leaving and revisiting the reconstruction, both opening sound modes, and preferences.
+- The interaction suite also checks duplicate evidence inspection, the three-clue decision gate, perception toggling, optional reading, saving/loading at the discovery, rollback before a lead choice, and reviewing the exhibit and field notes at the ending. Test saves use `.qa/saves`.
+- Actual Ren’Py renders were inspected at 1600 × 900 for the harbor, original perception geometry, supplied museum gallery, exhibit text and scrolling, reconstruction controls, discovery record, and chapter ending. A zero-width reading viewport was found during visual review and fixed by supplying the vertical scrollbar’s width. Screenshots are generated under ignored `tests/screenshots/`.
+- A comparison against the original content confirmed all **20 harbor dialogue lines** and original observations are preserved. All original runtime raster artwork was checked by hash after copying. Mara’s approved right-temple module and Kite’s canonical SVG remain unchanged.
+- All **46 archived React tests** also pass after relocation; the studio-logo import was adjusted to the preserved root studio source.
+- Browser and PC builds succeed. The PC archive is `SolarCommons-0.2.0-pc.zip` (58,000,109 bytes). Archive inspection confirms tests and the legacy prototype are excluded from the game distribution.
+- The browser export was served locally and opened in the in-app browser at 1280 × 720. The main menu, opening invitation, skip into the exact original harbor narrator line, and Cognitive Perception rendered and responded to input. Full route coverage is from the native engine suite, not a full manual browser playthrough.
+- The Pages workflow now targets Ren’Py; its Linux/Xvfb run and live deployment have not been exercised in this local-only commit. Physical gamepads, mobile browsers, desktop self-voicing, and human listening review of the adapted audio remain outstanding. The older React voice selector and cinematic transport controls are archived, not claimed as native features.
+- Museum history and the flood concept are explicitly provisional in the design notes. The model labels predicted water behavior separately from the recorded lamp observation. No paid generation, live AI, external messages, or telemetry were added.
+
+The records below describe the earlier React version, preserved in `legacy/react/`.
 
 ## Opening cinematic — October 14, 2026
 

@@ -1,5 +1,13 @@
 # Art direction and provenance
 
+## Ren’Py runtime and supplied museum art — October 15, 2026
+
+The active runtime now lives in `game/`. The original harbor and Mara WebPs were copied byte-for-byte to `game/images/`; Kite’s canonical SVG is `game/images/kite.svg`, and the original perception projection is preserved in `game/images/harbor-perception.svg`. The original browser source and art manifest remain under `legacy/react/`. Historical paths below describe that production history.
+
+Kevin supplied `solar_commons_hall_of_waters_webp.zip`, containing six 1672 × 941 background-only WebPs generated in his Solar Commons conversation with Phi in October 2026. This chapter uses four, unchanged, under `game/images/museum/`: `01_hall_exterior.webp`, `02_main_hall.webp`, `03_flood_exhibit.webp`, and `05_city_scale_model.webp`. The archive and memorial candidates are not used. No generated character-inclusive museum art replaces Mara or Kite. The right-temple module remains the original approved portrait; the character SVG retains its original silhouette.
+
+Museum writing, timeline controls, the simplified flood diagram, and the handover record are separate runtime text and geometry. The new history and puzzle remain provisional; see [Hall of Waters design](HALL_OF_WATERS.md). No new image generation or paid service was used for this addition. New Ogg/WAV files render the original procedural score’s palette with `tools/render-audio.py`, using original synthesis and no external samples.
+
 ## Current identity
 
 A warm, prosperous coastal commons seen through a precise cybernetic interface. The environment stays lush and luminous; shared cognition introduces cyan and mint geometry, deep teal glass, and flowing connections. Large serif dialogue preserves a visual-novel rhythm. Technical labels are limited to information that helps the player interpret evidence.

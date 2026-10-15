@@ -1,0 +1,89 @@
+{
+  "sceneCopy": {
+    "location": "LARKHAVEN · COASTAL COMMONS",
+    "tagline": "Everything is connected.",
+    "openingPrompt": "How do we begin?",
+    "decisionPrompt": "What should we do next?",
+    "investigation": "Examine the three markers in the harbor. Open Cognitive Perception to see my reconstruction. We’ll keep the measurements separate from the possibilities.",
+    "synthesis": "Three readings. An engineered shape, a little warmth, and a map that never saw deep enough. Enough to ask a better question.",
+    "completionTitle": "A question worth keeping.",
+    "surveyCompletion": "A careful beginning. A living harbor. A mystery with room to breathe.",
+    "handshakeCompletion": "A faint light. An open possibility. Your first shared observation.",
+    "footer": "Take your time. The city will wait.",
+    "clueLabels": {
+      "geometry": "The structure",
+      "thermal": "Warm water",
+      "archive": "The old survey"
+    },
+    "emptyNotes": "The harbor is still an open question.",
+    "notesSubtitle": "A record of what we know. And what we don’t.",
+    "perception": {
+      "observation": "14.2 m below datum",
+      "model": "Partial reconstruction",
+      "limitation": "Occluded surfaces unresolved",
+      "caption": "Patterns are not proof."
+    }
+  },
+  "clues": [
+    {
+      "id": "geometry",
+      "title": "A shape under the water",
+      "subtitle": "Sonar geometry · maintenance float",
+      "position": {
+        "x": 62,
+        "y": 64
+      },
+      "observation": {
+        "label": "Observed · sonar returns",
+        "value": "Six ribs · 2.4 ± 0.1 m spacing",
+        "detail": "Repeated sonar passes reveal parallel ribs beneath sediment. Their far ends remain hidden; the scan cannot establish the material or the structure’s age."
+      },
+      "model": {
+        "label": "Modeled · structural fit",
+        "value": "An engineered frame is plausible",
+        "detail": "The spacing fits a support frame. Similar bracing appears in old harbor foundations and modern reef supports; the partial scan fits either."
+      },
+      "contradiction": "This shape could be old or recent. Its geometry cannot date it or connect it to the Unbinding."
+    },
+    {
+      "id": "thermal",
+      "title": "A little warmth",
+      "subtitle": "Temperature transect · water sampling",
+      "position": {
+        "x": 80,
+        "y": 46
+      },
+      "observation": {
+        "label": "Observed · temperature probes",
+        "value": "+0.18 ± 0.05 °C above nearby water",
+        "detail": "Two sampling passes find warmer water near the frame. Changing currents prevent us from identifying where the heat came from."
+      },
+      "model": {
+        "label": "Modeled · heat transport",
+        "value": "Heat source still unknown",
+        "detail": "A flow model allows waste heat, sediment chemistry, or warm outfall water. More temperature and current measurements could separate these sources."
+      },
+      "contradiction": "Warm water alone cannot tell us whether the frame uses power or contains anything alive."
+    },
+    {
+      "id": "archive",
+      "title": "The missing depth",
+      "subtitle": "Public archive · first post-Unbinding survey",
+      "position": {
+        "x": 39,
+        "y": 40
+      },
+      "observation": {
+        "label": "Observed · archived survey",
+        "value": "Survey stopped above the frame",
+        "detail": "The first post-Unbinding survey recorded open water here. Its instrument could only measure down to nine meters above the frame."
+      },
+      "model": {
+        "label": "Modeled · historical inference",
+        "value": "Absence was never measured",
+        "detail": "The frame could have been below the survey’s reach, or arrived later. This record gives us no direct link to the Unbinding."
+      },
+      "contradiction": "The map and sonar cover different depths. The old survey never looked where the frame lies."
+    }
+  ]
+}

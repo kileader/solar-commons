@@ -1,5 +1,16 @@
 node_modules/
 dist/
+dist.zip
 *.local
 *.tsbuildinfo
 .qa/
+.tools/
+game/cache/
+game/saves/
+game/**/*.rpyc
+game/**/*.rpyb
+tests/screenshots/
+log.txt
+traceback.txt
+errors.txt
+*.dists/

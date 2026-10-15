@@ -17,13 +17,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: npm test
-      - run: npm run build
+      - name: Install pinned Ren'Py SDK and web support
+        shell: bash
+        run: |
+          mkdir -p .tools
+          curl --fail --location --retry 3 https://www.renpy.org/dl/8.5.3/renpy-8.5.3-sdk.tar.bz2 -o .tools/sdk.tar.bz2
+          curl --fail --location --retry 3 https://www.renpy.org/dl/8.5.3/renpy-8.5.3-web.zip -o .tools/web.zip
+          echo 'eb0a9be7f0fb13632fe25ceade9a8bed5a1b4d6b6e83bd19eeeb29e1a1bb4a45  .tools/sdk.tar.bz2' | sha256sum --check
+          echo '954db897e65f51ea63cb2fb7b203d02be0447f4e22069514020bbe6c6691fdfc  .tools/web.zip' | sha256sum --check
+          tar -xjf .tools/sdk.tar.bz2 -C .tools
+          unzip -q .tools/web.zip -d .tools/renpy-8.5.3-sdk
+      - name: Check script
+        run: .tools/renpy-8.5.3-sdk/renpy.sh --savedir .qa/saves . lint --error-code
+      - name: Test native story routes
+        env:
+          SDL_AUDIODRIVER: dummy
+        run: xvfb-run -a .tools/renpy-8.5.3-sdk/renpy.sh --savedir .qa/saves . test --overwrite-screenshots --report-detailed
+      - name: Build browser game
+        run: .tools/renpy-8.5.3-sdk/renpy.sh .tools/renpy-8.5.3-sdk/launcher web_build . --destination dist
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

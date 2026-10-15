@@ -19,7 +19,7 @@ SOURCES = {
 
 
 def main():
-    output = ROOT / "public/art/opening"
+    output = ROOT / "game/images/opening"
     output.mkdir(parents=True, exist_ok=True)
     for name, filename in SOURCES.items():
         destination = output / f"{name}.webp"

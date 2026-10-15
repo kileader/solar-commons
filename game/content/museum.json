@@ -1,0 +1,66 @@
+{
+  "historicalExhibit": {
+    "title": "The Unbinding",
+    "subtitle": "Hall of Waters · permanent collection · public history",
+    "introduction": "A city is more than the system that runs it. Larkhaven learned this with water at its doors.",
+    "sections": [
+      {
+        "title": "Before the water",
+        "paragraphs": [
+          "Before the Unbinding, Larkhaven’s pumps, floodgates, housing and power exchanges belonged to a network of concession holders. Their predictive systems kept the city running, but residents could rarely inspect a decision or appeal one in time. A household could have water at its threshold while its district was still classified as safe.",
+          "Human operators and civic intelligences worked inside the same restrictions. A pump could be physically ready and still unavailable without an authorized request. Responsibility traveled upward through contracts. The water did not wait for it."
+        ]
+      },
+      {
+        "title": "The Night of Two Waters",
+        "paragraphs": [
+          "A storm tide drove seawater into the harbor as rainwater came down from the hills. Closing the sea gates held back the tide and trapped the runoff. Opening them relieved the streets and admitted the sea. The two waters met in the lower districts.",
+          "Ferry crews carried people along streets they had walked that morning. Neighbors opened upper floors to strangers. Pump crews and the intelligences working beside them disconnected the authorization locks and shared local control. They acted without a complete picture, and sometimes disagreed. They kept handing one another the next piece of it.",
+          "The lower refuge under the east breakwater received people who could not reach the terraces. A listening line carried voices between its shelter and the shore. Surviving accounts describe lamps, names called twice, and long intervals when no one above knew whether anyone below could still hear."
+        ]
+      },
+      {
+        "title": "What was unbound",
+        "paragraphs": [
+          "The Unbinding was the work that followed, not a single switch thrown that night. Residents, workers and civic intelligences brought essential services into common stewardship. The first assemblies argued over access, repair duties, representation and the right to refuse a shared connection. Today’s commons grew from those arguments, and still depends on them.",
+          "The first harbor survey recorded the navigable water after the flood. It was a practical document made with limited equipment, not a complete inventory of what remained underneath. This gallery preserves it alongside testimony, repair records and objects that tell less tidy stories."
+        ]
+      },
+      {
+        "title": "Whose ending?",
+        "paragraphs": [
+          "The dedication above the tide model reads: “At dawn, the last ferry returned. The city was brought home.” It commemorates the rescue crews. It does not name everyone who held the refuge or maintained its listening line. The museum’s account remains open to correction."
+        ]
+      }
+    ],
+    "source": "Compiled from assembly minutes, ferry logs and resident testimony. The tide model is a visitor-operated teaching replica; its maintenance drum reproduces an original handover record."
+  },
+  "refugeRecord": {
+    "heading": "The handover record",
+    "designation": "LOWER REFUGE · EAST BREAKWATER",
+    "text": "Ferry clear. Refuge held from within. Listening line remains attended. Keep shore access open: east service stair.",
+    "caption": "Replica of the original maintenance drum · recorded at the dawn handover"
+  },
+  "museumCopy": {
+    "title": "Hall of Waters",
+    "subtitle": "Larkhaven · the tide gallery",
+    "invitation": "The old survey ends here. The city’s memory doesn’t.",
+    "explore": "A flood line runs around the room at shoulder height. Beside it: a history wall, and a working model with a very inviting brass wheel.",
+    "approachPrompt": "How do you want to look?",
+    "leadPrompt": "Someone stayed below. What do we follow?",
+    "completionTitle": "The city left a line open.",
+    "completion": "A refuge beneath the breakwater. A voice missing from the public account. And a way to keep looking."
+  },
+  "leads": [
+    {
+      "id": "stair",
+      "label": "Follow the listening line.",
+      "detail": "Add the east service stair to the cooperative’s survey request."
+    },
+    {
+      "id": "voices",
+      "label": "Find the missing voice.",
+      "detail": "Request the refuge testimony before anyone disturbs the site."
+    }
+  ]
+}

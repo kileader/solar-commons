@@ -1,5 +1,7 @@
 # Opening cinematic
 
+**Migration note, October 15, 2026:** the eight-shot story, artwork, and accepted clip now also run in `game/opening.rpy`. The active Ren’Py version uses skip and click-to-advance; the browser transport controls and CSS animation described below are preserved in `legacy/react/`. This document remains the original production and timing record. See [migration notes](MIGRATION.md) for current presentation differences.
+
 The 34-second opening runs between the Phicid studio splash and the existing harbor scene. It focuses on Mara voluntarily widening her connection with Kite, then returning to the living city. It reuses the approved eight-shot storyboard and Kevin's finished S01 clip with audio. No further AI video generation, external services, or animation dependencies are required.
 
 Mara and Kite have been partners for twelve years. Her existing right-temple module supports the connection. This is voluntary calibration, not implantation, unrestricted mind reading, an upload, or Kite becoming conscious. The biological mechanism remains open for story development. The civic room supports the session without establishing a permanent body or a single cabinet containing Kite's identity.
