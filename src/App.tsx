@@ -15,7 +15,9 @@ import {
   VolumeX,
   Gamepad2,
 } from 'lucide-react'
-import { characterArt, harborArt } from './art'
+import { characterArt, harborArt, museumArt } from './art'
+import { approachNotes, museumApproaches, museumContent, type FloodStage } from './content/museum'
+import { FloodReconstruction, HistoryExhibit, RefugeRecord } from './components/Museum'
 import {
   clues,
   conclusionChoices,
@@ -86,16 +88,50 @@ function EvidenceDiagram({ kind }: { kind: string }) {
 
 export default function App() {
   const [state, dispatch] = useReducer(sceneReducer, initialSceneState)
-  const [panel, setPanel] = useState<'journal' | 'settings' | null>(null)
+  const [panel, setPanel] = useState<'journal' | 'settings' | 'history' | null>(null)
   const [largeText, setLargeText] = useState(false)
   const [usingGamepad, setUsingGamepad] = useState(false)
   const motion = useMotion()
   const currentLine = getCurrentLine(state)
   const activeClue = clues.find((clue) => clue.id === state.activeClueId)
   const speaker = currentLine?.speaker ?? 'Kite'
-  const isChoice = state.phase === 'entry-choice' || state.phase === 'decision'
+  const inMuseum = state.phase.startsWith('museum-')
+  const isChoice = [
+    'entry-choice',
+    'decision',
+    'museum-lead-choice',
+    'museum-approach-choice',
+  ].includes(state.phase)
   const investigated = canConclude(state)
-  const choices = state.phase === 'entry-choice' ? entryChoices : conclusionChoices
+  const choices =
+    state.phase === 'entry-choice'
+      ? entryChoices
+      : state.phase === 'museum-lead-choice'
+        ? museumContent.leads
+        : state.phase === 'museum-approach-choice'
+          ? museumApproaches
+          : conclusionChoices
+  const choiceEvent =
+    state.phase === 'entry-choice'
+      ? 'CHOOSE_ENTRY'
+      : state.phase === 'museum-lead-choice'
+        ? 'CHOOSE_LEAD'
+        : state.phase === 'museum-approach-choice'
+          ? 'CHOOSE_MUSEUM_APPROACH'
+          : 'CHOOSE_ENDING'
+  const museumLead = museumContent.leads.find((lead) => lead.id === state.museumLeadId)
+  const museumBackground =
+    state.phase === 'museum-arrival' && state.lineIndex === 0
+      ? museumArt.exterior
+      : state.phase === 'museum-approach' && state.museumApproach === 'memory'
+        ? museumArt.exhibit
+        : ['museum-arrival', 'museum-approach-choice', 'museum-explore'].includes(state.phase)
+          ? museumArt.hall
+          : museumArt.model
+  const showRecord =
+    state.discovered &&
+    ((state.phase === 'museum-discovery' && state.lineIndex >= 6) ||
+      state.phase === 'museum-complete')
 
   const speechLines = useMemo<readonly DialogueLine[]>(() => {
     if (activeClue) return activeClue.dialogue
@@ -121,6 +157,8 @@ export default function App() {
         break
       case 'CHOOSE_ENTRY':
       case 'CHOOSE_ENDING':
+      case 'CHOOSE_LEAD':
+      case 'CHOOSE_MUSEUM_APPROACH':
         cue = 'choice'
         break
       case 'TOGGLE_PERCEPTION':
@@ -142,16 +180,38 @@ export default function App() {
       case 'RESTART':
         cue = 'restart'
         break
+      case 'INSPECT_LAMP':
+        cue = 'discovery'
+        break
+      case 'VISIT_MUSEUM':
+      case 'ENTER_MODEL':
+        cue = 'open'
+        break
+      case 'SET_FLOOD_STAGE':
+      case 'TOGGLE_GATE':
+        cue = 'evidence'
+        break
+      case 'READ_HISTORY':
+      case 'READ_HANDOVER':
+        cue = 'archive'
+        break
+      case 'LEAVE_MODEL':
+        cue = 'back'
+        break
     }
     audio.play(cue)
     dispatch(event)
   }
 
-  function openPanel(next: 'journal' | 'settings') {
+  function openPanel(next: 'journal' | 'settings' | 'history') {
     audio.unlock()
     if (activeClue) perform({ type: 'CLOSE_CLUE' })
     audio.play(panel === next ? 'back' : next === 'journal' ? 'archive' : 'open')
     setPanel((previous) => (previous === next ? null : next))
+  }
+  function readHistory() {
+    perform({ type: 'READ_HISTORY' })
+    openPanel('history')
   }
   function closePanel() {
     audio.play('back')
@@ -191,7 +251,7 @@ export default function App() {
         ? visibleControls(modal)
         : visibleControls(document).filter((element) =>
             element.matches(
-              '.continue-button, .voice-replay, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle',
+              '.continue-button, .voice-replay, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .model-moment, .gate-control, .lamp-discovery',
             ),
           )
       const focused = document.activeElement as HTMLElement | null
@@ -256,9 +316,13 @@ export default function App() {
       if ((event.key === '1' || event.key === '2') && isChoice) {
         event.preventDefault()
         perform({
-          type: state.phase === 'entry-choice' ? 'CHOOSE_ENTRY' : 'CHOOSE_ENDING',
+          type: choiceEvent,
           id: choices[Number(event.key) - 1].id,
         })
+      }
+      if (state.phase === 'museum-model' && ['1', '2', '3'].includes(event.key)) {
+        event.preventDefault()
+        perform({ type: 'SET_FLOOD_STAGE', stage: (Number(event.key) - 1) as FloodStage })
       }
     }
     window.addEventListener('keydown', keydown)
@@ -267,14 +331,17 @@ export default function App() {
 
   useEffect(() => {
     if (state.phase === 'intro') return
-    const selector =
-      state.phase === 'entry-choice' || state.phase === 'decision'
-        ? '.story-choice'
-        : state.phase === 'investigation'
-          ? '.hotspot'
-          : state.phase === 'complete'
-            ? '.replay-button'
-            : '.continue-button'
+    const selector = isChoice
+      ? '.story-choice'
+      : state.phase === 'investigation'
+        ? '.hotspot'
+        : state.phase === 'complete'
+          ? '.replay-button'
+          : state.phase === 'museum-model'
+            ? '.model-moment'
+            : ['museum-explore', 'museum-complete'].includes(state.phase)
+              ? '.museum-actions button'
+              : '.continue-button'
     const frame = requestAnimationFrame(() =>
       document.querySelector<HTMLElement>(selector)?.focus({ preventScroll: true }),
     )
@@ -294,7 +361,7 @@ export default function App() {
 
   return (
     <main
-      className={`novel ${state.perception ? 'cognitive' : ''} ${activeClue ? 'is-inspecting' : ''} ${largeText ? 'large-text' : ''}`}
+      className={`novel ${inMuseum ? 'museum' : ''} ${state.phase === 'museum-model' ? 'museum-model' : ''} ${state.perception ? 'cognitive' : ''} ${activeClue ? 'is-inspecting' : ''} ${largeText ? 'large-text' : ''}`}
       data-motion={motion.reduced ? 'reduced' : 'full'}
       data-audio-state={audio.status.state}
       data-audio-peak={audio.status.peak.toFixed(6)}
@@ -352,10 +419,19 @@ export default function App() {
         event.currentTarget.style.setProperty('--look-y', '0px')
       }}
     >
-      <div className="scene-art" role="img" aria-label={harborArt.description}>
+      <div
+        className="scene-art"
+        role="img"
+        aria-label={
+          inMuseum
+            ? 'Hall of Waters: sunlit galleries, planted glass roofs, and a brass model of the city'
+            : harborArt.description
+        }
+      >
         <img
           className="harbor-background"
-          src={harborArt.background}
+          key={inMuseum ? museumBackground : 'harbor'}
+          src={inMuseum ? museumBackground : harborArt.background}
           alt=""
           style={{ objectPosition: harborArt.focalPoint }}
           fetchPriority="high"
@@ -425,14 +501,18 @@ export default function App() {
         </nav>
       </header>
 
-      <section id="scene" className="scene-view" aria-label="Harbor scene">
+      <section
+        id="scene"
+        className="scene-view"
+        aria-label={inMuseum ? 'Hall of Waters scene' : 'Harbor scene'}
+      >
         <div className="location-heading">
           <div className="eyebrow">
             <span />
             CHAPTER ONE
           </div>
-          <h1>{sceneTitle}</h1>
-          <p>{sceneSubtitle}</p>
+          <h1>{inMuseum ? museumContent.museumCopy.title : sceneTitle}</h1>
+          <p>{inMuseum ? museumContent.museumCopy.subtitle : sceneSubtitle}</p>
         </div>
         <button
           className="perception-toggle"
@@ -448,8 +528,16 @@ export default function App() {
           </span>
           <i className="toggle-indicator" />
         </button>
-        <Perception active={state.perception} />
-        {state.endingChoiceId === 'handshake' &&
+        {!inMuseum && <Perception active={state.perception} />}
+        {inMuseum && state.perception && state.phase !== 'museum-model' && (
+          <p className="museum-attention">Shared attention · the worn brass rim</p>
+        )}
+        {showRecord && <RefugeRecord />}
+        {state.phase === 'museum-model' && (
+          <FloodReconstruction state={state} perform={perform} onReadHistory={readHistory} />
+        )}
+        {!inMuseum &&
+          state.endingChoiceId === 'handshake' &&
           (state.phase === 'complete' || (state.phase === 'ending' && state.lineIndex >= 1)) && (
             <div className="optical-emission" aria-hidden="true">
               <span />
@@ -482,162 +570,241 @@ export default function App() {
         )}
       </section>
 
-      <section
-        className={`dialogue-stage ${isChoice ? 'has-choices' : ''}`}
-        aria-label="Story and player choices"
-      >
-        <div
-          className={`companion-portrait speaker-${speaker.toLowerCase()} ${audio.voiceState === 'speaking' ? 'is-speaking' : ''}`}
+      {state.phase !== 'museum-model' && (
+        <section
+          className={`dialogue-stage ${isChoice ? 'has-choices' : ''}`}
+          aria-label="Story and player choices"
         >
-          <div className="portrait-orbit" />
-          <div className="portrait-disc" />
-          {speaker === 'Mara' ? (
-            <img
-              className="mara-portrait"
-              src={characterArt.mara}
-              alt="Mara, a coastal researcher with dark curly hair, an ivory jacket, and a mint-lit temple module"
-            />
-          ) : (
-            <Kite active={state.perception} compact />
-          )}
-          <span className="portrait-caption">{speaker === 'Mara' ? 'MARA' : 'KITE'}</span>
-        </div>
-        <div className="dialogue-card">
-          <div className="dialogue-topline">
-            <span className="speaker-name">
-              <i />
-              {speaker === 'Narrator' ? 'LARKHAVEN' : speaker}
-            </span>
-            <span className="scene-progress">
-              {state.phase === 'investigation'
-                ? `${state.inspected.length} of 3 examined`
-                : state.phase === 'complete'
-                  ? 'Scene complete'
-                  : isChoice
-                    ? 'Your choice'
-                    : ''}
-            </span>
+          <div
+            className={`companion-portrait speaker-${speaker.toLowerCase()} ${audio.voiceState === 'speaking' ? 'is-speaking' : ''}`}
+          >
+            <div className="portrait-orbit" />
+            <div className="portrait-disc" />
+            {speaker === 'Mara' ? (
+              <img
+                className="mara-portrait"
+                src={characterArt.mara}
+                alt="Mara, a coastal researcher with dark curly hair, an ivory jacket, and a mint-lit temple module"
+              />
+            ) : (
+              <Kite active={state.perception} compact />
+            )}
+            <span className="portrait-caption">{speaker === 'Mara' ? 'MARA' : 'KITE'}</span>
           </div>
-          {currentLine && (
-            <div className="dialogue-body">
-              <div className="dialogue-text" aria-live="polite" aria-atomic="true">
-                <p key={currentLine.id} className={speaker === 'Narrator' ? 'narration' : ''}>
-                  {currentLine.text}
-                </p>
-              </div>
-              <div className="dialogue-buttons">
-                <button
-                  className="voice-replay"
-                  onClick={audio.replayVoice}
-                  disabled={
-                    !audio.ready ||
-                    !audio.voices.length ||
-                    !audio.preferences.voiceEnabled ||
-                    audio.preferences.muted ||
-                    audio.preferences.master * audio.preferences.voice === 0
-                  }
-                  aria-label="Replay dialogue"
-                  title={
-                    audio.voices.length
-                      ? 'Listen to this dialogue again'
-                      : 'No local English voice available'
-                  }
-                >
-                  <Volume2 size={17} />
-                  <span>Listen</span>
-                </button>
-                <button className="continue-button" onClick={() => perform({ type: 'NEXT' })}>
-                  <span>Continue</span>
-                  <span className="continue-arrow">
-                    <ArrowRight size={23} />
-                  </span>
-                </button>
-              </div>
+          <div className="dialogue-card">
+            <div className="dialogue-topline">
+              <span className="speaker-name">
+                <i />
+                {speaker === 'Narrator' ? 'LARKHAVEN' : speaker}
+              </span>
+              <span className="scene-progress">
+                {state.phase === 'investigation'
+                  ? `${state.inspected.length} of 3 examined`
+                  : state.phase === 'complete'
+                    ? 'Scene complete'
+                    : isChoice
+                      ? 'Your choice'
+                      : ''}
+              </span>
             </div>
-          )}
-          {isChoice && (
-            <div className="choice-block" key={state.phase}>
-              <p className="choice-prompt">
-                {state.phase === 'entry-choice'
-                  ? sceneCopy.openingPrompt
-                  : sceneCopy.decisionPrompt}
-              </p>
-              <div className="choice-list">
-                {choices.map((choice, index) => (
+            {currentLine && (
+              <div className="dialogue-body">
+                <div className="dialogue-text" aria-live="polite" aria-atomic="true">
+                  <p key={currentLine.id} className={speaker === 'Narrator' ? 'narration' : ''}>
+                    {currentLine.text}
+                  </p>
+                </div>
+                <div className="dialogue-buttons">
                   <button
-                    className="story-choice"
-                    key={choice.id}
-                    onClick={() =>
-                      perform({
-                        type: state.phase === 'entry-choice' ? 'CHOOSE_ENTRY' : 'CHOOSE_ENDING',
-                        id: choice.id,
-                      })
+                    className="voice-replay"
+                    onClick={audio.replayVoice}
+                    disabled={
+                      !audio.ready ||
+                      !audio.voices.length ||
+                      !audio.preferences.voiceEnabled ||
+                      audio.preferences.muted ||
+                      audio.preferences.master * audio.preferences.voice === 0
+                    }
+                    aria-label="Replay dialogue"
+                    title={
+                      audio.voices.length
+                        ? 'Listen to this dialogue again'
+                        : 'No local English voice available'
                     }
                   >
-                    <span className="choice-number">0{index + 1}</span>
-                    <span>
-                      <strong>{choice.label}</strong>
-                      <small>{choice.detail}</small>
+                    <Volume2 size={17} />
+                    <span>Listen</span>
+                  </button>
+                  <button className="continue-button" onClick={() => perform({ type: 'NEXT' })}>
+                    <span>Continue</span>
+                    <span className="continue-arrow">
+                      <ArrowRight size={23} />
                     </span>
-                    <ChevronRight size={19} />
                   </button>
-                ))}
+                </div>
               </div>
-            </div>
-          )}
-          {state.phase === 'investigation' && (
-            <div className="investigation-body">
-              <p>{investigated ? sceneCopy.synthesis : sceneCopy.investigation}</p>
-              <div className="investigation-actions">
-                <span className="reading-dots">
-                  {clues.map((clue) => (
-                    <i
-                      key={clue.id}
-                      className={state.inspected.includes(clue.id) ? 'filled' : ''}
-                    />
-                  ))}
-                  <small>
-                    {investigated ? 'All readings recorded' : 'Select a marker to investigate'}
-                  </small>
-                </span>
-                {investigated ? (
-                  <button
-                    className="text-action"
-                    onClick={() => perform({ type: 'MAKE_DECISION' })}
-                  >
-                    Decide together <ArrowRight size={19} />
-                  </button>
-                ) : (
-                  <button
-                    className="text-action"
-                    onClick={() => perform({ type: 'TOGGLE_PERCEPTION' })}
-                  >
-                    <Eye size={17} />
-                    {state.perception ? 'Return to natural sight' : 'Open shared perception'}
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-          {state.phase === 'complete' && (
-            <div className="complete-body">
-              <div>
-                <span className="eyebrow">END OF THE FIRST SCENE</span>
-                <h2>{sceneCopy.completionTitle}</h2>
-                <p>
-                  {state.endingChoiceId === 'handshake'
-                    ? sceneCopy.handshakeCompletion
-                    : sceneCopy.surveyCompletion}
+            )}
+            {isChoice && (
+              <div className="choice-block" key={state.phase}>
+                <p className="choice-prompt">
+                  {state.phase === 'entry-choice'
+                    ? sceneCopy.openingPrompt
+                    : state.phase === 'museum-lead-choice'
+                      ? museumContent.museumCopy.leadPrompt
+                      : state.phase === 'museum-approach-choice'
+                        ? 'What catches your attention?'
+                        : sceneCopy.decisionPrompt}
                 </p>
+                <div className="choice-list">
+                  {choices.map((choice, index) => (
+                    <button
+                      className="story-choice"
+                      key={choice.id}
+                      onClick={() =>
+                        perform({
+                          type: choiceEvent,
+                          id: choice.id,
+                        })
+                      }
+                    >
+                      <span className="choice-number">0{index + 1}</span>
+                      <span>
+                        <strong>{choice.label}</strong>
+                        <small>{choice.detail}</small>
+                      </span>
+                      <ChevronRight size={19} />
+                    </button>
+                  ))}
+                </div>
               </div>
-              <button className="replay-button" onClick={() => perform({ type: 'RESTART' })}>
-                <RotateCcw size={18} />
-                Return to the harbor
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
+            )}
+            {state.phase === 'investigation' && (
+              <div className="investigation-body">
+                <p>{investigated ? sceneCopy.synthesis : sceneCopy.investigation}</p>
+                <div className="investigation-actions">
+                  <span className="reading-dots">
+                    {clues.map((clue) => (
+                      <i
+                        key={clue.id}
+                        className={state.inspected.includes(clue.id) ? 'filled' : ''}
+                      />
+                    ))}
+                    <small>
+                      {investigated ? 'All readings recorded' : 'Select a marker to investigate'}
+                    </small>
+                  </span>
+                  {investigated ? (
+                    <button
+                      className="text-action"
+                      onClick={() => perform({ type: 'MAKE_DECISION' })}
+                    >
+                      Decide together <ArrowRight size={19} />
+                    </button>
+                  ) : (
+                    <button
+                      className="text-action"
+                      onClick={() => perform({ type: 'TOGGLE_PERCEPTION' })}
+                    >
+                      <Eye size={17} />
+                      {state.perception ? 'Return to natural sight' : 'Open shared perception'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+            {state.phase === 'complete' && (
+              <div className="complete-body">
+                <div>
+                  <span className="eyebrow">END OF THE FIRST SCENE</span>
+                  <h2>{sceneCopy.completionTitle}</h2>
+                  <p>
+                    {state.endingChoiceId === 'handshake'
+                      ? sceneCopy.handshakeCompletion
+                      : sceneCopy.surveyCompletion}
+                  </p>
+                </div>
+                <div className="museum-actions">
+                  <button
+                    className="replay-button"
+                    onClick={() => perform({ type: 'VISIT_MUSEUM' })}
+                  >
+                    Visit the Hall of Waters <ArrowRight size={18} />
+                  </button>
+                  <button className="text-action" onClick={() => perform({ type: 'RESTART' })}>
+                    <RotateCcw size={16} /> Return to the harbor
+                  </button>
+                </div>
+              </div>
+            )}
+            {state.phase === 'museum-explore' && (
+              <div className="museum-summary">
+                <span className="eyebrow">THE TIDE GALLERY</span>
+                <p>{museumContent.museumCopy.explore}</p>
+                <div className="museum-actions">
+                  <button
+                    className="replay-button"
+                    onClick={() => perform({ type: 'ENTER_MODEL' })}
+                  >
+                    Try the tide model <ArrowRight size={18} />
+                  </button>
+                  <button
+                    className="text-action"
+                    onClick={() => perform({ type: 'READ_HANDOVER' })}
+                  >
+                    Follow the written dawn account <ArrowRight size={17} />
+                  </button>
+                  <button className="text-action" onClick={readHistory}>
+                    <BookOpen size={17} /> Read the history wall <small>Optional</small>
+                  </button>
+                </div>
+              </div>
+            )}
+            {state.phase === 'museum-complete' && (
+              <div className="museum-summary">
+                <span className="eyebrow">END OF CHAPTER ONE</span>
+                <h2>
+                  {state.discovered
+                    ? museumContent.museumCopy.completionTitle
+                    : 'Two waters. An unfinished account.'}
+                </h2>
+                <p>
+                  {state.discovered
+                    ? museumContent.museumCopy.completion
+                    : 'We can come back. The exhibit is a reconstruction, not an exam. There may be more to find in its dawn record.'}
+                </p>
+                {museumLead && (
+                  <strong className="next-lead">Your next step: {museumLead.label}</strong>
+                )}
+                <div className="museum-actions">
+                  <button
+                    className="replay-button"
+                    onClick={() => perform({ type: 'ENTER_MODEL' })}
+                  >
+                    Revisit the tide model <ArrowRight size={17} />
+                  </button>
+                  <button className="text-action" onClick={() => openPanel('journal')}>
+                    <BookOpen size={17} /> Review field notes
+                  </button>
+                  <button className="text-action" onClick={readHistory}>
+                    Read the history wall
+                  </button>
+                  {!state.discovered && (
+                    <button
+                      className="text-action"
+                      onClick={() => perform({ type: 'READ_HANDOVER' })}
+                    >
+                      Follow the written dawn account
+                    </button>
+                  )}
+                  <button className="text-action" onClick={() => perform({ type: 'RESTART' })}>
+                    <RotateCcw size={16} /> Return to the harbor
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       <footer className="scene-footer">
         <button
@@ -780,7 +947,44 @@ export default function App() {
         <p className="notes-footnote">
           In-world sensor readings are authored fiction. Models are hypotheses, never hidden facts.
         </p>
+        {(state.exhibitRead || state.discovered || state.museumApproach) && (
+          <div className="note-list">
+            {state.museumApproach && (
+              <article>
+                <h3>{approachNotes[state.museumApproach].title}</h3>
+                <p>{approachNotes[state.museumApproach].text}</p>
+              </article>
+            )}
+            {state.exhibitRead && (
+              <article>
+                <h3>The Night of Two Waters</h3>
+                <p>
+                  Storm tide and hill runoff met in the lower city. A refuge beneath the east
+                  breakwater kept a listening line to shore.
+                </p>
+              </article>
+            )}
+            {state.discovered && (
+              <article>
+                <h3>{museumContent.refugeRecord.heading}</h3>
+                <p>{museumContent.refugeRecord.text}</p>
+                <small>
+                  The replica’s six ribs fit our partial sonar. A possible location, not a date or
+                  an explanation for today’s warmth or lights.
+                </small>
+              </article>
+            )}
+            {museumLead && (
+              <article>
+                <h3>Next step: {museumLead.label}</h3>
+                <p>{museumLead.detail}</p>
+              </article>
+            )}
+          </div>
+        )}
       </Modal>
+
+      <HistoryExhibit open={panel === 'history'} onClose={closePanel} />
 
       <Modal
         open={panel === 'settings'}

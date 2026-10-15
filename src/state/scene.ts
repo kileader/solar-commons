@@ -5,9 +5,26 @@ import {
   introLines,
   type DialogueLine,
 } from '../content/harbor'
+import { museumApproaches, museumContent, museumDialogue, type FloodStage } from '../content/museum'
 
 export type ScenePhase =
-  'intro' | 'entry-choice' | 'response' | 'investigation' | 'decision' | 'ending' | 'complete'
+  | 'intro'
+  | 'entry-choice'
+  | 'response'
+  | 'investigation'
+  | 'decision'
+  | 'ending'
+  | 'complete'
+  | 'museum-arrival'
+  | 'museum-explore'
+  | 'museum-model-intro'
+  | 'museum-model'
+  | 'museum-discovery'
+  | 'museum-lead-choice'
+  | 'museum-lead-ending'
+  | 'museum-complete'
+  | 'museum-approach-choice'
+  | 'museum-approach'
 
 export interface SceneState {
   phase: ScenePhase
@@ -17,6 +34,13 @@ export interface SceneState {
   activeClueId: string | null
   endingChoiceId: string | null
   perception: boolean
+  floodStage: FloodStage
+  gateOpen: boolean
+  exhibitRead: boolean
+  discovered: boolean
+  museumLeadId: string | null
+  museumApproach: 'memory' | 'signal' | null
+  usedTideModel: boolean
 }
 
 export type SceneEvent =
@@ -28,6 +52,16 @@ export type SceneEvent =
   | { type: 'MAKE_DECISION' }
   | { type: 'CHOOSE_ENDING'; id: string }
   | { type: 'RESTART' }
+  | { type: 'VISIT_MUSEUM' }
+  | { type: 'READ_HISTORY' }
+  | { type: 'ENTER_MODEL' }
+  | { type: 'SET_FLOOD_STAGE'; stage: FloodStage }
+  | { type: 'TOGGLE_GATE' }
+  | { type: 'INSPECT_LAMP' }
+  | { type: 'LEAVE_MODEL' }
+  | { type: 'CHOOSE_LEAD'; id: string }
+  | { type: 'CHOOSE_MUSEUM_APPROACH'; id: string }
+  | { type: 'READ_HANDOVER' }
 
 export const initialSceneState: SceneState = {
   phase: 'intro',
@@ -37,6 +71,13 @@ export const initialSceneState: SceneState = {
   activeClueId: null,
   endingChoiceId: null,
   perception: false,
+  floodStage: 0,
+  gateOpen: false,
+  exhibitRead: false,
+  discovered: false,
+  museumLeadId: null,
+  museumApproach: null,
+  usedTideModel: false,
 }
 
 function dialogueForState(state: SceneState): readonly DialogueLine[] {
@@ -48,7 +89,7 @@ function dialogueForState(state: SceneState): readonly DialogueLine[] {
     case 'ending':
       return conclusionChoices.find((choice) => choice.id === state.endingChoiceId)?.ending ?? []
     default:
-      return []
+      return museumDialogue(state)
   }
 }
 
@@ -61,22 +102,27 @@ export function canConclude(state: SceneState): boolean {
   return clues.every((clue) => state.inspected.includes(clue.id))
 }
 
+const afterDialogue: Partial<Record<ScenePhase, ScenePhase>> = {
+  intro: 'entry-choice',
+  response: 'investigation',
+  ending: 'complete',
+  'museum-arrival': 'museum-approach-choice',
+  'museum-approach': 'museum-explore',
+  'museum-model-intro': 'museum-model',
+  'museum-discovery': 'museum-lead-choice',
+  'museum-lead-ending': 'museum-complete',
+}
+
 export function sceneReducer(state: SceneState, event: SceneEvent): SceneState {
   switch (event.type) {
     case 'NEXT': {
-      if (!['intro', 'response', 'ending'].includes(state.phase)) return state
-
       const lines = dialogueForState(state)
+      if (!lines.length) return state
       if (state.lineIndex < lines.length - 1) {
         return { ...state, lineIndex: state.lineIndex + 1 }
       }
 
-      const nextPhase: ScenePhase =
-        state.phase === 'intro'
-          ? 'entry-choice'
-          : state.phase === 'response'
-            ? 'investigation'
-            : 'complete'
+      const nextPhase = afterDialogue[state.phase] ?? state.phase
       return { ...state, phase: nextPhase, lineIndex: 0 }
     }
     case 'CHOOSE_ENTRY': {
@@ -106,6 +152,65 @@ export function sceneReducer(state: SceneState, event: SceneEvent): SceneState {
       return { ...state, phase: 'ending', endingChoiceId: event.id, lineIndex: 0 }
     case 'RESTART':
       return { ...initialSceneState, inspected: [] }
+    case 'VISIT_MUSEUM':
+      if (state.phase !== 'complete') return state
+      return { ...state, phase: 'museum-arrival', lineIndex: 0, perception: false }
+    case 'READ_HISTORY':
+      return state.phase.startsWith('museum-') ? { ...state, exhibitRead: true } : state
+    case 'ENTER_MODEL':
+      if (!['museum-explore', 'museum-complete'].includes(state.phase)) return state
+      return {
+        ...state,
+        phase: state.phase === 'museum-explore' ? 'museum-model-intro' : 'museum-model',
+        lineIndex: 0,
+        usedTideModel: true,
+      }
+    case 'SET_FLOOD_STAGE':
+      if (state.phase !== 'museum-model' || ![0, 1, 2].includes(event.stage)) return state
+      return { ...state, floodStage: event.stage }
+    case 'TOGGLE_GATE':
+      if (state.phase !== 'museum-model' || state.floodStage === 2) return state
+      return { ...state, gateOpen: !state.gateOpen }
+    case 'INSPECT_LAMP':
+      if (state.phase !== 'museum-model' || state.floodStage !== 2) return state
+      return {
+        ...state,
+        discovered: true,
+        phase: state.discovered ? 'museum-complete' : 'museum-discovery',
+        lineIndex: 0,
+      }
+    case 'LEAVE_MODEL':
+      if (state.phase !== 'museum-model') return state
+      return { ...state, phase: 'museum-complete', perception: false }
+    case 'CHOOSE_LEAD':
+      if (
+        state.phase !== 'museum-lead-choice' ||
+        !museumContent.leads.some((lead) => lead.id === event.id)
+      )
+        return state
+      return { ...state, museumLeadId: event.id, phase: 'museum-lead-ending', lineIndex: 0 }
+    case 'CHOOSE_MUSEUM_APPROACH':
+      if (
+        state.phase !== 'museum-approach-choice' ||
+        !museumApproaches.some((approach) => approach.id === event.id)
+      )
+        return state
+      return {
+        ...state,
+        museumApproach: event.id as 'memory' | 'signal',
+        phase: 'museum-approach',
+        lineIndex: 0,
+      }
+    case 'READ_HANDOVER':
+      if (!['museum-explore', 'museum-complete'].includes(state.phase) || state.discovered)
+        return state
+      return {
+        ...state,
+        usedTideModel: false,
+        discovered: true,
+        phase: 'museum-discovery',
+        lineIndex: 0,
+      }
     default:
       return state
   }

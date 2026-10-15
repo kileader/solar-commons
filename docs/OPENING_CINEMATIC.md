@@ -1,6 +1,6 @@
 # Opening cinematic
 
-**Migration note, October 15, 2026:** the eight-shot story, artwork, and accepted clip now also run in `game/opening.rpy`. The active Ren’Py version uses skip and click-to-advance; the browser transport controls and CSS animation described below are preserved in `legacy/react/`. This document remains the original production and timing record. See [migration notes](MIGRATION.md) for current presentation differences.
+**Restoration note, October 15, 2026:** the original React cinematic is active again in `src/components/OpeningCinematic.tsx`. All browser transport controls and camera/light animation described below are restored unchanged. The native adaptation is archived in `legacy/renpy/game/opening.rpy`. See [migration notes](MIGRATION.md) for the engine decision.
 
 The 34-second opening runs between the Phicid studio splash and the existing harbor scene. It focuses on Mara voluntarily widening her connection with Kite, then returning to the living city. It reuses the approved eight-shot storyboard and Kevin's finished S01 clip with audio. No further AI video generation, external services, or animation dependencies are required.
 

@@ -1,0 +1,413 @@
+.museum .foreground-frond,
+.museum .water-light {
+  display: none;
+}
+.museum .harbor-background {
+  animation: museum-arrive 1s ease both;
+}
+.museum .location-heading h1 {
+  font-size: clamp(42px, 5vw, 68px);
+}
+.museum .location-heading > p {
+  letter-spacing: 1.5px;
+}
+.museum-attention {
+  display: inline-block;
+  color: #baffdf;
+  background: #123c40cc;
+  padding: 10px 15px;
+  border-left: 2px solid #a0f7d7;
+  font-size: 12px;
+}
+.museum-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 28px;
+  margin-top: 20px;
+}
+.museum-actions .replay-button {
+  background: #224f44;
+  color: #fff4d5;
+}
+.museum-actions .text-action {
+  padding: 10px 0;
+}
+.museum-summary {
+  padding: 7px 0 14px;
+}
+.museum-summary > p {
+  font:
+    23px/1.55 Georgia,
+    serif;
+  margin: 13px 0;
+  max-width: 68ch;
+}
+.museum-summary h2 {
+  font:
+    31px/1.2 Georgia,
+    serif;
+  margin: 12px 0;
+}
+.museum-summary .next-lead {
+  display: block;
+  font-size: 14px;
+  margin: 16px 0;
+}
+.museum-model .scene-view {
+  min-height: 680px;
+}
+.museum-model .location-heading h1 {
+  font-size: 42px;
+}
+.museum-model .location-heading {
+  margin-top: 8px;
+}
+.museum-model .location-heading > p {
+  display: none;
+}
+.flood-reconstruction {
+  position: relative;
+  max-width: 1120px;
+  margin: 28px auto 20px;
+  padding: 26px 30px 18px;
+  color: #f2e5c3;
+  background: linear-gradient(130deg, #153d37f2, #102d2deb);
+  border: 1px solid #e4c48c77;
+  border-radius: 6px;
+  box-shadow: 0 18px 65px #0b211e70;
+  backdrop-filter: blur(18px);
+}
+.model-titleline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  color: #d2c099;
+}
+.model-titleline > span:last-child {
+  font-size: 9px;
+  letter-spacing: 1.6px;
+}
+.flood-reconstruction h2 {
+  font:
+    32px/1.2 Georgia,
+    serif;
+  margin: 15px 0 22px;
+}
+.model-timeline {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #cbb58240;
+  padding-bottom: 17px;
+}
+.model-moment {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  border: 1px solid #cbb58255;
+  border-radius: 3px;
+  background: transparent;
+  color: #e7d9b8;
+  padding: 13px 10px;
+  font-size: 14px;
+}
+.model-moment > span {
+  color: #d3b676;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+.model-moment[aria-pressed='true'],
+.model-moment:hover {
+  background: #e7d8b9;
+  color: #234b46;
+  border-color: #e7d8b9;
+}
+.model-moment[aria-pressed='true'] > span {
+  color: #75623d;
+}
+.model-layout {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  align-items: center;
+  gap: 24px;
+  margin-top: 20px;
+}
+.model-cutaway {
+  position: relative;
+  min-width: 0;
+}
+.model-cutaway svg {
+  width: 100%;
+  display: block;
+}
+.model-water,
+.model-gate {
+  transition: all 0.65s ease;
+}
+.refuge-lamp {
+  filter: drop-shadow(0 0 5px #ffe7a1);
+}
+.model-reading {
+  border-left: 1px solid #d9c69040;
+  padding-left: 25px;
+}
+.model-reading h3 {
+  font:
+    23px/1.25 Georgia,
+    serif;
+  margin: 14px 0;
+  color: #fff0c9;
+}
+.model-reading p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #dedfcd;
+}
+.gate-control {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  text-align: left;
+  padding: 13px 5px;
+  border: 0;
+  background: transparent;
+  color: #ffe1a5;
+}
+.gate-control .wheel {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  font-size: 35px;
+  border: 1px solid #e8cc91;
+  border-radius: 50%;
+  transition: transform 0.6s;
+}
+.gate-control[aria-pressed='true'] .wheel {
+  transform: rotate(50deg);
+}
+.gate-control small {
+  display: block;
+  margin-top: 7px;
+  font-size: 11px;
+  color: #c8d2bd;
+}
+.gate-control:disabled {
+  opacity: 0.55;
+}
+.model-footnote {
+  color: #c5c6ad;
+  font-size: 11px;
+  line-height: 1.6;
+  border-top: 1px solid #cbb58230;
+  padding-top: 13px;
+  margin-bottom: 0;
+}
+.lamp-discovery {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  margin: 0 auto;
+  border: 1px solid #ffe4a780;
+  background: #f6e4b7;
+  color: #23473c;
+  border-radius: 3px;
+  padding: 10px 16px;
+  font-size: 14px;
+  box-shadow: 0 0 30px #ffe4a728;
+}
+.lamp-discovery > span {
+  color: #887234;
+  font-size: 20px;
+}
+.refuge-record {
+  position: relative;
+  max-width: 600px;
+  margin: 35px 4% 30px auto;
+  padding: 28px 34px;
+  color: #294b43;
+  background: linear-gradient(115deg, #f3e6c8f5, #e8d6aff2);
+  border: 1px solid #fff0c5;
+  border-radius: 4px;
+  box-shadow: 0 15px 60px #102f3350;
+  animation: museum-arrive 0.6s ease both;
+}
+.refuge-record h2 {
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 400;
+  margin: 19px 0;
+}
+.refuge-record p {
+  font:
+    28px/1.5 Georgia,
+    serif;
+  margin: 14px 0 21px;
+}
+.refuge-record small {
+  font-size: 11px;
+  line-height: 1.5;
+  opacity: 0.7;
+}
+.modal.history-exhibit {
+  width: 850px;
+  max-width: calc(100vw - 32px);
+}
+.history-exhibit .modal-topline {
+  position: sticky;
+  top: -34px;
+  z-index: 2;
+  background: #173940;
+  padding: 15px 0;
+}
+.history-exhibit .exhibit-art {
+  width: 100%;
+  max-height: 230px;
+  object-fit: cover;
+  border-radius: 3px;
+  margin-bottom: 22px;
+}
+.exhibit-introduction {
+  font:
+    italic 24px/1.5 Georgia,
+    serif;
+  color: #c6d6c0;
+  margin: 24px 0 35px;
+}
+.exhibit-text {
+  max-width: 62ch;
+  font-size: 18px;
+  margin: 0 auto;
+}
+.exhibit-text h3 {
+  font:
+    27px/1.25 Georgia,
+    serif;
+  margin: 36px 0 17px;
+}
+.exhibit-text p {
+  font:
+    18px/1.85 Georgia,
+    serif;
+  margin: 17px 0;
+}
+.exhibit-source {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #bdcbbd;
+  border-top: 1px solid #69826444;
+  margin-top: 35px;
+  padding-top: 20px;
+}
+.large-text .exhibit-text p {
+  font-size: 22px;
+}
+.large-text .model-reading p {
+  font-size: 18px;
+}
+@keyframes museum-arrive {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 900px) {
+  .model-layout {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .model-cutaway {
+    max-width: 700px;
+  }
+  .model-reading {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .model-reading h3 {
+    margin: 10px 0;
+  }
+  .model-reading p {
+    margin: 7px 0;
+  }
+  .gate-control {
+    width: auto;
+  }
+  .flood-reconstruction {
+    padding: 22px;
+  }
+  .museum-model .scene-view {
+    min-height: 0;
+  }
+  .museum-model .perception-toggle {
+    position: relative;
+    margin-top: 25px;
+    top: auto;
+    bottom: auto;
+  }
+  .model-titleline > span:last-child {
+    display: none;
+  }
+  .museum-summary > p {
+    font-size: 21px;
+  }
+  .refuge-record {
+    margin: 28px 0;
+    max-width: 100%;
+  }
+}
+@media (max-width: 520px) {
+  .flood-reconstruction {
+    padding: 18px 15px 14px;
+    margin-top: 25px;
+  }
+  .flood-reconstruction h2 {
+    font-size: 27px;
+  }
+  .model-moment {
+    flex-direction: column;
+    gap: 7px;
+    font-size: 12px;
+    padding: 11px 5px;
+  }
+  .museum-actions {
+    gap: 14px;
+  }
+  .refuge-record {
+    padding: 24px;
+  }
+  .refuge-record p {
+    font-size: 24px;
+  }
+  .exhibit-text p {
+    font-size: 17px;
+  }
+}
+@media (max-width: 760px) {
+  .museum .perception-toggle {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    margin-top: 22px;
+  }
+  .museum .refuge-record {
+    margin-bottom: 85px;
+  }
+}
+[data-motion='reduced'] .museum-arrive,
+[data-motion='reduced'] .refuge-record,
+[data-motion='reduced'].museum .harbor-background {
+  animation: none;
+}
+[data-motion='reduced'] .model-water,
+[data-motion='reduced'] .model-gate,
+[data-motion='reduced'] .wheel {
+  transition: none;
+}

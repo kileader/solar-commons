@@ -124,7 +124,79 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('gamepad scene integration', () => {
+describe('scene input integration', () => {
+  it.each([
+    { approach: 0, reading: true, note: 'Names after the last ferry', lead: 1 },
+    { approach: 1, reading: false, note: 'A line held from below', lead: 0 },
+  ])('plays the museum through its real UI (approach $approach, reading $reading)', (route) => {
+    function clickButton(selector: string) {
+      const button = container.querySelector<HTMLButtonElement>(selector)
+      expect(button, selector).toBeTruthy()
+      act(() => button!.click())
+      tick()
+    }
+    function clickText(label: string) {
+      const button = [...container.querySelectorAll<HTMLButtonElement>('button')].find(
+        (button) =>
+          button.textContent?.includes(label) &&
+          (!button.closest('dialog') || button.closest('dialog')!.open),
+      )
+      expect(button, label).toBeTruthy()
+      act(() => button!.click())
+      tick()
+    }
+    function finishLines() {
+      let count = 0
+      while (container.querySelector('.continue-button')) {
+        if (++count > 30) throw new Error('UI failed to reach a choice')
+        clickButton('.continue-button')
+      }
+    }
+    finishLines()
+    clickButton('.story-choice')
+    finishLines()
+    for (const clue of ['geometry', 'thermal', 'archive']) {
+      clickButton(`.hotspot-${clue}`)
+      clickButton('[aria-label="Close evidence"]')
+    }
+    clickText('Decide together')
+    clickButton('.story-choice:nth-child(2)')
+    finishLines()
+    clickText('Visit the Hall of Waters')
+    finishLines()
+    clickButton(`.story-choice:nth-child(${route.approach + 1})`)
+    finishLines()
+    clickText('Read the history wall')
+    expect(container.querySelector('dialog[open]')?.textContent).toContain('Whose ending?')
+    clickButton('[aria-label="Close history exhibit"]')
+    if (route.reading) clickText('Follow the written dawn account')
+    else {
+      clickText('Try the tide model')
+      finishLines()
+      connect()
+      press(15)
+      press(15)
+      expect(document.activeElement?.textContent).toContain('Dawn')
+      press(0)
+      expect(container.querySelector('.model-moment[aria-pressed="true"]')?.textContent).toContain(
+        'Dawn',
+      )
+      clickButton('.lamp-discovery')
+    }
+    finishLines()
+    clickButton(`.story-choice:nth-child(${route.lead + 1})`)
+    finishLines()
+    expect(container.querySelector('.museum-summary')?.textContent).toContain(
+      'The city left a line open.',
+    )
+    clickText('Review field notes')
+    const notes = container.querySelector('dialog[open]')!.textContent
+    expect(notes).toContain(route.note)
+    expect(notes).toContain('Ferry clear. Refuge held from within.')
+    expect(notes).toContain('Next step:')
+    expect(container.querySelectorAll('.note-list article')).toHaveLength(7)
+  })
+
   it('advances exactly one real dialogue line while A is held', () => {
     connect()
     expect(text()).toContain('harbor terraces')

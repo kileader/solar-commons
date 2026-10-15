@@ -1,6 +1,19 @@
 # Validation
 
-## Ren’Py migration and Hall of Waters — October 15, 2026
+## React restoration and branching Hall of Waters — October 15, 2026
+
+- All **85 tests** pass across nine files. This includes the original 46 tests, 37 museum progression tests, and two museum journeys through the actual React UI. The route matrix combines both harbor entry choices, both harbor endings, both museum approaches, both gate positions, and both final leads. Reading-only discovery, leaving/revisiting the model, invalid actions, replay reset, and evidence retention are covered.
+- `npm run build` passes the TypeScript check and production Vite build. The active source, run commands, and Pages workflow use React/TypeScript again; the Ren’Py experiment is retained under `legacy/renpy/`.
+- Original harbor content, cinematic components, Mara artwork, Kite SVG, Cognitive Perception, and original runtime assets were compared against the pre-migration version. The four supplied museum WebPs match their imported originals by hash.
+- The restored opening was exercised in the browser: natural completion enters the original first harbor line; Begin with sound, pause, actual timeline seeking, and Skip respond. The S01 video reports ready state 4 and its expected 5.042-second duration.
+- Actual browser controls were used to play the harbor investigation into the museum, inspect both character approaches, operate the gate and all three model moments, discover the handover record, follow the written-account alternative, and reach both lead endings. Field notes retain the original three observations, the approach-specific information, the record, and the chosen next step.
+- Visual review at desktop 1280 × 900 and phone 390 × 844 covered the gallery, history panel, flood model, and handover record. Review found and corrected exhibit contrast, redundant model layout height, and phone control/record overlap. The final phone discovery view has no horizontal overflow. Screenshots are local QA artifacts under ignored `.qa/`.
+- Museum history and reconstruction remain provisional. Water responses are qualitative teaching illustrations; the lamp is separately identified as a recorded observation. The final lead records the next investigation without resolving the harbor mystery.
+- Progress lasts for the current visit; cross-session story saves are not implemented. Simulated controller coverage passes, but physical hardware and real mobile devices remain untested. Restored audio/voice playback has not received a fresh human listening review. The restored Pages workflow has not been run or deployed for these local commits.
+
+The following records describe earlier validation stages. Native-engine results apply only to the archived experiment.
+
+## Archived Ren’Py migration and Hall of Waters — October 15, 2026
 
 - Ren’Py **8.5.3.26051504** lint passes with no reported problems: 60 dialogue blocks, three menus, seven named images, and 29 screens.
 - **20 native test cases and 241 assertions pass**. Sixteen parameterized full routes combine both harbor entry choices, both harbor endings, both gate positions, and both museum leads. Additional cases cover new-game reset, leaving and revisiting the reconstruction, both opening sound modes, and preferences.
@@ -13,7 +26,7 @@
 - The Pages workflow now targets Ren’Py; its Linux/Xvfb run and live deployment have not been exercised in this local-only commit. Physical gamepads, mobile browsers, desktop self-voicing, and human listening review of the adapted audio remain outstanding. The older React voice selector and cinematic transport controls are archived, not claimed as native features.
 - Museum history and the flood concept are explicitly provisional in the design notes. The model labels predicted water behavior separately from the recorded lamp observation. No paid generation, live AI, external messages, or telemetry were added.
 
-The records below describe the earlier React version, preserved in `legacy/react/`.
+The records below describe the earlier React version, now restored at the repository root.
 
 ## Opening cinematic — October 14, 2026
 
