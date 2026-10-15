@@ -41,6 +41,7 @@ import { PagedReader } from './components/PagedReader'
 import { fieldNotes } from './content/fieldNotes'
 import { PagedPassage } from './components/PagedPassage'
 import { Perception } from './components/Perception'
+import { EvidenceDiagram } from './components/EvidenceDiagram'
 import { useMotion } from './hooks/useMotion'
 import { useAudio } from './hooks/useAudio'
 import { useGamepad } from './hooks/useGamepad'
@@ -868,31 +869,37 @@ export default function App() {
             >
               <Sparkles size={14} /> {activeClue.title}
             </ModalHeading>
-            <PagedReader
-              key={activeClue.id}
-              entries={[
-                {
-                  id: 'observed',
-                  title: activeClue.observation.label,
-                  text: activeClue.observation.value + '\n\n' + activeClue.observation.detail,
-                },
-                {
-                  id: 'modeled',
-                  title: activeClue.model.label,
-                  text: activeClue.model.value + '\n\n' + activeClue.model.detail,
-                },
-                {
-                  id: 'uncertain',
-                  title: 'What remains uncertain',
-                  text: activeClue.contradiction,
-                },
-                ...activeClue.dialogue.map((line) => ({
-                  id: line.id,
-                  title: line.speaker,
-                  text: line.text,
-                })),
-              ]}
-            />
+            <div className="evidence-content">
+              <figure className="evidence-figure">
+                <EvidenceDiagram kind={activeClue.id} label={activeClue.subtitle} />
+                <figcaption>{activeClue.subtitle}</figcaption>
+              </figure>
+              <PagedReader
+                key={activeClue.id}
+                entries={[
+                  {
+                    id: 'observed',
+                    title: activeClue.observation.label,
+                    text: activeClue.observation.value + '\n\n' + activeClue.observation.detail,
+                  },
+                  {
+                    id: 'modeled',
+                    title: activeClue.model.label,
+                    text: activeClue.model.value + '\n\n' + activeClue.model.detail,
+                  },
+                  {
+                    id: 'uncertain',
+                    title: 'What remains uncertain',
+                    text: activeClue.contradiction,
+                  },
+                  ...activeClue.dialogue.map((line) => ({
+                    id: line.id,
+                    title: line.speaker,
+                    text: line.text,
+                  })),
+                ]}
+              />
+            </div>
             <button className="modal-done" onClick={() => perform({ type: 'CLOSE_CLUE' })}>
               <Check size={16} /> Saved to field notes{' '}
               <span>

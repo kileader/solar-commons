@@ -390,6 +390,34 @@ body,
   flex-direction: column;
   gap: 10px;
 }
+.evidence-content {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+}
+.evidence-content .paged-reader {
+  min-width: 0;
+}
+.evidence-figure {
+  margin: 0;
+  min-width: 0;
+}
+.novel .evidence-diagram {
+  display: block;
+  height: clamp(56px, 12dvh, 96px);
+  margin: 0;
+}
+.evidence-diagram :is(path, ellipse) {
+  vector-effect: non-scaling-stroke;
+}
+.evidence-figure figcaption {
+  margin-top: 6px;
+  color: #c4dccf;
+  font-size: 11px;
+  line-height: 1.4;
+}
 .reader-contents {
   flex: 0 0 36px;
   min-width: 0;
@@ -944,6 +972,17 @@ body,
   }
 }
 @media (max-height: 500px) {
+  .evidence-content {
+    grid-template-columns: minmax(130px, 0.8fr) minmax(0, 2fr);
+    grid-template-rows: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .evidence-figure {
+    align-self: center;
+  }
+  .novel .evidence-diagram {
+    height: auto;
+  }
   .novel:has(.dialogue-body) {
     grid-template-rows: 44px minmax(0, 1fr) 60dvh 26px;
   }

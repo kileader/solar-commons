@@ -1,5 +1,10 @@
 # Validation
 
+## Restore harbor diagrams — October 15, 2026
+
+- The no-scroll refactor had removed the sonar, thermal, and archive schematics from the evidence panels. Their original SVG drawings and source captions are restored and remain visible across evidence pages. Short landscape screens place the drawing beside the reader.
+- All **121 tests** and the production build pass. New regressions open each clue through the real UI and verify its diagram persists when moving from observed readings to modeled interpretations. Browser checks at 1280 × 720, 320 × 568, and 640 × 360, including larger text, show no clipped reading text or off-screen controls. No browser warnings or errors were observed.
+
 ## Compact dialogue — October 15, 2026
 
 - Conversation cards are about 28% shorter at 1280 × 720 and 18% shorter at 320 × 568. A 73–78% opaque backdrop and 6 px blur reveal more of the illustration without shrinking the text. Choices and other reading surfaces retain their reserved space.

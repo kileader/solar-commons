@@ -3,6 +3,7 @@ import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
+import { clues } from '../content/harbor'
 import type { AudioStatus } from '../audio/HarborAudio'
 
 // These tests exercise real UI/reducer/controller wiring; sound rendering is browser-verified.
@@ -127,6 +128,33 @@ afterEach(() => {
 })
 
 describe('scene input integration', () => {
+  it.each(clues)('retains the $id schematic while paging through its evidence', (clue) => {
+    const click = (selector: string) => {
+      act(() => container.querySelector<HTMLButtonElement>(selector)!.click())
+      tick()
+    }
+    for (let i = 0; i < 4; i++) click('.continue-button')
+    click('.story-choice')
+    click('.continue-button')
+    click('.continue-button')
+    click(`.hotspot-${clue.id}`)
+    const diagram = container.querySelector('dialog[open] .evidence-diagram')!
+    expect(diagram).toBeTruthy()
+    expect(diagram.getAttribute('role')).toBe('img')
+    expect(diagram.getAttribute('aria-label')).toBe(clue.subtitle)
+    expect(container.querySelector('.evidence-figure figcaption')?.textContent).toBe(clue.subtitle)
+    expect(container.querySelector('dialog[open] .reader-heading')?.textContent).toBe(
+      clue.observation.label,
+    )
+    click('dialog[open] [aria-label="Next page"]')
+    expect(container.querySelector('dialog[open] .reader-heading')?.textContent).toBe(
+      clue.model.label,
+    )
+    expect(container.querySelector('dialog[open] .evidence-diagram')).toBe(diagram)
+    expect(container.querySelector('main')?.dataset.phase).toBe('investigation')
+    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 examined')
+  })
+
   it('keeps the current step and choices available without scrolling or selecting one', () => {
     const scroll = vi.spyOn(HTMLElement.prototype, 'scrollIntoView')
     const click = (selector: string) => {
