@@ -36,6 +36,24 @@
 .museum-summary {
   padding: 7px 0 14px;
 }
+.voice-replay.reading-button {
+  width: fit-content;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #b8e2c73b;
+  border-radius: 4px;
+  margin: 8px 0 12px;
+  font:
+    13px 'Trebuchet MS',
+    Arial,
+    sans-serif;
+}
+.voice-replay.reading-button > span {
+  display: inline;
+}
+.reading-button[aria-pressed='true'] {
+  background: #a6ecc91c;
+}
 .museum-summary > p {
   font:
     23px/1.55 Georgia,
@@ -254,6 +272,12 @@
   font-size: 11px;
   line-height: 1.5;
   opacity: 0.7;
+}
+.refuge-record .reading-button,
+.refuge-record .reading-button:hover:not(:disabled) {
+  color: #294b43;
+  border-color: #426b5a88;
+  background: #2256410d;
 }
 .modal.history-exhibit {
   width: 850px;

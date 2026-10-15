@@ -1,3 +1,5 @@
+import type { Speaker } from './harbor'
+
 const base = import.meta.env.BASE_URL
 const plate = (name: string) => `${base}art/opening/${name}.webp`
 
@@ -10,7 +12,7 @@ export interface OpeningShot {
   description: string
   dissolve: number
   camera: [number, number, number, number, number, number]
-  caption?: { speaker: string; text: string; delay: number }
+  caption?: { speaker: Speaker; text: string; delay: number }
 }
 
 /** Seconds, authored independently of the player. Camera: start/end scale, x and y (%). */

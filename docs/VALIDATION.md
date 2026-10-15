@@ -1,5 +1,13 @@
 # Validation
 
+## Museum recordings — October 15, 2026
+
+- All **105 tests** pass. The complete 94-track script is matched against current authored words and speakers across both harbor endings, both museum approaches, written/model discovery, both gate positions, and both leads. Explicit assertions protect every `--v1`/`--v2`/`--v3` selection, and changed words or speakers cannot reuse an old recording.
+- The existing two React museum journey tests now verify real audio URLs for both character approaches and discovery paths; sequential exhibit headings/paragraphs; completion cleanup; canceled callbacks after closing history; stopping a reading when the gate or timeline changes; and optional handover/epilogue narration. Existing autoplay, cinematic, cancellation, and story-route coverage still passes.
+- All **94 MP3s** decode successfully with FFmpeg. TypeScript and the production Vite build pass. The asset library remains on demand, with no TTS API calls, new audio engine, or paid generation.
+- Optional Listen controls use the existing voice player and never select choices, advance scenes, or operate the tide model. The recorded script is versioned beside the supplied clips; museum historical content and character designs are unchanged.
+- Browser verification plays the museum arrival and handshake callback, Mara's route, a history section, a flood explanation, the open-gate discovery, and the handover record. Native `speaking` events are observed; closing history and turning the gate restore idle playback. Exhibit and handover controls were visually checked at the normal panel width and 390 × 844; the paper record's button uses a darker ink color for readable contrast. Screenshots are ignored QA artifacts. This validates playback and controls, not a human review of every performance.
+
 ## Recorded dialogue and VN settings — October 15, 2026
 
 - All **103 tests** pass across 13 files. Added coverage checks every supplied filename against actual content, recording playback without device speech, sequential evidence dialogue, cancellation and late events, failed/muted clips, cinematic seeks and pause/resume, autoplay timers and reading time, foreground checks, settings pauses, choice/evidence gates through the actual React UI, and reading-preference recovery/persistence. Existing harbor and museum route coverage remains green.

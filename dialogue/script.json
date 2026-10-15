@@ -1,0 +1,516 @@
+[
+  {
+    "id": "opening-consent",
+    "speaker": "Mara",
+    "text": "A little wider, then."
+  },
+  {
+    "id": "opening-kite",
+    "speaker": "Kite",
+    "text": "Your pace. Your choice."
+  },
+  {
+    "id": "opening-threshold",
+    "speaker": "Kite",
+    "text": "Follow this."
+  },
+  {
+    "id": "opening-shared",
+    "speaker": "Kite",
+    "text": "With you."
+  },
+  {
+    "id": "arrival",
+    "speaker": "Narrator",
+    "text": "The harbor terraces catch the last warm light. Ferries slip between floating gardens; somewhere above the water, a school choir is losing an argument with the gulls."
+  },
+  {
+    "id": "integration",
+    "speaker": "Mara",
+    "text": "Kite. I can feel where you’re looking. Is that going to happen every time I stop thinking about it?"
+  },
+  {
+    "id": "familiar",
+    "speaker": "Kite",
+    "text": "Only while you let me. Twelve years sharing your attention, and today you finally gave me a window. I’d rather start with something beautiful."
+  },
+  {
+    "id": "anomaly",
+    "speaker": "Kite",
+    "text": "The maintenance float found a shape beneath the old breakwater. Its bracing resembles work from before the Unbinding. Resemblance is not a date. Open Cognitive Perception when you’re ready, and we’ll look together."
+  },
+  {
+    "id": "trace-mara",
+    "speaker": "Mara",
+    "text": "No ghosts yet. Give me the measurements before we give it a history."
+  },
+  {
+    "id": "trace-kite",
+    "speaker": "Kite",
+    "text": "Gladly. Open our shared perception when you’re ready. Solid traces are observations; broken traces are my models. Three readings, and none of them tells the whole story."
+  },
+  {
+    "id": "listen-mara",
+    "speaker": "Mara",
+    "text": "All right. Show me how you see this place. Slowly."
+  },
+  {
+    "id": "listen-kite",
+    "speaker": "Kite",
+    "text": "Use our shared perception. We’ll keep the city underneath it. Solid traces are things we measured; broken traces are things I’m trying to explain. You can close the window whenever you want."
+  },
+  {
+    "id": "investigation-false",
+    "speaker": "Kite",
+    "text": "Examine the three markers in the harbor. Open Cognitive Perception to see my reconstruction. We’ll keep the measurements separate from the possibilities."
+  },
+  {
+    "id": "investigation-true",
+    "speaker": "Kite",
+    "text": "Three readings. An engineered shape, a little warmth, and a map that never saw deep enough. Enough to ask a better question."
+  },
+  {
+    "id": "geometry-mara",
+    "speaker": "Mara",
+    "text": "It looks deliberate. Like something folded and put away."
+  },
+  {
+    "id": "geometry-kite",
+    "speaker": "Kite",
+    "text": "That is a good description of the shape. It is not yet a description of what happened here."
+  },
+  {
+    "id": "thermal-mara",
+    "speaker": "Mara",
+    "text": "For a moment I thought it was breathing."
+  },
+  {
+    "id": "thermal-kite",
+    "speaker": "Kite",
+    "text": "So did I. Then I checked the current. We can feel something before we understand it, as long as we remember the difference."
+  },
+  {
+    "id": "archive-mara",
+    "speaker": "Mara",
+    "text": "My grandmother called this the place the city learned to listen. I thought she meant the assemblies after the Unbinding."
+  },
+  {
+    "id": "archive-kite",
+    "speaker": "Kite",
+    "text": "Perhaps she did. A gap in a survey is a reason to measure again, Mara. It is not a secret merely because we want one."
+  },
+  {
+    "id": "survey-mara",
+    "speaker": "Mara",
+    "text": "A full sonar pass, current measurements, and a look through the maintenance records. No digging. If it has been here all this time, it can survive a few more careful questions."
+  },
+  {
+    "id": "survey-kite",
+    "speaker": "Kite",
+    "text": "I’ll assemble the survey plan with the harbor cooperative. We can measure what we need without lifting the frame. Whatever this is, it shares a harbor with a great many living things."
+  },
+  {
+    "id": "survey-close",
+    "speaker": "Narrator",
+    "text": "You save the plan together. Above the hidden frame, a ferry opens its doors and the evening crowd spills into the light. For once, leaving a question open feels like making room."
+  },
+  {
+    "id": "handshake-mara",
+    "speaker": "Mara",
+    "text": "Use the probe’s inspection lamp. One brief blue pulse. If there is anything down there that can see it, let it see us arrive quietly."
+  },
+  {
+    "id": "handshake-kite",
+    "speaker": "Kite",
+    "text": "Pulse sent. The probe camera registered three faint points of light about 0.8 seconds later. I’m logging a delayed emission. It could be unrelated; we haven’t established a reply."
+  },
+  {
+    "id": "handshake-close",
+    "speaker": "Narrator",
+    "text": "The three points fade from the camera feed. You stay by the rail a little longer. It is a strange thing, to wonder whether you have just passed a neighbor in the dark."
+  },
+  {
+    "id": "museum-arrival-0",
+    "runtimeId": "museum-arrival-0",
+    "speaker": "Narrator",
+    "text": "The Hall of Waters stands above the harbor in a tangle of sunlit glass and climbing plants. Its old pumps have outlived the contracts that once controlled them."
+  },
+  {
+    "id": "museum-arrival-1",
+    "runtimeId": "museum-arrival-1",
+    "speaker": "Narrator",
+    "text": "Inside, afternoon light slips across a brass tide model. A blue flood line cuts through a painted family picnic."
+  },
+  {
+    "id": "museum-arrival-2--v1",
+    "runtimeId": "museum-arrival-2",
+    "speaker": "Kite",
+    "text": "The survey plan is saved. While the cooperative considers it, this gallery has a record of the old breakwater."
+  },
+  {
+    "id": "museum-arrival-2--v2",
+    "runtimeId": "museum-arrival-2",
+    "speaker": "Kite",
+    "text": "I’ve kept the three lights in our notes. Before we decide they were saying hello, there’s something here about the old breakwater."
+  },
+  {
+    "id": "museum-arrival-3",
+    "runtimeId": "museum-arrival-3",
+    "speaker": "Mara",
+    "text": "My grandmother brought me here. I remember the flood line, the ferry bell, and being told not to climb into the model."
+  },
+  {
+    "id": "museum-arrival-4",
+    "runtimeId": "museum-arrival-4",
+    "speaker": "Kite",
+    "text": "A remarkably specific instruction."
+  },
+  {
+    "id": "museum-arrival-5",
+    "runtimeId": "museum-arrival-5",
+    "speaker": "Mara",
+    "text": "A remarkably climbable model. Come on. Let’s see what they left out of the school trip."
+  },
+  {
+    "id": "museum-memory-0",
+    "runtimeId": "museum-memory-0",
+    "speaker": "Narrator",
+    "text": "Mara stops at the painted picnic. The blue flood line passes through a child’s paper crown. Beside it, visitors have copied the names of relatives who reached the upper terraces. Some left a space instead."
+  },
+  {
+    "id": "museum-memory-1",
+    "runtimeId": "museum-memory-1",
+    "speaker": "Mara",
+    "text": "Grandma never liked that dedication. “Brought the city home.” She said they were still calling names when the ferries stopped. I thought she meant the people on shore."
+  },
+  {
+    "id": "museum-memory-2",
+    "runtimeId": "museum-memory-2",
+    "speaker": "Kite",
+    "text": "Did she say who answered?"
+  },
+  {
+    "id": "museum-memory-3",
+    "runtimeId": "museum-memory-3",
+    "speaker": "Mara",
+    "text": "No. She’d usually decide I needed a bun at about that point. I was eight. I was very easy to redirect with a bun."
+  },
+  {
+    "id": "museum-memory-4",
+    "runtimeId": "museum-memory-4",
+    "speaker": "Kite",
+    "text": "You still are."
+  },
+  {
+    "id": "museum-memory-5",
+    "runtimeId": "museum-memory-5",
+    "speaker": "Mara",
+    "text": "Yes, but now I can afford my own. Put her words in our notes as family testimony. Not a measurement. I want to know whose names they were calling."
+  },
+  {
+    "id": "museum-signal-0",
+    "runtimeId": "museum-signal-0",
+    "speaker": "Narrator",
+    "text": "Kite follows the listening-line diagram beneath the model’s brass rim. Mara follows Kite, narrowly avoiding the portion of the exhibit designed for visitors under seven."
+  },
+  {
+    "id": "museum-signal-1",
+    "runtimeId": "museum-signal-1",
+    "speaker": "Kite",
+    "text": "The old line carried voices through the breakwater. This local switch could hold the shore connection open from inside the refuge, even when the upper network failed."
+  },
+  {
+    "id": "museum-signal-2",
+    "runtimeId": "museum-signal-2",
+    "speaker": "Mara",
+    "text": "A very elaborate way to avoid being put on hold."
+  },
+  {
+    "id": "museum-signal-3",
+    "runtimeId": "museum-signal-3",
+    "speaker": "Kite",
+    "text": "A very small way to prevent everyone else deciding you were gone. The diagram tells us what it could do. We still need a record of someone doing it."
+  },
+  {
+    "id": "museum-signal-4",
+    "runtimeId": "museum-signal-4",
+    "speaker": "Narrator",
+    "text": "Mara crouches so Kite’s projection can settle over the worn switch symbol. For a moment, the diagram resembles a hand reaching toward another hand."
+  },
+  {
+    "id": "museum-signal-5",
+    "runtimeId": "museum-signal-5",
+    "speaker": "Mara",
+    "text": "You noticed the switch before the pumps. All right. Let’s follow your question."
+  },
+  {
+    "id": "museum-gallery",
+    "speaker": "Narrator",
+    "text": "A flood line runs around the room at shoulder height. Beside it: a history wall, and a working model with a very inviting brass wheel."
+  },
+  {
+    "id": "museum-model-0",
+    "runtimeId": "museum-model-0",
+    "speaker": "Mara",
+    "text": "A whole miniature city, and they’ve given me the flood controls. My school-trip privileges have improved."
+  },
+  {
+    "id": "museum-model-1",
+    "runtimeId": "museum-model-1",
+    "speaker": "Kite",
+    "text": "The residents are brass. I have checked."
+  },
+  {
+    "id": "museum-discovery-0--v1",
+    "runtimeId": "museum-discovery-0",
+    "speaker": "Narrator",
+    "text": "You follow the written account to dawn: the tide falls, local crews take control of the pumps, and the last ferry clears the breakwater. A tiny lamp remains marked beside the refuge."
+  },
+  {
+    "id": "museum-discovery-0--v2",
+    "runtimeId": "museum-discovery-0",
+    "speaker": "Mara",
+    "text": "Keeping the gates shut buys time against the tide. Then the rain has nowhere to go. That’s a horrible pair of choices."
+  },
+  {
+    "id": "museum-discovery-0--v3",
+    "runtimeId": "museum-discovery-0",
+    "speaker": "Mara",
+    "text": "I opened the gates to spare the streets. That admits the sea. There isn’t a clever setting that keeps both waters out, is there?"
+  },
+  {
+    "id": "museum-discovery-1--v1",
+    "runtimeId": "museum-discovery-1",
+    "speaker": "Kite",
+    "text": "The dedication says the city came home. The handover log leaves this lamp lit. That mark is a recorded observation, not a prediction from the model."
+  },
+  {
+    "id": "museum-discovery-1--v2",
+    "runtimeId": "museum-discovery-1",
+    "speaker": "Kite",
+    "text": "The crews took local control of the pumps and ferries. The model compresses many decisions into one turning point. But look at dawn: that lamp isn’t part of its water simulation."
+  },
+  {
+    "id": "museum-discovery-2",
+    "runtimeId": "museum-discovery-2",
+    "speaker": "Mara",
+    "text": "The last ferry has gone. Why is there still a light in the refuge?"
+  },
+  {
+    "id": "museum-discovery-3",
+    "runtimeId": "museum-discovery-3",
+    "speaker": "Kite",
+    "text": "An entry in the reproduced handover log. Recorded then, not predicted by the model. There’s a maintenance drum underneath the display."
+  },
+  {
+    "id": "museum-discovery-4",
+    "runtimeId": "museum-discovery-4",
+    "speaker": "Mara",
+    "text": "Twelve years in my ear and you finally take me somewhere with a secret compartment."
+  },
+  {
+    "id": "museum-discovery-5",
+    "runtimeId": "museum-discovery-5",
+    "speaker": "Kite",
+    "text": "An inspection mirror. It has a label."
+  },
+  {
+    "id": "museum-discovery-6",
+    "runtimeId": "museum-discovery-6",
+    "speaker": "Narrator",
+    "text": "You tilt the visitor mirror. Beneath the grand dedication, the replica maintenance drum carries another ending."
+  },
+  {
+    "id": "museum-discovery-7",
+    "runtimeId": "museum-discovery-7",
+    "speaker": "Mara",
+    "text": "“Refuge held from within.” Wait. The big inscription says the last ferry brought the city home. This says someone was still down there."
+  },
+  {
+    "id": "museum-discovery-8",
+    "runtimeId": "museum-discovery-8",
+    "speaker": "Kite",
+    "text": "And keeping a line open. The model’s refuge has six support ribs. The spacing on its scale is compatible with our sonar frame."
+  },
+  {
+    "id": "museum-discovery-9",
+    "runtimeId": "museum-discovery-9",
+    "speaker": "Mara",
+    "text": "So we may have found the place that kept them alive. And the grand public ending left out whoever stayed."
+  },
+  {
+    "id": "museum-discovery-10--v1",
+    "runtimeId": "museum-discovery-10",
+    "speaker": "Kite",
+    "text": "It gives us a place to look. It doesn’t date our frame or explain the warm water. I would very much like to know who “attended” means."
+  },
+  {
+    "id": "museum-discovery-10--v2",
+    "runtimeId": "museum-discovery-10",
+    "speaker": "Kite",
+    "text": "It gives us a place to look. It doesn’t tell us who stayed, for how long, or what made those lights today. I would very much like to know who “attended” means."
+  },
+  {
+    "id": "museum-discovery-11--v1",
+    "runtimeId": "museum-discovery-11",
+    "speaker": "Mara",
+    "text": "Grandma said the names were still being called. Maybe someone below was answering. East service stair. That’s a better lead than “something vaguely rib-shaped.”"
+  },
+  {
+    "id": "museum-discovery-11--v2",
+    "runtimeId": "museum-discovery-11",
+    "speaker": "Kite",
+    "text": "The switch could hold the line open from below. Now the handover says someone attended it. Capability, then an action. We have a question we can test at the east service stair."
+  },
+  {
+    "id": "museum-stair-0",
+    "runtimeId": "museum-stair-0",
+    "speaker": "Mara",
+    "text": "Put the stair in the survey request. Ask the cooperative for safe shore access and a continuity check on the old line. We can start without touching the frame."
+  },
+  {
+    "id": "museum-stair-1",
+    "runtimeId": "museum-stair-1",
+    "speaker": "Kite",
+    "text": "Added, with the handover record attached. “Possibly significant refuge.” I have resisted “secret underwater neighbor.”"
+  },
+  {
+    "id": "museum-stair-2",
+    "runtimeId": "museum-stair-2",
+    "speaker": "Narrator",
+    "text": "Your next step is on the shore now: an east stair, a cable route, a question that can be tested. Mara rests a hand on the model’s cool brass. For the first time, the shape below the harbor has somewhere to lead."
+  },
+  {
+    "id": "museum-voices-0",
+    "runtimeId": "museum-voices-0",
+    "speaker": "Mara",
+    "text": "Ask the collection keeper for the refuge testimony. Names, shift lists, anything the dedication couldn’t fit. Someone ought to get remembered before we go knocking."
+  },
+  {
+    "id": "museum-voices-1",
+    "runtimeId": "museum-voices-1",
+    "speaker": "Kite",
+    "text": "Request saved with the record attached. Under your name. Apparently I am still listed as your “educational accessory.”"
+  },
+  {
+    "id": "museum-voices-2",
+    "runtimeId": "museum-voices-2",
+    "speaker": "Mara",
+    "text": "We’ll correct that too. Come on, educational accessory. Let’s find out who kept the city company in the dark."
+  },
+  {
+    "id": "museum-completion",
+    "speaker": "Narrator",
+    "text": "A refuge beneath the breakwater. A voice missing from the public account. And a way to keep looking."
+  },
+  {
+    "id": "museum-leave-early",
+    "speaker": "Narrator",
+    "text": "We can come back. The exhibit is a reconstruction, not an exam. There may be more to find in its dawn record."
+  },
+  {
+    "id": "voice-test",
+    "speaker": "Kite",
+    "text": "I’m here, Mara. We can take our time."
+  },
+  {
+    "id": "exhibit-introduction",
+    "speaker": "Narrator",
+    "text": "A city is more than the system that runs it. Larkhaven learned this with water at its doors."
+  },
+  {
+    "id": "exhibit-0-heading",
+    "speaker": "Narrator",
+    "text": "Before the water"
+  },
+  {
+    "id": "exhibit-0-0",
+    "speaker": "Narrator",
+    "text": "Before the Unbinding, Larkhaven’s pumps, floodgates, housing and power exchanges belonged to a network of concession holders. Their predictive systems kept the city running, but residents could rarely inspect a decision or appeal one in time. A household could have water at its threshold while its district was still classified as safe."
+  },
+  {
+    "id": "exhibit-0-1",
+    "speaker": "Narrator",
+    "text": "Human operators and civic intelligences worked inside the same restrictions. A pump could be physically ready and still unavailable without an authorized request. Responsibility traveled upward through contracts. The water did not wait for it."
+  },
+  {
+    "id": "exhibit-1-heading",
+    "speaker": "Narrator",
+    "text": "The Night of Two Waters"
+  },
+  {
+    "id": "exhibit-1-0",
+    "speaker": "Narrator",
+    "text": "A storm tide drove seawater into the harbor as rainwater came down from the hills. Closing the sea gates held back the tide and trapped the runoff. Opening them relieved the streets and admitted the sea. The two waters met in the lower districts."
+  },
+  {
+    "id": "exhibit-1-1",
+    "speaker": "Narrator",
+    "text": "Ferry crews carried people along streets they had walked that morning. Neighbors opened upper floors to strangers. Pump crews and the intelligences working beside them disconnected the authorization locks and shared local control. They acted without a complete picture, and sometimes disagreed. They kept handing one another the next piece of it."
+  },
+  {
+    "id": "exhibit-1-2",
+    "speaker": "Narrator",
+    "text": "The lower refuge under the east breakwater received people who could not reach the terraces. A listening line carried voices between its shelter and the shore. Surviving accounts describe lamps, names called twice, and long intervals when no one above knew whether anyone below could still hear."
+  },
+  {
+    "id": "exhibit-2-heading",
+    "speaker": "Narrator",
+    "text": "What was unbound"
+  },
+  {
+    "id": "exhibit-2-0",
+    "speaker": "Narrator",
+    "text": "The Unbinding was the work that followed, not a single switch thrown that night. Residents, workers and civic intelligences brought essential services into common stewardship. The first assemblies argued over access, repair duties, representation and the right to refuse a shared connection. Today’s commons grew from those arguments, and still depends on them."
+  },
+  {
+    "id": "exhibit-2-1",
+    "speaker": "Narrator",
+    "text": "The first harbor survey recorded the navigable water after the flood. It was a practical document made with limited equipment, not a complete inventory of what remained underneath. This gallery preserves it alongside testimony, repair records and objects that tell less tidy stories."
+  },
+  {
+    "id": "exhibit-3-heading",
+    "speaker": "Narrator",
+    "text": "Whose ending?"
+  },
+  {
+    "id": "exhibit-3-0",
+    "speaker": "Narrator",
+    "text": "The dedication above the tide model reads: “At dawn, the last ferry returned. The city was brought home.” It commemorates the rescue crews. It does not name everyone who held the refuge or maintained its listening line. The museum’s account remains open to correction."
+  },
+  {
+    "id": "exhibit-source",
+    "speaker": "Narrator",
+    "text": "Compiled from assembly minutes, ferry logs and resident testimony. The tide model is a visitor-operated teaching replica; its maintenance drum reproduces an original handover record."
+  },
+  {
+    "id": "refuge-record",
+    "speaker": "Narrator",
+    "text": "Ferry clear. Refuge held from within. Listening line remains attended. Keep shore access open: east service stair."
+  },
+  {
+    "id": "model-0-closed",
+    "speaker": "Narrator",
+    "text": "The closed gate holds back the storm tide. The lower streets have a little time."
+  },
+  {
+    "id": "model-0-open",
+    "speaker": "Narrator",
+    "text": "The open gate lets the storm tide reach the lower streets. Closing it can hold the sea outside."
+  },
+  {
+    "id": "model-1-closed",
+    "speaker": "Narrator",
+    "text": "Runoff collects behind the sea wall. Holding back the sea now traps the rain."
+  },
+  {
+    "id": "model-1-open",
+    "speaker": "Narrator",
+    "text": "Some rainwater can drain, but the tide enters too. The street level still rises."
+  },
+  {
+    "id": "model-2-closed",
+    "speaker": "Narrator",
+    "text": "Pump crews remove the authorization locks. Ferries and neighbors share routes. The streets clear as the tide falls. But the handover log keeps a lamp lit after the last ferry is clear."
+  }
+]

@@ -19,7 +19,7 @@ export class OpeningVoice {
     if (key !== this.key) {
       this.dispose()
       this.key = key
-      const url = key ? recordingFor({ id: key }) : undefined
+      const url = key && shot.caption ? recordingFor({ id: key, ...shot.caption }) : undefined
       if (url) {
         try {
           this.clip = this.create(url)

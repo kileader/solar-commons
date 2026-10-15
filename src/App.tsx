@@ -20,6 +20,8 @@ import {
 import { characterArt, harborArt, museumArt } from './art'
 import { approachNotes, museumApproaches, museumContent, type FloodStage } from './content/museum'
 import { FloodReconstruction, HistoryExhibit, RefugeRecord } from './components/Museum'
+import { ReadAloudButton, type ReadAloudControls } from './components/ReadAloudButton'
+import { museumReadings } from './content/museumReadings'
 import {
   clues,
   conclusionChoices,
@@ -100,6 +102,9 @@ export default function App() {
   const [panel, setPanel] = useState<'journal' | 'settings' | 'history' | null>(null)
   const [reading, setReading] = useState(loadReadingPreferences)
   const [auto, setAuto] = useState(false)
+  const [readAloud, setReadAloud] = useState<{ id: string; lines: readonly DialogueLine[] } | null>(
+    null,
+  )
   const [usingGamepad, setUsingGamepad] = useState(false)
   const motion = useMotion()
   const currentLine = getCurrentLine(state)
@@ -144,6 +149,7 @@ export default function App() {
       state.phase === 'museum-complete')
 
   const speechLines = useMemo<readonly DialogueLine[]>(() => {
+    if (readAloud) return readAloud.lines
     if (activeClue) return activeClue.dialogue
     if (currentLine) return [currentLine]
     if (state.phase === 'investigation')
@@ -155,8 +161,32 @@ export default function App() {
         },
       ]
     return []
-  }, [activeClue, currentLine, state.phase, investigated])
-  const audio = useAudio(speechLines, panel !== null, state.perception)
+  }, [readAloud, activeClue, currentLine, state.phase, investigated])
+  const audio = useAudio(
+    speechLines,
+    panel !== null && !(panel === 'history' && readAloud),
+    state.perception,
+  )
+  const canRead =
+    audio.preferences.voiceEnabled &&
+    !audio.preferences.muted &&
+    audio.preferences.master * audio.preferences.voice > 0
+  const readControls: ReadAloudControls = {
+    activeId: readAloud?.id ?? null,
+    canRead,
+    onRead: (id, lines) => {
+      audio.unlock()
+      setReadAloud((previous) => (previous?.id === id ? null : { id, lines }))
+    },
+  }
+  useEffect(() => {
+    if (readAloud && (!canRead || ['ended', 'unavailable', 'error'].includes(audio.voiceState)))
+      setReadAloud(null)
+  }, [readAloud, canRead, audio.voiceState])
+  function replayDialogue() {
+    setReadAloud(null)
+    audio.replayVoice()
+  }
   useEffect(() => saveReadingPreferences(reading), [reading])
   function updateReading(patch: Partial<ReadingPreferences>) {
     setReading((previous) => normalizeReadingPreferences({ ...previous, ...patch }))
@@ -168,13 +198,14 @@ export default function App() {
   useAutoAdvance(
     currentLine,
     auto,
-    panel !== null || !!activeClue || !audio.foreground,
+    panel !== null || !!activeClue || !!readAloud || !audio.foreground,
     audio.voiceState,
     reading,
     () => perform({ type: 'NEXT' }),
   )
 
   function perform(event: SceneEvent) {
+    setReadAloud(null)
     audio.unlock()
     let cue: SoundCue = 'confirm'
     switch (event.type) {
@@ -231,6 +262,7 @@ export default function App() {
   }
 
   function openPanel(next: 'journal' | 'settings' | 'history') {
+    setReadAloud(null)
     audio.unlock()
     if (activeClue) perform({ type: 'CLOSE_CLUE' })
     audio.play(panel === next ? 'back' : next === 'journal' ? 'archive' : 'open')
@@ -241,6 +273,7 @@ export default function App() {
     openPanel('history')
   }
   function closePanel() {
+    setReadAloud(null)
     audio.play('back')
     setPanel(null)
   }
@@ -271,7 +304,7 @@ export default function App() {
         return
       }
       if (action === 'replay') {
-        if (!panel) audio.replayVoice()
+        if (!panel) replayDialogue()
         return
       }
       const controls = modal
@@ -564,9 +597,14 @@ export default function App() {
         {inMuseum && state.perception && state.phase !== 'museum-model' && (
           <p className="museum-attention">Shared attention · the worn brass rim</p>
         )}
-        {showRecord && <RefugeRecord />}
+        {showRecord && <RefugeRecord reading={readControls} />}
         {state.phase === 'museum-model' && (
-          <FloodReconstruction state={state} perform={perform} onReadHistory={readHistory} />
+          <FloodReconstruction
+            state={state}
+            perform={perform}
+            onReadHistory={readHistory}
+            reading={readControls}
+          />
         )}
         {!inMuseum &&
           state.endingChoiceId === 'handshake' &&
@@ -608,7 +646,7 @@ export default function App() {
           aria-label="Story and player choices"
         >
           <div
-            className={`companion-portrait speaker-${speaker.toLowerCase()} ${audio.voiceState === 'speaking' ? 'is-speaking' : ''}`}
+            className={`companion-portrait speaker-${speaker.toLowerCase()} ${audio.voiceState === 'speaking' && !readAloud ? 'is-speaking' : ''}`}
           >
             <div className="portrait-orbit" />
             <div className="portrait-disc" />
@@ -649,7 +687,7 @@ export default function App() {
                 <div className="dialogue-buttons">
                   <button
                     className="voice-replay"
-                    onClick={audio.replayVoice}
+                    onClick={replayDialogue}
                     disabled={
                       !audio.ready ||
                       !audio.hasVoice ||
@@ -783,6 +821,12 @@ export default function App() {
               <div className="museum-summary">
                 <span className="eyebrow">THE TIDE GALLERY</span>
                 <p>{museumContent.museumCopy.explore}</p>
+                <ReadAloudButton
+                  reading={readControls}
+                  id="gallery"
+                  lines={[museumReadings.gallery]}
+                  label="the gallery description"
+                />
                 <div className="museum-actions">
                   <button
                     className="replay-button"
@@ -813,8 +857,14 @@ export default function App() {
                 <p>
                   {state.discovered
                     ? museumContent.museumCopy.completion
-                    : 'We can come back. The exhibit is a reconstruction, not an exam. There may be more to find in its dawn record.'}
+                    : museumReadings.leaveEarly.text}
                 </p>
+                <ReadAloudButton
+                  reading={readControls}
+                  id="completion"
+                  lines={[state.discovered ? museumReadings.completion : museumReadings.leaveEarly]}
+                  label="the chapter epilogue"
+                />
                 {museumLead && (
                   <strong className="next-lead">Your next step: {museumLead.label}</strong>
                 )}
@@ -1027,7 +1077,7 @@ export default function App() {
         )}
       </Modal>
 
-      <HistoryExhibit open={panel === 'history'} onClose={closePanel} />
+      <HistoryExhibit open={panel === 'history'} onClose={closePanel} reading={readControls} />
 
       <Modal
         open={panel === 'settings'}

@@ -119,7 +119,8 @@ export function AudioSettings({ audio }: { audio: AudioControls }) {
         <Volume2 size={16} /> Try Kite’s recorded voice
       </button>
       <p className="settings-description">
-        The harbor and opening are voiced. Museum recordings are still to come.
+        The harbor, museum, and opening are voiced. Optional exhibit readings have their own Listen
+        buttons.
       </p>
       {audio.voiceState === 'error' && (
         <p className="settings-description" role="status">

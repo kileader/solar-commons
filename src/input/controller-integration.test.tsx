@@ -204,6 +204,17 @@ describe('scene input integration', () => {
     { approach: 0, reading: true, note: 'Names after the last ferry', lead: 1 },
     { approach: 1, reading: false, note: 'A line held from below', lead: 0 },
   ])('plays the museum through its real UI (approach $approach, reading $reading)', (route) => {
+    const clips: HTMLMediaElement[] = []
+    const playedUrls: string[] = []
+    vi.mocked(HTMLMediaElement.prototype.play).mockImplementation(function (
+      this: HTMLMediaElement,
+    ) {
+      clips.push(this)
+      playedUrls.push(this.src)
+      return Promise.resolve()
+    })
+    const latestClip = () => clips.at(-1)!
+    const endClip = () => act(() => latestClip().dispatchEvent(new Event('ended')))
     function clickButton(selector: string) {
       const button = container.querySelector<HTMLButtonElement>(selector)
       expect(button, selector).toBeTruthy()
@@ -238,16 +249,47 @@ describe('scene input integration', () => {
     clickButton('.story-choice:nth-child(2)')
     finishLines()
     clickText('Visit the Hall of Waters')
+    expect(latestClip().src).toContain('museum-arrival-0')
     finishLines()
     clickButton(`.story-choice:nth-child(${route.approach + 1})`)
+    expect(latestClip().src).toContain(route.approach === 0 ? 'museum-memory-0' : 'museum-signal-0')
     finishLines()
+    clickButton('[aria-label="Listen to the gallery description"]')
+    expect(latestClip().src).toContain('museum-gallery')
+    endClip()
+    expect(
+      container.querySelector('[aria-label="Stop reading the gallery description"]'),
+    ).toBeNull()
     clickText('Read the history wall')
     expect(container.querySelector('dialog[open]')?.textContent).toContain('Whose ending?')
+    // Exhibit narration is opt-in, sequential, and never advances the scene.
+    clickButton('[aria-label="Listen to Before the water"]')
+    expect(latestClip().src).toContain('exhibit-0-heading')
+    endClip()
+    expect(latestClip().src).toContain('exhibit-0-0')
+    endClip()
+    expect(latestClip().src).toContain('exhibit-0-1')
+    endClip()
+    expect(container.querySelector('[aria-label="Stop reading Before the water"]')).toBeNull()
+    clickButton('[aria-label="Listen to the exhibit introduction"]')
+    const abandonedClip = latestClip()
+    const abandonedEnd = abandonedClip.onended!
     clickButton('[aria-label="Close history exhibit"]')
+    const afterClose = clips.length
+    act(() => abandonedEnd.call(abandonedClip, new Event('ended')))
+    expect(clips).toHaveLength(afterClose)
     if (route.reading) clickText('Follow the written dawn account')
     else {
       clickText('Try the tide model')
       finishLines()
+      clickButton('[aria-label="Listen to the flood explanation"]')
+      expect(latestClip().src).toContain('model-0-closed')
+      clickButton('.gate-control')
+      expect(
+        container.querySelector('[aria-label="Stop reading the flood explanation"]'),
+      ).toBeNull()
+      clickButton('[aria-label="Listen to the flood explanation"]')
+      expect(latestClip().src).toContain('model-0-open')
       connect()
       press(15)
       press(15)
@@ -256,14 +298,27 @@ describe('scene input integration', () => {
       expect(container.querySelector('.model-moment[aria-pressed="true"]')?.textContent).toContain(
         'Dawn',
       )
+      clickButton('[aria-label="Listen to the flood explanation"]')
+      expect(latestClip().src).toContain('model-2-closed')
       clickButton('.lamp-discovery')
     }
+    expect(latestClip().src).toContain(
+      route.reading ? 'museum-discovery-0--v1' : 'museum-discovery-0--v3',
+    )
     finishLines()
+    expect(playedUrls.at(-1)).toContain(
+      route.approach === 0 ? 'museum-discovery-11--v1' : 'museum-discovery-11--v2',
+    )
     clickButton(`.story-choice:nth-child(${route.lead + 1})`)
     finishLines()
     expect(container.querySelector('.museum-summary')?.textContent).toContain(
       'The city left a line open.',
     )
+    clickButton('[aria-label="Listen to the handover record"]')
+    expect(latestClip().src).toContain('refuge-record')
+    clickButton('[aria-label="Stop reading the handover record"]')
+    clickButton('[aria-label="Listen to the chapter epilogue"]')
+    expect(latestClip().src).toContain('museum-completion')
     clickText('Review field notes')
     const notes = container.querySelector('dialog[open]')!.textContent
     expect(notes).toContain(route.note)

@@ -1,4 +1,5 @@
 import type { DialogueLine } from '../content/harbor'
+import script from '../../dialogue/script.json'
 
 // Keep Kevin's source filenames intact; Vite ships each clip with a cache-safe URL.
 const files = import.meta.glob<string>('../../dialogue/*.mp3', {
@@ -17,6 +18,20 @@ export const dialogueRecordings: Readonly<Record<string, string>> = Object.fromE
   ]),
 )
 
-export function recordingFor(line: Pick<DialogueLine, 'id'>) {
-  return dialogueRecordings[line.id]
+const keyFor = (line: DialogueLine) => JSON.stringify([line.id, line.speaker, line.text])
+const recordingIds = new Map(
+  script.map((line) => [
+    keyFor({ ...line, id: line.runtimeId ?? line.id } as DialogueLine),
+    line.id,
+  ]),
+)
+
+/** The recorded script is a snapshot: changed words must never play an older performance. */
+export function recordingIdFor(line: DialogueLine) {
+  return recordingIds.get(keyFor(line))
+}
+
+export function recordingFor(line: DialogueLine) {
+  const id = recordingIdFor(line)
+  return id ? dialogueRecordings[id] : undefined
 }

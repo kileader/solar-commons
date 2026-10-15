@@ -1,9 +1,21 @@
 import { describe, expect, it, vi } from 'vitest'
 import { VoicePlayback } from './VoicePlayback'
 import { defaultAudioPreferences } from './preferences'
-import { dialogueRecordings } from './dialogueAssets'
-import { clues, conclusionChoices, entryChoices, introLines } from '../content/harbor'
+import { dialogueRecordings, recordingFor, recordingIdFor } from './dialogueAssets'
+import {
+  clues,
+  conclusionChoices,
+  entryChoices,
+  introLines,
+  sceneCopy,
+  voiceTestLine,
+  type DialogueLine,
+} from '../content/harbor'
 import { openingShots } from '../content/opening'
+import { museumContent, museumDialogue } from '../content/museum'
+import { exhibitSectionReadings, modelReading, museumReadings } from '../content/museumReadings'
+import { initialSceneState, type ScenePhase } from '../state/scene'
+import script from '../../dialogue/script.json'
 
 function setup(blocked = false) {
   const clips: HTMLAudioElement[] = []
@@ -34,20 +46,87 @@ function setup(blocked = false) {
 const lines = introLines.slice(0, 2)
 
 describe('supplied dialogue recordings', () => {
-  it('maps all 26 source files to actual harbor or cinematic line IDs', () => {
-    const expected = [
+  it('maps all 94 recordings to exact authored words across every route and optional reading', () => {
+    const authored: DialogueLine[] = [
       ...introLines,
       ...entryChoices.flatMap((choice) => choice.response),
       ...clues.flatMap((clue) => clue.dialogue),
       ...conclusionChoices.flatMap((choice) => choice.ending),
-    ].map((line) => line.id)
-    expected.push(
-      'investigation-false',
-      'investigation-true',
-      ...openingShots.filter((shot) => shot.caption).map((shot) => `opening-${shot.id}`),
-    )
-    expect(Object.keys(dialogueRecordings).sort()).toEqual(expected.sort())
-    expect(expected).toHaveLength(26)
+      voiceTestLine,
+      { id: 'investigation-false', speaker: 'Kite', text: sceneCopy.investigation },
+      { id: 'investigation-true', speaker: 'Kite', text: sceneCopy.synthesis },
+      ...openingShots.flatMap((shot) =>
+        shot.caption ? [{ id: `opening-${shot.id}`, ...shot.caption }] : [],
+      ),
+      ...Object.values(museumReadings),
+      ...museumContent.historicalExhibit.sections.flatMap((_, index) =>
+        exhibitSectionReadings(index),
+      ),
+    ]
+    for (const stage of [0, 1, 2] as const)
+      for (const gate of [false, true]) authored.push(modelReading(stage, gate))
+    for (const phase of [
+      'museum-arrival',
+      'museum-approach',
+      'museum-model-intro',
+      'museum-discovery',
+      'museum-lead-ending',
+    ] as ScenePhase[])
+      for (const endingChoiceId of ['survey', 'handshake'])
+        for (const museumApproach of ['memory', 'signal'] as const)
+          for (const gateOpen of [false, true])
+            for (const usedTideModel of [false, true])
+              for (const museumLeadId of ['stair', 'voices'])
+                authored.push(
+                  ...museumDialogue({
+                    ...initialSceneState,
+                    phase,
+                    endingChoiceId,
+                    museumApproach,
+                    gateOpen,
+                    usedTideModel,
+                    museumLeadId,
+                  }),
+                )
+    const used = new Set<string>()
+    for (const line of authored) {
+      const id = recordingIdFor(line)
+      expect(id, `${line.id}: ${line.text}`).toBeTruthy()
+      expect(recordingFor(line), id).toBeTruthy()
+      const recorded = script.find((clip) => clip.id === id)!
+      expect(recorded.speaker).toBe(line.speaker)
+      expect(recorded.text).toBe(line.text)
+      used.add(id!)
+    }
+    expect([...used].sort()).toEqual(Object.keys(dialogueRecordings).sort())
+    expect(script.map((line) => line.id).sort()).toEqual([...used].sort())
+    expect(used.size).toBe(94)
+  })
+  it('selects the correct discovery performance for the written, closed-gate and open-gate routes', () => {
+    const ids = (patch: Partial<typeof initialSceneState>) =>
+      museumDialogue({ ...initialSceneState, phase: 'museum-discovery', ...patch }).map(
+        recordingIdFor,
+      )
+    expect(ids({ usedTideModel: false })[0]).toBe('museum-discovery-0--v1')
+    expect(ids({ usedTideModel: true, gateOpen: false })[0]).toBe('museum-discovery-0--v2')
+    expect(ids({ usedTideModel: true, gateOpen: true })[0]).toBe('museum-discovery-0--v3')
+    expect(ids({ usedTideModel: false })[1]).toBe('museum-discovery-1--v1')
+    expect(ids({ usedTideModel: true })[1]).toBe('museum-discovery-1--v2')
+    expect(ids({ endingChoiceId: 'survey' })[10]).toBe('museum-discovery-10--v1')
+    expect(ids({ endingChoiceId: 'handshake' })[10]).toBe('museum-discovery-10--v2')
+    expect(ids({ museumApproach: 'memory' })[11]).toBe('museum-discovery-11--v1')
+    expect(ids({ museumApproach: 'signal' })[11]).toBe('museum-discovery-11--v2')
+    const arrival = (endingChoiceId: string) =>
+      museumDialogue({ ...initialSceneState, phase: 'museum-arrival', endingChoiceId })[2]
+    expect(recordingIdFor(arrival('survey'))).toBe('museum-arrival-2--v1')
+    expect(recordingIdFor(arrival('handshake'))).toBe('museum-arrival-2--v2')
+  })
+  it('never plays a recording with changed wording or the wrong speaker, even for a shared runtime ID', () => {
+    expect(recordingFor({ ...introLines[0], text: 'A rewritten line.' })).toBeUndefined()
+    expect(recordingFor({ ...introLines[0], speaker: 'Mara' })).toBeUndefined()
+    expect(
+      recordingFor({ id: 'museum-discovery-0', speaker: 'Mara', text: 'Another account.' }),
+    ).toBeUndefined()
   })
   it('plays recordings without installed device voices and signals completion only after every clip', () => {
     const { player, clips, state, speak } = setup()

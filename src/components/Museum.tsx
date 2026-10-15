@@ -4,8 +4,10 @@ import { floodSnapshot, floodStages, museumContent, type FloodStage } from '../c
 import type { SceneEvent, SceneState } from '../state/scene'
 import { Modal } from './Modal'
 import './museum.css'
+import { exhibitSectionReadings, modelReading, museumReadings } from '../content/museumReadings'
+import { ReadAloudButton, type ReadAloudControls } from './ReadAloudButton'
 
-export function RefugeRecord() {
+export function RefugeRecord({ reading }: { reading: ReadAloudControls }) {
   const record = museumContent.refugeRecord
   return (
     <article className="refuge-record" aria-label={record.heading}>
@@ -13,11 +15,25 @@ export function RefugeRecord() {
       <h2>{record.designation}</h2>
       <p>{record.text}</p>
       <small>{record.caption}</small>
+      <ReadAloudButton
+        reading={reading}
+        id="refuge"
+        lines={[museumReadings.refuge]}
+        label="the handover record"
+      />
     </article>
   )
 }
 
-export function HistoryExhibit({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function HistoryExhibit({
+  open,
+  onClose,
+  reading,
+}: {
+  open: boolean
+  onClose: () => void
+  reading: ReadAloudControls
+}) {
   const exhibit = museumContent.historicalExhibit
   return (
     <Modal open={open} onClose={onClose} titleId="exhibit-title" className="history-exhibit">
@@ -36,10 +52,22 @@ export function HistoryExhibit({ open, onClose }: { open: boolean; onClose: () =
       />
       <h2 id="exhibit-title">{exhibit.title}</h2>
       <p className="exhibit-introduction">{exhibit.introduction}</p>
+      <ReadAloudButton
+        reading={reading}
+        id="history-introduction"
+        lines={[museumReadings.introduction]}
+        label="the exhibit introduction"
+      />
       <div className="exhibit-text">
-        {exhibit.sections.map((section) => (
+        {exhibit.sections.map((section, index) => (
           <section key={section.title}>
             <h3>{section.title}</h3>
+            <ReadAloudButton
+              reading={reading}
+              id={`history-${index}`}
+              lines={exhibitSectionReadings(index)}
+              label={section.title}
+            />
             {section.paragraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
@@ -47,6 +75,12 @@ export function HistoryExhibit({ open, onClose }: { open: boolean; onClose: () =
         ))}
       </div>
       <p className="exhibit-source">{exhibit.source}</p>
+      <ReadAloudButton
+        reading={reading}
+        id="history-source"
+        lines={[museumReadings.source]}
+        label="the exhibit sources"
+      />
       <button className="modal-done" onClick={onClose}>
         Return to the gallery <ArrowRight size={18} />
       </button>
@@ -58,10 +92,12 @@ export function FloodReconstruction({
   state,
   perform,
   onReadHistory,
+  reading,
 }: {
   state: SceneState
   perform: (event: SceneEvent) => void
   onReadHistory: () => void
+  reading: ReadAloudControls
 }) {
   const snapshot = floodSnapshot(state.floodStage, state.gateOpen)
   const dawn = state.floodStage === 2
@@ -210,6 +246,12 @@ export function FloodReconstruction({
           </span>
           <h3>{snapshot.title}</h3>
           <p>{snapshot.detail}</p>
+          <ReadAloudButton
+            reading={reading}
+            id={`model-${state.floodStage}-${state.gateOpen}`}
+            lines={[modelReading(state.floodStage, state.gateOpen)]}
+            label="the flood explanation"
+          />
           <button
             className="gate-control"
             disabled={dawn}

@@ -8,7 +8,7 @@ import {
   type AudioPreferences,
 } from '../audio/preferences'
 import type { DialogueLine } from '../content/harbor'
-import { introLines } from '../content/harbor'
+import { voiceTestLine } from '../content/harbor'
 import { recordingFor } from '../audio/dialogueAssets'
 
 export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognitive: boolean) {
@@ -101,10 +101,7 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
   }, [unlock])
   const testVoice = useCallback(() => {
     unlock()
-    speech.current?.say(
-      [introLines.find((line) => line.speaker === 'Kite')!],
-      preferencesRef.current,
-    )
+    speech.current?.say([voiceTestLine], preferencesRef.current)
   }, [unlock])
   const hasVoice =
     lines.some((line) => !!recordingFor(line)) ||

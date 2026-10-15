@@ -27,7 +27,7 @@ Keyboard: **Enter/Space** continues dialogue, **A** toggles Auto, **C** toggles 
 
 The gear opens **Reading**, **Sound**, and **Controls** settings. Auto waits for each voice to finish, then pauses **one second** before continuing (adjustable from 0.5–5 seconds). Unvoiced lines get reading time at the selected pace first. Choices, evidence, optional exhibits, and the flood model wait for player input. Opening a panel or leaving the foreground pauses Auto; Continue and Listen still work. Auto starts off each visit. Text size, reduced motion, timing, reading pace, and sound preferences stay on this device.
 
-Kevin's 26 MP3 recordings in [`dialogue/`](dialogue/README.md) voice all harbor dialogue and the four opening captions. Missing museum recordings leave the text readable; an optional local English device-voice fallback is off by default. Opening dialogue follows its existing timeline, pause, and seek controls.
+Kevin's 94 MP3 recordings in [`dialogue/`](dialogue/README.md) cover the harbor, museum branches, four opening captions, and voice preview. Optional **Listen** buttons narrate the history wall, flood explanations, handover record, and gallery/epilogue descriptions. Reading never chooses an answer or advances the reconstruction. Closing a panel, changing a model control, or pressing Stop ends its narration. An optional local English device-voice fallback remains off by default. Opening dialogue follows its existing timeline, pause, and seek controls.
 
 This is an authored, browser-local story with no backend, telemetry, paid inference, or external messaging. Scene progress lasts for the current visit. Voice playback serves checked-in audio assets; it never calls a TTS provider.
 
