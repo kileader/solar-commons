@@ -822,7 +822,8 @@ body,
     width: 70px;
     height: 74px;
   }
-  .novel .mara-portrait {
+  .novel .mara-portrait,
+  .novel .ilex-portrait {
     width: 70px;
     height: 85px;
     bottom: 0;

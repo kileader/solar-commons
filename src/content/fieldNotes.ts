@@ -1,5 +1,6 @@
 import { clues, sceneCopy } from './harbor'
 import { approachNotes, museumContent } from './museum'
+import { quietIndexApproaches, quietIndexNotes } from './quietIndex'
 import type { SceneState } from '../state/scene'
 import type { ReadingEntry } from '../reading/pagination'
 
@@ -26,6 +27,21 @@ export function fieldNotes(state: SceneState): ReadingEntry[] {
     })
   const lead = museumContent.leads.find((lead) => lead.id === state.museumLeadId)
   if (lead) notes.push({ id: 'lead', title: `Next step: ${lead.label}`, text: lead.detail })
+  if (state.quietIndexApproach) {
+    const approach = quietIndexApproaches.find((choice) => choice.id === state.quietIndexApproach)!
+    const note = quietIndexNotes[state.quietIndexApproach]
+    notes.push({
+      id: `qi-${approach.id}`,
+      title: `${approach.label}: ${note.title}`,
+      text: note.text,
+    })
+  }
+  if (state.quietIndexHeard)
+    notes.push({
+      id: 'qi-excerpt',
+      title: 'The refuge excerpt',
+      text: 'In the surviving excerpt, a speaker asks shore to keep the line open after the ferries have gone: “She can hear you.” Two clicks follow. The speaker, “she,” and any other presence remain unidentified.\n\nRestoration is an intervention, and the documentation is incomplete. The clicks may be switching noise; they do not establish a reply. No link to the present harbor anomaly is confirmed. Donor restrictions permit listening, not copying or transmission.',
+    })
   return notes.length
     ? notes
     : [

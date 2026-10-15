@@ -77,7 +77,7 @@ export function DialogueReader({
           {auto ? <Pause size={16} /> : <Play size={16} />}
           <span>Auto{auto ? ' on' : ''}</span>
         </button>
-        <button className="continue-button" onClick={onAdvance}>
+        <button className="continue-button" onClick={onAdvance} aria-label="Continue">
           <span>Continue</span>
           <span className="continue-arrow">
             <ArrowRight size={23} />

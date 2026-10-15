@@ -6,6 +6,7 @@ export function sceneGuide(state: SceneState) {
     case 'decision':
     case 'museum-approach-choice':
     case 'museum-lead-choice':
+    case 'qi-approach-choice':
       return { title: 'Your choice' }
     case 'investigation':
       return { title: 'Harbor investigation' }
@@ -17,7 +18,19 @@ export function sceneGuide(state: SceneState) {
       return { title: 'Tide reconstruction' }
     case 'museum-complete':
       return { title: state.museumLeadId ? 'Chapter One complete' : 'Museum visit paused' }
+    case 'qi-arrival':
+      return { title: 'Larkhaven after dark' }
+    case 'qi-playback':
+      return { title: 'The refuge excerpt' }
+    case 'qi-complete':
+      return { title: 'Chapter Two complete' }
     default:
-      return { title: state.phase.startsWith('museum-') ? 'Hall of Waters' : 'At the harbor' }
+      return {
+        title: state.phase.startsWith('qi-')
+          ? 'The Quiet Index'
+          : state.phase.startsWith('museum-')
+            ? 'Hall of Waters'
+            : 'At the harbor',
+      }
   }
 }

@@ -6,6 +6,8 @@ import App from '../App'
 import { clues } from '../content/harbor'
 import type { AudioStatus } from '../audio/HarborAudio'
 import recordedScript from '../../dialogue/script.json'
+import { quietIndexApproaches } from '../content/quietIndex'
+import { readingTime } from '../hooks/useAutoAdvance'
 
 // These tests exercise real UI/reducer/controller wiring; sound rendering is browser-verified.
 vi.mock('../audio/HarborAudio', () => ({
@@ -571,9 +573,12 @@ describe('scene input integration', () => {
       'Chapter One complete',
     )
     expect(container.querySelector('.chapter-end-note')!.textContent).toContain(
-      'end of the current playable story',
+      'nocturnal district',
     )
-    expect(container.querySelector('.next-lead')!.textContent).toMatch(/^Next chapter:/)
+    expect(container.querySelector('.next-lead')!.textContent).toMatch(/^Investigation focus:/)
+    expect(container.querySelector('.museum-actions')!.textContent).toContain(
+      'Continue to The Quiet Index',
+    )
     clickButton('.record-button')
     clickButton('[aria-label="Listen to the handover record"]')
     expect(latestClip().src).toContain('refuge-record')
@@ -595,6 +600,174 @@ describe('scene input integration', () => {
       'Next step:',
     )
   })
+
+  it.each(quietIndexApproaches)(
+    'plays the unvoiced $id encounter with real controls and retained notes',
+    (approach) => {
+      const clips = vi.mocked(HTMLMediaElement.prototype.play)
+      const click = (selector: string) => {
+        const button = container.querySelector<HTMLButtonElement>(selector)
+        expect(button, selector).toBeTruthy()
+        act(() => button!.click())
+        tick()
+      }
+      const clickText = (label: string) => {
+        const button = [...container.querySelectorAll<HTMLButtonElement>('button')].find(
+          (button) =>
+            button.textContent?.includes(label) &&
+            (!button.closest('dialog') || button.closest('dialog')!.open),
+        )
+        expect(button, label).toBeTruthy()
+        act(() => button!.click())
+        tick()
+      }
+      const finish = () => {
+        let count = 0
+        while (
+          container.querySelector('.continue-button') ||
+          container.querySelector('main')?.dataset.phase === 'qi-intro-shot'
+        ) {
+          if (++count > 100) throw new Error('UI failed to reach a choice or chapter ending')
+          if (
+            container.querySelector('main')?.dataset.phase === 'qi-intro-shot' &&
+            !container.querySelector('.continue-button')
+          ) {
+            clickText('Skip introduction')
+            continue
+          }
+          click('.continue-button')
+        }
+      }
+      finish()
+      click('.story-choice')
+      finish()
+      for (const clue of clues) {
+        click(`.hotspot-${clue.id}`)
+        click('[aria-label="Close evidence"]')
+      }
+      clickText('Decide together')
+      click('.story-choice')
+      finish()
+      clickText('Visit the Hall of Waters')
+      finish()
+      click('.story-choice')
+      finish()
+      clickText('Follow the written dawn account')
+      finish()
+      click('.story-choice')
+      finish()
+      clickText('Continue to The Quiet Index')
+      expect(container.querySelector('main')?.dataset.phase).toBe('qi-arrival')
+      expect(container.querySelector('h1')?.textContent).toBe('The Quiet Index')
+      expect(container.querySelector('.harbor-background')?.getAttribute('src')).toContain(
+        'nocturnal_canal.webp',
+      )
+      const before = clips.mock.instances.filter(
+        (element) => element instanceof HTMLAudioElement,
+      ).length
+      if (approach.id === 'analysis') {
+        vi.useFakeTimers()
+        try {
+          const delay = readingTime(text()!, 200) + 1000
+          click('.auto-toggle')
+          act(() => vi.advanceTimersByTime(delay - 1))
+          expect(container.querySelector('main')?.dataset.voiceLine).toBe('qi-arrival-01')
+          act(() => vi.advanceTimersByTime(1))
+          expect(container.querySelector('main')?.dataset.voiceLine).toBe('qi-arrival-02')
+          click('.auto-toggle')
+        } finally {
+          vi.useRealTimers()
+        }
+      }
+      let count = 0
+      while (!container.querySelector('.ilex-portrait')) {
+        if (++count > 12) throw new Error('Ilex portrait did not appear')
+        if (container.querySelector('main')?.dataset.phase === 'qi-intro-shot') {
+          connect()
+          press(1)
+          expect(container.querySelector('main')?.dataset.voiceLine).toBe('qi-intro-01')
+          tick(3000)
+          expect(container.querySelector('main')?.dataset.voiceLine).toBe('qi-intro-01')
+          continue
+        }
+        click('.continue-button')
+      }
+      expect(container.querySelector('.ilex-portrait')?.getAttribute('src')).toContain(
+        'ilex_dialogue_avatar.png',
+      )
+      expect(container.querySelector('.harbor-background')?.getAttribute('src')).toContain(
+        'quiet_index.webp',
+      )
+      expect(container.querySelector('.speaker-name')?.textContent).toBe('Ilex')
+      finish()
+      expect(container.querySelectorAll('.story-choice')).toHaveLength(3)
+      expect(container.querySelector('.archive-waveform')?.textContent).toContain(
+        'Illustrative waveform',
+      )
+      vi.useFakeTimers()
+      try {
+        act(() =>
+          document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true })),
+        )
+        act(() => vi.advanceTimersByTime(60000))
+        expect(container.querySelector('main')?.dataset.phase).toBe('qi-approach-choice')
+        act(() =>
+          document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true })),
+        )
+      } finally {
+        vi.useRealTimers()
+      }
+      const index = quietIndexApproaches.indexOf(approach)
+      if (approach.id === 'empathy') {
+        connect()
+        act(() => container.querySelector<HTMLButtonElement>('.story-choice')!.focus())
+        press(15)
+        expect(document.activeElement?.textContent).toContain('Empathy')
+        press(0)
+      } else {
+        act(() =>
+          document.body.dispatchEvent(
+            new KeyboardEvent('keydown', { key: String(index + 1), bubbles: true }),
+          ),
+        )
+      }
+      expect(container.querySelector('main')?.dataset.voiceLine).toBe(`qi-${approach.id}-01`)
+      while (container.querySelector('main')?.dataset.voiceLine !== 'qi-play-04')
+        click('.continue-button')
+      expect(container.querySelector('.speaker-name')?.textContent).toBe(
+        'Unknown speaker (recording)',
+      )
+      expect(container.querySelector('.companion-portrait')).toBeNull()
+      expect(text()).toContain('She can hear you')
+      expect(container.querySelector<HTMLButtonElement>('.voice-replay')!.disabled).toBe(true)
+      expect(
+        clips.mock.instances.filter((element) => element instanceof HTMLAudioElement),
+      ).toHaveLength(before)
+      finish()
+      expect(container.querySelector('main')?.dataset.phase).toBe('qi-complete')
+      expect(container.querySelector('.chapter-complete-badge')?.textContent).toContain(
+        'Chapter Two complete',
+      )
+      expect(container.querySelector('.quiet-index-summary')?.textContent).toContain(
+        `Your approach: ${approach.label}`,
+      )
+      expect(container.querySelector('.next-lead')?.textContent).toContain(
+        'Follow the listening line.',
+      )
+      clickText('Review field notes')
+      const options = [...container.querySelectorAll<HTMLOptionElement>('dialog[open] option')].map(
+        (option) => option.value,
+      )
+      expect(options).toContain('approach')
+      expect(options).toContain(`qi-${approach.id}`)
+      expect(options).toContain('qi-excerpt')
+      click('[aria-label="Close field notes"]')
+      clickText('Revisit the Hall of Waters')
+      expect(container.querySelector('main')?.dataset.phase).toBe('museum-complete')
+      clickText('Continue to The Quiet Index')
+      expect(container.querySelector('main')?.dataset.phase).toBe('qi-arrival')
+    },
+  )
 
   it('advances exactly one real dialogue line while A is held', () => {
     connect()

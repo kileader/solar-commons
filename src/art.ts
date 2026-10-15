@@ -16,3 +16,11 @@ export const museumArt = {
   exhibit: `${import.meta.env.BASE_URL}art/museum/03_flood_exhibit.webp`,
   model: `${import.meta.env.BASE_URL}art/museum/05_city_scale_model.webp`,
 }
+
+export const quietIndexArt = {
+  canal: `${import.meta.env.BASE_URL}art/quiet-index/nocturnal_canal.webp`,
+  interior: `${import.meta.env.BASE_URL}art/quiet-index/quiet_index.webp`,
+  ilex: `${import.meta.env.BASE_URL}art/quiet-index/ilex_dialogue_avatar.png`,
+  introPoster: `${import.meta.env.BASE_URL}art/quiet-index/ilex-intro-poster.webp`,
+  introVideo: `${import.meta.env.BASE_URL}media/quiet-index/ilex-intro.mp4`,
+}

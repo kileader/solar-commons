@@ -683,7 +683,8 @@ button {
   opacity: 0.6;
   margin-top: 7px;
 }
-.mara-portrait {
+.mara-portrait,
+.ilex-portrait {
   width: 181px;
   height: 219px;
   object-fit: contain;
@@ -1629,7 +1630,8 @@ button {
   .portrait-caption {
     display: none;
   }
-  .mara-portrait {
+  .mara-portrait,
+  .ilex-portrait {
     width: 108px;
     height: 138px;
     bottom: 0;

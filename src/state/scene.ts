@@ -6,6 +6,11 @@ import {
   type DialogueLine,
 } from '../content/harbor'
 import { museumApproaches, museumContent, museumDialogue, type FloodStage } from '../content/museum'
+import {
+  quietIndexApproaches,
+  quietIndexDialogue,
+  type QuietIndexApproach,
+} from '../content/quietIndex'
 
 export type ScenePhase =
   | 'intro'
@@ -25,6 +30,15 @@ export type ScenePhase =
   | 'museum-complete'
   | 'museum-approach-choice'
   | 'museum-approach'
+  | 'qi-arrival'
+  | 'qi-intro-shot'
+  | 'qi-intro'
+  | 'qi-record'
+  | 'qi-approach-choice'
+  | 'qi-approach'
+  | 'qi-playback'
+  | 'qi-ending'
+  | 'qi-complete'
 
 export interface SceneState {
   phase: ScenePhase
@@ -41,6 +55,8 @@ export interface SceneState {
   museumLeadId: string | null
   museumApproach: 'memory' | 'signal' | null
   usedTideModel: boolean
+  quietIndexApproach: QuietIndexApproach | null
+  quietIndexHeard: boolean
 }
 
 export type SceneEvent =
@@ -62,6 +78,11 @@ export type SceneEvent =
   | { type: 'CHOOSE_LEAD'; id: string }
   | { type: 'CHOOSE_MUSEUM_APPROACH'; id: string }
   | { type: 'READ_HANDOVER' }
+  | { type: 'VISIT_QUIET_INDEX' }
+  | { type: 'FINISH_ILEX_INTRO' }
+  | { type: 'CHOOSE_QUIET_INDEX_APPROACH'; id: string }
+  | { type: 'REPLAY_QUIET_INDEX' }
+  | { type: 'RETURN_TO_MUSEUM' }
 
 export const initialSceneState: SceneState = {
   phase: 'intro',
@@ -78,6 +99,8 @@ export const initialSceneState: SceneState = {
   museumLeadId: null,
   museumApproach: null,
   usedTideModel: false,
+  quietIndexApproach: null,
+  quietIndexHeard: false,
 }
 
 function dialogueForState(state: SceneState): readonly DialogueLine[] {
@@ -89,7 +112,7 @@ function dialogueForState(state: SceneState): readonly DialogueLine[] {
     case 'ending':
       return conclusionChoices.find((choice) => choice.id === state.endingChoiceId)?.ending ?? []
     default:
-      return museumDialogue(state)
+      return state.phase.startsWith('qi-') ? quietIndexDialogue(state) : museumDialogue(state)
   }
 }
 
@@ -111,6 +134,12 @@ const afterDialogue: Partial<Record<ScenePhase, ScenePhase>> = {
   'museum-model-intro': 'museum-model',
   'museum-discovery': 'museum-lead-choice',
   'museum-lead-ending': 'museum-complete',
+  'qi-arrival': 'qi-intro-shot',
+  'qi-intro': 'qi-record',
+  'qi-record': 'qi-approach-choice',
+  'qi-approach': 'qi-playback',
+  'qi-playback': 'qi-ending',
+  'qi-ending': 'qi-complete',
 }
 
 export function sceneReducer(state: SceneState, event: SceneEvent): SceneState {
@@ -123,7 +152,12 @@ export function sceneReducer(state: SceneState, event: SceneEvent): SceneState {
       }
 
       const nextPhase = afterDialogue[state.phase] ?? state.phase
-      return { ...state, phase: nextPhase, lineIndex: 0 }
+      return {
+        ...state,
+        phase: nextPhase,
+        lineIndex: 0,
+        quietIndexHeard: state.quietIndexHeard || state.phase === 'qi-playback',
+      }
     }
     case 'CHOOSE_ENTRY': {
       if (state.phase !== 'entry-choice') return state
@@ -211,6 +245,29 @@ export function sceneReducer(state: SceneState, event: SceneEvent): SceneState {
         phase: 'museum-discovery',
         lineIndex: 0,
       }
+    case 'VISIT_QUIET_INDEX':
+      if (
+        state.phase !== 'museum-complete' ||
+        !state.discovered ||
+        !museumContent.leads.some((lead) => lead.id === state.museumLeadId)
+      )
+        return state
+      return { ...state, phase: 'qi-arrival', lineIndex: 0 }
+    case 'CHOOSE_QUIET_INDEX_APPROACH': {
+      if (state.phase !== 'qi-approach-choice') return state
+      const approach = quietIndexApproaches.find((choice) => choice.id === event.id)
+      if (!approach) return state
+      return { ...state, phase: 'qi-approach', lineIndex: 0, quietIndexApproach: approach.id }
+    }
+    case 'FINISH_ILEX_INTRO':
+      if (state.phase !== 'qi-intro-shot') return state
+      return { ...state, phase: 'qi-intro', lineIndex: 0 }
+    case 'REPLAY_QUIET_INDEX':
+      if (state.phase !== 'qi-complete') return state
+      return { ...state, phase: 'qi-arrival', lineIndex: 0 }
+    case 'RETURN_TO_MUSEUM':
+      if (state.phase !== 'qi-complete') return state
+      return { ...state, phase: 'museum-complete', lineIndex: 0 }
     default:
       return state
   }

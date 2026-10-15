@@ -222,7 +222,7 @@ export function ControllerSettings({
             <kbd>C</kbd> Perception <kbd>J</kbd> Field notes
           </p>
           <p>
-            <kbd>1</kbd> <kbd>2</kbd> Choose <kbd>Esc</kbd> Close a panel
+            <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> Choose <kbd>Esc</kbd> Close a panel
           </p>
           <p>
             Scroll long voice passages with the wheel or touch. Auto scrolls for you. Back and Next

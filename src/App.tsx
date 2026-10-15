@@ -13,7 +13,10 @@ import {
   VolumeX,
   Volume2,
 } from 'lucide-react'
-import { characterArt, harborArt, museumArt } from './art'
+import { characterArt, harborArt, museumArt, quietIndexArt } from './art'
+import { quietIndexApproaches } from './content/quietIndex'
+import { ArchiveWaveform, QuietIndexCompletion } from './components/QuietIndex'
+import { IlexIntroduction } from './components/IlexIntroduction'
 import { museumApproaches, museumContent, floodSnapshot, type FloodStage } from './content/museum'
 import { FloodReconstruction, HistoryExhibit } from './components/Museum'
 import { ReadAloudButton, type ReadAloudControls } from './components/ReadAloudButton'
@@ -87,11 +90,14 @@ export default function App() {
     [clueVoiceId],
   )
   const inMuseum = state.phase.startsWith('museum-')
+  const inQuietIndex = state.phase.startsWith('qi-')
+  const quietIndexComplete = state.phase === 'qi-complete'
   const isChoice = [
     'entry-choice',
     'decision',
     'museum-lead-choice',
     'museum-approach-choice',
+    'qi-approach-choice',
   ].includes(state.phase)
   const investigated = canConclude(state)
   const investigationLine = useMemo<DialogueLine>(
@@ -122,7 +128,9 @@ export default function App() {
         ? museumContent.leads
         : state.phase === 'museum-approach-choice'
           ? museumApproaches
-          : conclusionChoices
+          : state.phase === 'qi-approach-choice'
+            ? quietIndexApproaches
+            : conclusionChoices
   const choiceEvent =
     state.phase === 'entry-choice'
       ? 'CHOOSE_ENTRY'
@@ -130,7 +138,9 @@ export default function App() {
         ? 'CHOOSE_LEAD'
         : state.phase === 'museum-approach-choice'
           ? 'CHOOSE_MUSEUM_APPROACH'
-          : 'CHOOSE_ENDING'
+          : state.phase === 'qi-approach-choice'
+            ? 'CHOOSE_QUIET_INDEX_APPROACH'
+            : 'CHOOSE_ENDING'
   const museumLead = museumContent.leads.find((lead) => lead.id === state.museumLeadId)
   const museumBackground =
     state.phase === 'museum-arrival' && state.lineIndex === 0
@@ -144,6 +154,17 @@ export default function App() {
     state.discovered &&
     ((state.phase === 'museum-discovery' && state.lineIndex >= 6) ||
       state.phase === 'museum-complete')
+  const quietIndexOutside =
+    state.phase === 'qi-arrival' ||
+    quietIndexComplete ||
+    (state.phase === 'qi-ending' && currentLine?.id === 'qi-end-04')
+  const background = inQuietIndex
+    ? quietIndexOutside
+      ? quietIndexArt.canal
+      : quietIndexArt.interior
+    : inMuseum
+      ? museumBackground
+      : harborArt.background
 
   const speechLines = useMemo<readonly DialogueLine[]>(() => {
     if (readAloud) return readAloud.lines
@@ -210,6 +231,7 @@ export default function App() {
       case 'CHOOSE_ENDING':
       case 'CHOOSE_LEAD':
       case 'CHOOSE_MUSEUM_APPROACH':
+      case 'CHOOSE_QUIET_INDEX_APPROACH':
         cue = 'choice'
         break
       case 'TOGGLE_PERCEPTION':
@@ -236,6 +258,8 @@ export default function App() {
         cue = 'discovery'
         break
       case 'VISIT_MUSEUM':
+      case 'VISIT_QUIET_INDEX':
+      case 'REPLAY_QUIET_INDEX':
       case 'ENTER_MODEL':
         cue = 'open'
         break
@@ -248,6 +272,7 @@ export default function App() {
         cue = 'archive'
         break
       case 'LEAVE_MODEL':
+      case 'RETURN_TO_MUSEUM':
         cue = 'back'
         break
     }
@@ -274,6 +299,7 @@ export default function App() {
 
   const controller = useGamepad(
     (action) => {
+      if (state.phase === 'qi-intro-shot') return
       setUsingGamepad(true)
       const modal = document.querySelector<HTMLDialogElement>('dialog[open]')
       if (action === 'back') {
@@ -345,6 +371,7 @@ export default function App() {
 
   useEffect(() => {
     const keydown = (event: KeyboardEvent) => {
+      if (state.phase === 'qi-intro-shot') return
       if (
         event.altKey ||
         event.ctrlKey ||
@@ -375,7 +402,7 @@ export default function App() {
         event.preventDefault()
         document.querySelector<HTMLButtonElement>('.continue-button')?.click()
       }
-      if ((event.key === '1' || event.key === '2') && isChoice) {
+      if (/^[1-3]$/.test(event.key) && isChoice && choices[Number(event.key) - 1]) {
         event.preventDefault()
         perform({
           type: choiceEvent,
@@ -401,7 +428,7 @@ export default function App() {
           ? '.replay-button'
           : state.phase === 'museum-model'
             ? '.model-moment'
-            : ['museum-explore', 'museum-complete'].includes(state.phase)
+            : ['museum-explore', 'museum-complete', 'qi-complete'].includes(state.phase)
               ? '.museum-actions button'
               : '.continue-button'
     const frame = requestAnimationFrame(() => {
@@ -421,9 +448,17 @@ export default function App() {
     }
   }
 
+  if (state.phase === 'qi-intro-shot')
+    return (
+      <IlexIntroduction
+        reduced={motion.reduced}
+        onComplete={() => perform({ type: 'FINISH_ILEX_INTRO' })}
+      />
+    )
+
   return (
     <main
-      className={`novel ${inMuseum ? 'museum' : ''} ${isChoice ? 'is-choice' : ''} ${state.phase === 'museum-model' ? 'museum-model' : ''} ${state.perception ? 'cognitive' : ''} ${activeClue ? 'is-inspecting' : ''} ${reading.largeText ? 'large-text' : ''}`}
+      className={`novel ${inMuseum ? 'museum' : ''} ${inQuietIndex ? 'quiet-index' : ''} ${isChoice ? 'is-choice' : ''} ${state.phase === 'museum-model' ? 'museum-model' : ''} ${state.perception ? 'cognitive' : ''} ${activeClue ? 'is-inspecting' : ''} ${reading.largeText ? 'large-text' : ''}`}
       data-phase={state.phase}
       data-motion={motion.reduced ? 'reduced' : 'full'}
       data-audio-state={audio.status.state}
@@ -449,7 +484,7 @@ export default function App() {
           event.isTrusted &&
           !audio.preferences.muted &&
           !(event.target as HTMLElement).closest('.sound-toggle') &&
-          ['Enter', ' ', 'c', 'C', '1', '2', 'j', 'J'].includes(event.key)
+          ['Enter', ' ', 'c', 'C', '1', '2', '3', 'j', 'J'].includes(event.key)
         )
           audio.unlock()
       }}
@@ -488,15 +523,19 @@ export default function App() {
         className="scene-art"
         role="img"
         aria-label={
-          inMuseum
-            ? 'Hall of Waters: sunlit galleries, planted glass roofs, and a brass model of the city'
-            : harborArt.description
+          inQuietIndex
+            ? quietIndexOutside
+              ? 'Larkhaven after dark: amber lanterns and gardens reflected in a nocturnal canal'
+              : 'The Quiet Index: a lamplit restoration studio with protected recordings and warm electronics'
+            : inMuseum
+              ? 'Hall of Waters: sunlit galleries, planted glass roofs, and a brass model of the city'
+              : harborArt.description
         }
       >
         <img
           className="harbor-background"
-          key={inMuseum ? museumBackground : 'harbor'}
-          src={inMuseum ? museumBackground : harborArt.background}
+          key={background}
+          src={background}
           alt=""
           style={{ objectPosition: harborArt.focalPoint }}
           fetchPriority="high"
@@ -569,15 +608,33 @@ export default function App() {
       <section
         id="scene"
         className="scene-view"
-        aria-label={inMuseum ? 'Hall of Waters scene' : 'Harbor scene'}
+        aria-label={
+          inQuietIndex
+            ? 'The Quiet Index scene'
+            : inMuseum
+              ? 'Hall of Waters scene'
+              : 'Harbor scene'
+        }
       >
         <div className="location-heading">
           <div className="eyebrow">
             <span />
-            CHAPTER ONE
+            {inQuietIndex ? 'CHAPTER TWO' : 'CHAPTER ONE'}
           </div>
-          <h1>{inMuseum ? museumContent.museumCopy.title : sceneTitle}</h1>
-          <p>{inMuseum ? museumContent.museumCopy.subtitle : sceneSubtitle}</p>
+          <h1>
+            {inQuietIndex
+              ? 'The Quiet Index'
+              : inMuseum
+                ? museumContent.museumCopy.title
+                : sceneTitle}
+          </h1>
+          <p>
+            {inQuietIndex
+              ? 'Larkhaven · after dark'
+              : inMuseum
+                ? museumContent.museumCopy.subtitle
+                : sceneSubtitle}
+          </p>
         </div>
         <button
           className="perception-toggle"
@@ -593,7 +650,13 @@ export default function App() {
           </span>
           <i className="toggle-indicator" />
         </button>
-        {!inMuseum && <Perception active={state.perception} />}
+        {!inMuseum && !inQuietIndex && <Perception active={state.perception} />}
+        {inQuietIndex && state.perception && (
+          <p className="museum-attention">Shared attention · public presence only</p>
+        )}
+        {['qi-record', 'qi-approach-choice', 'qi-approach', 'qi-playback'].includes(
+          state.phase,
+        ) && <ArchiveWaveform playback={state.phase === 'qi-playback'} />}
         {inMuseum && state.perception && state.phase !== 'museum-model' && (
           <p className="museum-attention">Shared attention · the worn brass rim</p>
         )}
@@ -613,6 +676,7 @@ export default function App() {
           />
         )}
         {!inMuseum &&
+          !inQuietIndex &&
           state.endingChoiceId === 'handshake' &&
           (state.phase === 'complete' || (state.phase === 'ending' && state.lineIndex >= 1)) && (
             <div className="optical-emission" aria-hidden="true">
@@ -648,10 +712,10 @@ export default function App() {
 
       {state.phase !== 'museum-model' && (
         <section
-          className={`dialogue-stage ${isChoice ? 'has-choices' : ''} ${speaker === 'Narrator' ? 'is-narration' : ''} ${chapterComplete ? 'chapter-ending' : ''}`}
+          className={`dialogue-stage ${isChoice ? 'has-choices' : ''} ${speaker === 'Narrator' || speaker === 'Unknown speaker (recording)' ? 'is-narration' : ''} ${chapterComplete || quietIndexComplete ? 'chapter-ending' : ''}`}
           aria-label="Story and player choices"
         >
-          {(speaker === 'Mara' || speaker === 'Kite') && (
+          {(speaker === 'Mara' || speaker === 'Kite' || speaker === 'Ilex') && (
             <div
               className={`companion-portrait speaker-${speaker.toLowerCase()} ${audio.voiceState === 'speaking' && !readAloud ? 'is-speaking' : ''}`}
             >
@@ -663,10 +727,16 @@ export default function App() {
                   src={characterArt.mara}
                   alt="Mara, a coastal researcher with dark curly hair, an ivory jacket, and a mint-lit temple module"
                 />
+              ) : speaker === 'Ilex' ? (
+                <img
+                  className="ilex-portrait"
+                  src={quietIndexArt.ilex}
+                  alt="Ilex Vale, an androgynous archivist with an amber augmented eye, exposed cranial lattice, and a white-and-brass prosthetic hand"
+                />
               ) : (
                 <Kite active={state.perception} compact />
               )}
-              <span className="portrait-caption">{speaker === 'Mara' ? 'MARA' : 'KITE'}</span>
+              <span className="portrait-caption">{speaker.toUpperCase()}</span>
             </div>
           )}
           <div className="dialogue-card">
@@ -675,9 +745,10 @@ export default function App() {
                 <i />
                 {speaker === 'Narrator' ? 'NARRATION' : (speaker ?? 'YOUR CHOICE')}
               </span>
-              {chapterComplete ? (
+              {chapterComplete || quietIndexComplete ? (
                 <strong className="chapter-complete-badge" role="status">
-                  <Check size={16} aria-hidden="true" /> Chapter One complete
+                  <Check size={16} aria-hidden="true" />{' '}
+                  {quietIndexComplete ? 'Chapter Two complete' : 'Chapter One complete'}
                 </strong>
               ) : (
                 <span className="scene-progress">
@@ -712,7 +783,9 @@ export default function App() {
                       ? museumContent.museumCopy.leadPrompt
                       : state.phase === 'museum-approach-choice'
                         ? 'What catches your attention?'
-                        : sceneCopy.decisionPrompt}
+                        : state.phase === 'qi-approach-choice'
+                          ? 'How does Mara approach Ilex?'
+                          : sceneCopy.decisionPrompt}
                 </p>
                 <div className="choice-list">
                   {choices.map((choice, index) => (
@@ -836,7 +909,7 @@ export default function App() {
               <div className="museum-summary">
                 {chapterComplete && (
                   <p className="chapter-end-note">
-                    You’ve reached the end of the current playable story.
+                    The listening line leads into Larkhaven’s nocturnal district.
                   </p>
                 )}
                 <div className="epilogue-heading">
@@ -858,9 +931,17 @@ export default function App() {
                   text={chapterEpilogue.text}
                 />
                 {museumLead && (
-                  <strong className="next-lead">Next chapter: {museumLead.label}</strong>
+                  <strong className="next-lead">Investigation focus: {museumLead.label}</strong>
                 )}
                 <div className="museum-actions">
+                  {chapterComplete && (
+                    <button
+                      className="replay-button"
+                      onClick={() => perform({ type: 'VISIT_QUIET_INDEX' })}
+                    >
+                      Continue to The Quiet Index <ArrowRight size={17} />
+                    </button>
+                  )}
                   <button
                     className="replay-button"
                     onClick={() => perform({ type: 'ENTER_MODEL' })}
@@ -886,6 +967,14 @@ export default function App() {
                   </button>
                 </div>
               </div>
+            )}
+            {quietIndexComplete && (
+              <QuietIndexCompletion
+                state={state}
+                onNotes={() => openPanel('journal')}
+                onReplay={() => perform({ type: 'REPLAY_QUIET_INDEX' })}
+                onMuseum={() => perform({ type: 'RETURN_TO_MUSEUM' })}
+              />
             )}
           </div>
         </section>

@@ -1,4 +1,4 @@
-export type Speaker = 'Kite' | 'Mara' | 'Narrator'
+export type Speaker = 'Kite' | 'Mara' | 'Narrator' | 'Ilex' | 'Unknown speaker (recording)'
 
 export interface DialogueLine {
   id: string
