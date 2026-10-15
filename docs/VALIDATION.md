@@ -1,5 +1,11 @@
 # Validation
 
+## Chapter ending and speaker attribution — October 15, 2026
+
+- The completed museum route shows a visible **Chapter One complete** badge and an explicit end-of-playable-story notice. The selected lead is labeled for the next chapter. Leaving the model before finishing the discovery is labeled **Museum visit paused**, while preserving the existing revisit and written-account routes.
+- Summary speakers come from their authored passage metadata instead of falling back to Kite. The gallery, epilogue, and harbor summary show NARRATION without a character portrait; choices show YOUR CHOICE. Character dialogue retains its authored Mara or Kite presentation. All **132 tests** and the production build pass, including checks of every dialogue line reached by both museum UI journeys against the recorded script, summary attribution, and completion versus early departure. No recordings or story wording changed.
+- Browser checks at 1280 × 720, 320 × 568, and 640 × 360 confirm the ending notice, narrator label, Listen control, and revisit actions remain visible without document scrolling. The larger-text phone setting also retains its controls and scrollable epilogue. Optional epilogue playback selects `museum-completion`; no browser warnings or errors were observed.
+
 ## Visible voice passages and Auto scrolling — October 15, 2026
 
 - Each recording keeps its full text in an internally scrollable passage. Different recordings have different pages. Evidence voices start only after their character’s page appears; sensor and uncertainty pages stay silent. Optional historical headings and paragraphs have separate Listen controls. Auto scrolls by media time, then shows the next passage after the configured gap; it never selects a story choice or operates the model.

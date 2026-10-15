@@ -16,7 +16,7 @@ export function sceneGuide(state: SceneState) {
     case 'museum-model':
       return { title: 'Tide reconstruction' }
     case 'museum-complete':
-      return { title: 'Chapter One complete' }
+      return { title: state.museumLeadId ? 'Chapter One complete' : 'Museum visit paused' }
     default:
       return { title: state.phase.startsWith('museum-') ? 'Hall of Waters' : 'At the harbor' }
   }

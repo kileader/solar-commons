@@ -85,6 +85,22 @@ body,
   margin: 0 0 10px;
   padding: 0;
 }
+.novel .chapter-ending .dialogue-topline {
+  flex-basis: 30px;
+}
+.chapter-complete-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  border: 1px solid #e8cb8d99;
+  border-radius: 4px;
+  background: #ead39b20;
+  color: #fff0bf;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
 .novel .dialogue-body {
   flex: 1;
   min-height: 0;
@@ -209,6 +225,25 @@ body,
   flex-shrink: 0;
   margin: 0;
   font-size: 13px;
+}
+.novel .museum-summary > .chapter-end-note {
+  flex-shrink: 0;
+  margin: 0;
+  font:
+    13px/1.4 'Trebuchet MS',
+    Arial,
+    sans-serif;
+  color: #f5dfad;
+}
+.epilogue-heading {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.epilogue-heading h2 {
+  flex: 1;
+  min-width: 0;
 }
 .novel .museum-summary > .eyebrow {
   display: none;
@@ -805,6 +840,17 @@ body,
   .novel .dialogue-buttons {
     gap: 6px;
   }
+  .chapter-complete-badge {
+    gap: 4px;
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+  .novel .chapter-ending .dialogue-topline {
+    gap: 8px;
+  }
+  .novel .epilogue-heading .reading-button > span {
+    display: none;
+  }
   .novel .continue-button > span:first-child {
     font-size: 14px;
   }
@@ -1001,6 +1047,12 @@ body,
   }
   .novel .museum-summary {
     gap: 6px;
+  }
+  .novel .chapter-ending .dialogue-topline {
+    flex-basis: 24px;
+  }
+  .novel .museum-summary > .chapter-end-note {
+    font-size: 11px;
   }
   .novel[data-phase='museum-explore'],
   .novel[data-phase='museum-complete'] {

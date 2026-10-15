@@ -7,10 +7,10 @@ The existing harbor loop remains intact: three evidence readings, two entry choi
 1. Exterior arrival and a short exchange inside the main hall. Choose a small illustrated branch: walk the flood line with Mara and learn her grandmother’s unfinished account, or trace the listening line with Kite and learn how a local switch could hold it open from below. Each reveals different information and develops a different conversation; both rejoin in the gallery. The choice changes a later interpretation and stays in the notes.
 2. Optional history wall: roughly 600 words in a reader, available again at the chapter ending. Each recorded heading or paragraph has a separate page with its complete text, scrollable if needed. Choose a passage or turn pages; Listen starts only that passage, and Auto can scroll and continue through subsequent readings. No questions, registration, or completion gate.
 3. One optional city-model screen, with three historical snapshots and one gate toggle. Players see why closing the sea gates traps runoff and opening them admits the tide. Dawn explains local pump control and the shared evacuation response. A written dawn account reaches the same discovery without operating the model.
-4. At dawn, an inspectable lamp reproduces an unexplained observation from the handover log. It remains lit in the lower refuge after the last ferry clears. The player can leave without inspecting it, then revisit from the ending.
+4. At dawn, an inspectable lamp reproduces an unexplained observation from the handover log. It remains lit in the lower refuge after the last ferry clears. The player can leave without inspecting it, then revisit from the paused museum visit.
 5. Inspecting it reveals a maintenance-drum record, a possible correspondence with the six sonar ribs, and an east service stair. Choose to follow the listening line through a cooperative survey request or seek the missing testimony. The request is fictional story state, not an external message.
 
-The ending records a specific next step. That next investigation is outside this slice.
+The ending explicitly marks Chapter One complete and records a specific lead for the next chapter. That next investigation is outside this slice. Leaving early pauses the visit without claiming chapter completion.
 
 ## Provisional history and mystery boundaries
 

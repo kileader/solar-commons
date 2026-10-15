@@ -86,7 +86,6 @@ export default function App() {
     },
     [clueVoiceId],
   )
-  const speaker = currentLine?.speaker ?? 'Kite'
   const inMuseum = state.phase.startsWith('museum-')
   const isChoice = [
     'entry-choice',
@@ -95,6 +94,26 @@ export default function App() {
     'museum-approach-choice',
   ].includes(state.phase)
   const investigated = canConclude(state)
+  const investigationLine = useMemo<DialogueLine>(
+    () => ({
+      id: `investigation-${investigated}`,
+      speaker: 'Kite',
+      text: investigated ? sceneCopy.synthesis : sceneCopy.investigation,
+    }),
+    [investigated],
+  )
+  const chapterEpilogue = state.discovered ? museumReadings.completion : museumReadings.leaveEarly
+  const displayedLine =
+    currentLine ??
+    (state.phase === 'investigation'
+      ? investigationLine
+      : state.phase === 'museum-explore'
+        ? museumReadings.gallery
+        : state.phase === 'museum-complete'
+          ? chapterEpilogue
+          : null)
+  const speaker = displayedLine?.speaker ?? (isChoice ? null : 'Narrator')
+  const chapterComplete = state.phase === 'museum-complete' && state.museumLeadId !== null
   const guide = sceneGuide(state)
   const choices =
     state.phase === 'entry-choice'
@@ -133,16 +152,9 @@ export default function App() {
         ? [evidenceVoice.line]
         : []
     if (currentLine) return [currentLine]
-    if (state.phase === 'investigation')
-      return [
-        {
-          id: `investigation-${investigated}`,
-          speaker: 'Kite',
-          text: investigated ? sceneCopy.synthesis : sceneCopy.investigation,
-        },
-      ]
+    if (state.phase === 'investigation') return [investigationLine]
     return []
-  }, [readAloud, activeClue, evidenceVoice, currentLine, state.phase, investigated])
+  }, [readAloud, activeClue, evidenceVoice, currentLine, state.phase, investigationLine])
   const audio = useAudio(
     speechLines,
     panel !== null && !(['history', 'record', 'model-account'].includes(panel) && readAloud),
@@ -636,10 +648,10 @@ export default function App() {
 
       {state.phase !== 'museum-model' && (
         <section
-          className={`dialogue-stage ${isChoice ? 'has-choices' : ''} ${speaker === 'Narrator' ? 'is-narration' : ''}`}
+          className={`dialogue-stage ${isChoice ? 'has-choices' : ''} ${speaker === 'Narrator' ? 'is-narration' : ''} ${chapterComplete ? 'chapter-ending' : ''}`}
           aria-label="Story and player choices"
         >
-          {speaker !== 'Narrator' && (
+          {(speaker === 'Mara' || speaker === 'Kite') && (
             <div
               className={`companion-portrait speaker-${speaker.toLowerCase()} ${audio.voiceState === 'speaking' && !readAloud ? 'is-speaking' : ''}`}
             >
@@ -661,17 +673,21 @@ export default function App() {
             <div className="dialogue-topline">
               <span className="speaker-name">
                 <i />
-                {speaker === 'Narrator' ? 'NARRATION' : speaker}
+                {speaker === 'Narrator' ? 'NARRATION' : (speaker ?? 'YOUR CHOICE')}
               </span>
-              <span className="scene-progress">
-                {state.phase === 'investigation'
-                  ? `${state.inspected.length} of 3 examined`
-                  : state.phase === 'complete'
-                    ? 'Scene complete'
-                    : isChoice
-                      ? 'Your choice'
+              {chapterComplete ? (
+                <strong className="chapter-complete-badge" role="status">
+                  <Check size={16} aria-hidden="true" /> Chapter One complete
+                </strong>
+              ) : (
+                <span className="scene-progress">
+                  {state.phase === 'investigation'
+                    ? `${state.inspected.length} of 3 examined`
+                    : state.phase === 'complete'
+                      ? 'Scene complete'
                       : ''}
-              </span>
+                </span>
+              )}
             </div>
             {currentLine && (
               <DialogueReader
@@ -724,12 +740,8 @@ export default function App() {
             {state.phase === 'investigation' && (
               <div className="investigation-body">
                 <PagedPassage
-                  text={investigated ? sceneCopy.synthesis : sceneCopy.investigation}
-                  line={{
-                    id: `investigation-${investigated}`,
-                    speaker: 'Kite',
-                    text: investigated ? sceneCopy.synthesis : sceneCopy.investigation,
-                  }}
+                  text={investigationLine.text}
+                  line={investigationLine}
                   playback={readerPlayback}
                 />
                 <div className="investigation-actions">
@@ -822,29 +834,31 @@ export default function App() {
             )}
             {state.phase === 'museum-complete' && (
               <div className="museum-summary">
-                <span className="eyebrow">END OF CHAPTER ONE</span>
-                <h2>
-                  {state.discovered
-                    ? museumContent.museumCopy.completionTitle
-                    : 'Two waters. An unfinished account.'}
-                </h2>
+                {chapterComplete && (
+                  <p className="chapter-end-note">
+                    You’ve reached the end of the current playable story.
+                  </p>
+                )}
+                <div className="epilogue-heading">
+                  <h2>
+                    {state.discovered
+                      ? museumContent.museumCopy.completionTitle
+                      : 'Two waters. An unfinished account.'}
+                  </h2>
+                  <ReadAloudButton
+                    reading={readControls}
+                    id="completion"
+                    lines={[chapterEpilogue]}
+                    label="the chapter epilogue"
+                  />
+                </div>
                 <PagedPassage
-                  line={state.discovered ? museumReadings.completion : museumReadings.leaveEarly}
+                  line={chapterEpilogue}
                   playback={readerPlayback}
-                  text={
-                    state.discovered
-                      ? museumContent.museumCopy.completion
-                      : museumReadings.leaveEarly.text
-                  }
-                />
-                <ReadAloudButton
-                  reading={readControls}
-                  id="completion"
-                  lines={[state.discovered ? museumReadings.completion : museumReadings.leaveEarly]}
-                  label="the chapter epilogue"
+                  text={chapterEpilogue.text}
                 />
                 {museumLead && (
-                  <strong className="next-lead">Your next step: {museumLead.label}</strong>
+                  <strong className="next-lead">Next chapter: {museumLead.label}</strong>
                 )}
                 <div className="museum-actions">
                   <button

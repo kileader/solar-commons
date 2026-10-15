@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
 import { clues } from '../content/harbor'
 import type { AudioStatus } from '../audio/HarborAudio'
+import recordedScript from '../../dialogue/script.json'
 
 // These tests exercise real UI/reducer/controller wiring; sound rendering is browser-verified.
 vi.mock('../audio/HarborAudio', () => ({
@@ -418,8 +419,21 @@ describe('scene input integration', () => {
       let count = 0
       while (container.querySelector('.continue-button')) {
         if (++count > 30) throw new Error('UI failed to reach a choice')
+        const line = recordedScript.find((line) => line.text === text())
+        expect(line, 'The displayed passage has an authored recording').toBeTruthy()
+        expectSpeaker(line!.speaker)
         clickButton('.continue-button')
       }
+    }
+    function expectSpeaker(speaker: string) {
+      expect(container.querySelector('.speaker-name')!.textContent).toBe(
+        speaker === 'Narrator' ? 'NARRATION' : speaker,
+      )
+      expect(!!container.querySelector('.companion-portrait')).toBe(speaker !== 'Narrator')
+      if (speaker !== 'Narrator')
+        expect(
+          container.querySelector(`.companion-portrait.speaker-${speaker.toLowerCase()}`),
+        ).toBeTruthy()
     }
     function selectReading(id: string) {
       const select = container.querySelector<HTMLSelectElement>('dialog[open] select')!
@@ -439,12 +453,15 @@ describe('scene input integration', () => {
     clickText('Decide together')
     clickButton('.story-choice:nth-child(2)')
     finishLines()
+    expectSpeaker('Narrator')
+    expect(container.querySelector('.chapter-complete-badge')).toBeNull()
     clickText('Visit the Hall of Waters')
     expect(latestClip().src).toContain('museum-arrival-0')
     finishLines()
     clickButton(`.story-choice:nth-child(${route.approach + 1})`)
     expect(latestClip().src).toContain(route.approach === 0 ? 'museum-memory-0' : 'museum-signal-0')
     finishLines()
+    expectSpeaker('Narrator')
     clickButton('[aria-label="Listen to the gallery description"]')
     expect(latestClip().src).toContain('museum-gallery')
     endClip()
@@ -512,6 +529,11 @@ describe('scene input integration', () => {
     else {
       clickText('Try the tide model')
       finishLines()
+      clickText('Leave the model for now')
+      expectSpeaker('Narrator')
+      expect(container.querySelector('.chapter-complete-badge')).toBeNull()
+      expect(container.querySelector('.scene-status')!.textContent).toBe('Museum visit paused')
+      clickText('Revisit the tide model')
       clickButton('[aria-label="Listen to the flood explanation"]')
       expect(latestClip().src).toContain('model-0-closed')
       clickButton('.gate-control')
@@ -544,6 +566,14 @@ describe('scene input integration', () => {
     expect(container.querySelector('.museum-summary')?.textContent).toContain(
       'The city left a line open.',
     )
+    expectSpeaker('Narrator')
+    expect(container.querySelector('.chapter-complete-badge')!.textContent).toContain(
+      'Chapter One complete',
+    )
+    expect(container.querySelector('.chapter-end-note')!.textContent).toContain(
+      'end of the current playable story',
+    )
+    expect(container.querySelector('.next-lead')!.textContent).toMatch(/^Next chapter:/)
     clickButton('.record-button')
     clickButton('[aria-label="Listen to the handover record"]')
     expect(latestClip().src).toContain('refuge-record')
@@ -551,6 +581,7 @@ describe('scene input integration', () => {
     clickButton('[aria-label="Close handover record"]')
     clickButton('[aria-label="Listen to the chapter epilogue"]')
     expect(latestClip().src).toContain('museum-completion')
+    expectSpeaker('Narrator')
     clickText('Review field notes')
     expect(container.querySelectorAll('dialog[open] select option')).toHaveLength(7)
     selectReading('approach')
@@ -591,6 +622,8 @@ describe('scene input integration', () => {
     connect()
     for (let i = 0; i < 4; i++) press(0)
     expect(container.querySelectorAll('.story-choice')).toHaveLength(2)
+    expect(container.querySelector('.speaker-name')!.textContent).toBe('YOUR CHOICE')
+    expect(container.querySelector('.companion-portrait')).toBeNull()
     tick()
     press(13)
     expect(document.activeElement?.textContent).toContain('Let me see the harbor')
