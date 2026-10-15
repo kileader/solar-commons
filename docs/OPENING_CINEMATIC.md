@@ -55,7 +55,7 @@ Runtime URLs use Vite's `BASE_URL`, including the video and original harbor, for
 | Jade planes and represented indicator | A rendered perceptual workspace, not physical architecture changing.                             |
 | Harbor panorama                       | Ordinary perception restored; no anomaly, sonar or historical evidence before the investigation. |
 
-The opening preserves `initialSceneState`: intro line zero, perception off, no inspected clues and no choices. Harbor Replay restarts only that scene. The Unbinding's detailed history remains unwritten; this cinematic establishes no new historical canon.
+The opening preserves `initialSceneState`: intro line zero, perception off, no inspected clues and no choices. Harbor Replay restarts only that scene. The cinematic establishes no additional Unbinding history; its chronology is introduced in the [Hall of Waters exhibit](HALL_OF_WATERS.md).
 
 ## Validation
 
