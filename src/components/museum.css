@@ -283,13 +283,6 @@
   width: 850px;
   max-width: calc(100vw - 32px);
 }
-.history-exhibit .modal-topline {
-  position: sticky;
-  top: -34px;
-  z-index: 2;
-  background: #173940;
-  padding: 15px 0;
-}
 .history-exhibit .exhibit-art {
   width: 100%;
   max-height: 230px;

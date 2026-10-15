@@ -1,4 +1,29 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { X } from 'lucide-react'
+
+export function ModalHeading({
+  children,
+  step,
+  onClose,
+  closeLabel,
+}: {
+  children: ReactNode
+  step: string
+  onClose: () => void
+  closeLabel: string
+}) {
+  return (
+    <div className="modal-topline">
+      <div>
+        <span className="eyebrow">{children}</span>
+        <span className="modal-step">Story · {step}</span>
+      </div>
+      <button className="close-button" onClick={onClose} aria-label={closeLabel}>
+        <X size={20} />
+      </button>
+    </div>
+  )
+}
 
 export function Modal({
   open,

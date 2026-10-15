@@ -127,6 +127,41 @@ afterEach(() => {
 })
 
 describe('scene input integration', () => {
+  it('keeps the current step available and reveals choices without selecting one', () => {
+    const scroll = vi.spyOn(HTMLElement.prototype, 'scrollIntoView')
+    const click = (selector: string) => {
+      act(() => container.querySelector<HTMLButtonElement>(selector)!.click())
+      tick()
+    }
+    expect(container.querySelector('.current-step')?.textContent).toContain('At the harbor')
+    for (let i = 0; i < 4; i++) click('.continue-button')
+    expect(container.querySelector('.current-step')?.textContent).toContain('Your choice')
+    expect(scroll.mock.contexts).toContain(container.querySelector('.choice-block'))
+    container.querySelector<HTMLButtonElement>('.scene-jump')!.focus()
+    click('.scene-jump')
+    expect(document.activeElement).toBe(container.querySelector('.story-choice'))
+    expect(container.querySelectorAll('.story-choice')).toHaveLength(2)
+    click('[aria-label^="Open field notes"]')
+    expect(container.querySelector('dialog[open] .modal-step')?.textContent).toContain(
+      'Your choice',
+    )
+    click('[aria-label="Close field notes"]')
+    expect(container.querySelectorAll('.story-choice')).toHaveLength(2)
+    click('.story-choice')
+    click('.continue-button')
+    click('.continue-button')
+    expect(container.querySelector('.current-step')?.textContent).toContain('0 of 3 readings')
+    click('.hotspot')
+    expect(container.querySelector('.current-step')?.textContent).toContain('1 of 3 readings')
+    expect(container.querySelector('dialog[open] .modal-step')?.textContent).toContain(
+      'Harbor investigation',
+    )
+    click('[aria-label="Close evidence"]')
+    click('.scene-jump')
+    expect(document.activeElement).toBe(container.querySelector('.hotspot'))
+    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 examined')
+  })
+
   it('keeps voice and Auto running across focus changes without restarting a recording', () => {
     vi.useFakeTimers()
     try {
@@ -317,6 +352,9 @@ describe('scene input integration', () => {
     ).toBeNull()
     clickText('Read the history wall')
     expect(container.querySelector('dialog[open]')?.textContent).toContain('Whose ending?')
+    expect(container.querySelector('dialog[open] .modal-step')?.textContent).toContain(
+      'Tide gallery',
+    )
     // Exhibit narration is opt-in, sequential, and never advances the scene.
     clickButton('[aria-label="Listen to Before the water"]')
     expect(latestClip().src).toContain('exhibit-0-heading')

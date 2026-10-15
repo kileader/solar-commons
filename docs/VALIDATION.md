@@ -1,5 +1,12 @@
 # Validation
 
+## Visible next steps — October 15, 2026
+
+- All **109 tests** pass. A new integration regression follows conversation → choice → notes → investigation, verifies the persistent step and reading count, confirms the choice block is revealed on arrival, and checks that jump controls move focus without selecting a path or recording evidence. Existing museum journeys also assert the history panel's story context.
+- TypeScript and the production Vite build pass. The existing footer now remains visible with a phase-specific status and jump to the actual scene controls. It does not advance dialogue or choose a branch. Automatic choice scrolling is limited to the active window; background audio and Auto retain their existing behavior.
+- Browser checks at a short 390 × 568 viewport cover choices, reading counts, gallery options, model controls, dawn status, and returning to dialogue after the handover record expands the page. The evidence panel was scrolled 618 px and history 3,256 px; their context and close controls remained visible. A padded-header gap found during inspection was corrected.
+- At 320 × 568 with larger dialogue, both museum lead choices remain reachable above the navigation bar. The final narrow-header check with all three clues recorded confirms the Settings button fits, the main content has no horizontal overflow, and returning focus from Settings leaves the page aligned. At 1280 × 720 both harbor decisions fit above the bar. No browser warnings or errors were observed. Temporary viewport and reading-size changes were restored.
+
 ## Background playback and narration — October 15, 2026
 
 - All **108 tests** pass, and TypeScript plus the production Vite build pass. New regressions cover an uninterrupted recording through blur/visibility changes, progression to the next voiced line in the background, returning focus without replay, and retaining the remainder of the Auto delay. Optional museum narration also continues across focus changes.

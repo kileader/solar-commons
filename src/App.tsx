@@ -10,10 +10,8 @@ import {
   Settings2,
   Sparkles,
   Sun,
-  X,
   Volume2,
   VolumeX,
-  Gamepad2,
   Play,
   Pause,
 } from 'lucide-react'
@@ -38,7 +36,8 @@ import {
   type SceneEvent,
 } from './state/scene'
 import { Kite } from './components/Kite'
-import { Modal } from './components/Modal'
+import { Modal, ModalHeading } from './components/Modal'
+import { jumpToScene, sceneGuide, SceneGuide } from './components/SceneGuide'
 import { Perception } from './components/Perception'
 import { useMotion } from './hooks/useMotion'
 import { useAudio } from './hooks/useAudio'
@@ -118,6 +117,7 @@ export default function App() {
     'museum-approach-choice',
   ].includes(state.phase)
   const investigated = canConclude(state)
+  const guide = sceneGuide(state)
   const choices =
     state.phase === 'entry-choice'
       ? entryChoices
@@ -311,7 +311,7 @@ export default function App() {
         ? visibleControls(modal)
         : visibleControls(document).filter((element) =>
             element.matches(
-              '.continue-button, .auto-toggle, .voice-replay, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .model-moment, .gate-control, .lamp-discovery',
+              '.continue-button, .auto-toggle, .voice-replay, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .scene-jump, .model-moment, .gate-control, .lamp-discovery',
             ),
           )
       const focused = document.activeElement as HTMLElement | null
@@ -406,11 +406,12 @@ export default function App() {
             : ['museum-explore', 'museum-complete'].includes(state.phase)
               ? '.museum-actions button'
               : '.continue-button'
-    const frame = requestAnimationFrame(() =>
-      document.querySelector<HTMLElement>(selector)?.focus({ preventScroll: true }),
-    )
+    const frame = requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>(selector)?.focus({ preventScroll: true })
+      if (isChoice && !document.hidden && document.hasFocus()) jumpToScene('.choice-block')
+    })
     return () => cancelAnimationFrame(frame)
-  }, [state.phase])
+  }, [state.phase, isChoice])
 
   async function toggleFullscreen() {
     audio.unlock()
@@ -901,7 +902,7 @@ export default function App() {
         </section>
       )}
 
-      <footer className="scene-footer">
+      <footer className="scene-footer" aria-label="Story navigation">
         <button
           className="sound-toggle"
           onClick={audio.toggle}
@@ -921,16 +922,10 @@ export default function App() {
                   : 'Sound on'}
           </span>
         </button>
-        <span>
-          {controller === 'connected' ? (
-            <>
-              <Gamepad2 size={15} />
-              Controller connected
-            </>
-          ) : (
-            sceneCopy.footer
-          )}
-        </span>
+        <SceneGuide
+          guide={guide}
+          auto={auto && !!currentLine && !panel && !activeClue && !readAloud}
+        />
       </footer>
 
       <Modal
@@ -941,19 +936,13 @@ export default function App() {
       >
         {activeClue && (
           <>
-            <div className="modal-topline">
-              <span className="eyebrow">
-                <Sparkles size={14} />
-                Evidence {clues.indexOf(activeClue) + 1} of 3
-              </span>
-              <button
-                className="close-button"
-                onClick={() => perform({ type: 'CLOSE_CLUE' })}
-                aria-label="Close evidence"
-              >
-                <X size={20} />
-              </button>
-            </div>
+            <ModalHeading
+              step={guide.title}
+              onClose={() => perform({ type: 'CLOSE_CLUE' })}
+              closeLabel="Close evidence"
+            >
+              <Sparkles size={14} /> Evidence {clues.indexOf(activeClue) + 1} of 3
+            </ModalHeading>
             <h2 id="evidence-title">{activeClue.title}</h2>
             <p className="modal-subtitle">{activeClue.subtitle}</p>
             <EvidenceDiagram kind={activeClue.id} />
@@ -1004,15 +993,9 @@ export default function App() {
         titleId="notes-title"
         className="notes-modal"
       >
-        <div className="modal-topline">
-          <span className="eyebrow">
-            <BookOpen size={14} />
-            Mara + Kite
-          </span>
-          <button className="close-button" onClick={closePanel} aria-label="Close field notes">
-            <X size={20} />
-          </button>
-        </div>
+        <ModalHeading step={guide.title} onClose={closePanel} closeLabel="Close field notes">
+          <BookOpen size={14} /> Field notes
+        </ModalHeading>
         <h2 id="notes-title">Field notes</h2>
         <p className="modal-subtitle">{sceneCopy.notesSubtitle}</p>
         {state.inspected.length === 0 ? (
@@ -1079,7 +1062,12 @@ export default function App() {
         )}
       </Modal>
 
-      <HistoryExhibit open={panel === 'history'} onClose={closePanel} reading={readControls} />
+      <HistoryExhibit
+        open={panel === 'history'}
+        onClose={closePanel}
+        reading={readControls}
+        step={guide.title}
+      />
 
       <Modal
         open={panel === 'settings'}
@@ -1087,12 +1075,9 @@ export default function App() {
         titleId="settings-title"
         className="settings-modal"
       >
-        <div className="modal-topline">
-          <span className="eyebrow">Make yourself at home</span>
-          <button className="close-button" onClick={closePanel} aria-label="Close settings">
-            <X size={20} />
-          </button>
-        </div>
+        <ModalHeading step={guide.title} onClose={closePanel} closeLabel="Close settings">
+          Make yourself at home
+        </ModalHeading>
         <h2 id="settings-title">Settings</h2>
         <NovelSettings
           audio={audio}

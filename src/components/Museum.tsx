@@ -1,8 +1,8 @@
-import { ArrowRight, BookOpen, Waves, X } from 'lucide-react'
+import { ArrowRight, BookOpen, Waves } from 'lucide-react'
 import { museumArt } from '../art'
 import { floodSnapshot, floodStages, museumContent, type FloodStage } from '../content/museum'
 import type { SceneEvent, SceneState } from '../state/scene'
-import { Modal } from './Modal'
+import { Modal, ModalHeading } from './Modal'
 import './museum.css'
 import { exhibitSectionReadings, modelReading, museumReadings } from '../content/museumReadings'
 import { ReadAloudButton, type ReadAloudControls } from './ReadAloudButton'
@@ -29,22 +29,19 @@ export function HistoryExhibit({
   open,
   onClose,
   reading,
+  step,
 }: {
   open: boolean
   onClose: () => void
   reading: ReadAloudControls
+  step: string
 }) {
   const exhibit = museumContent.historicalExhibit
   return (
     <Modal open={open} onClose={onClose} titleId="exhibit-title" className="history-exhibit">
-      <div className="modal-topline">
-        <span className="eyebrow">
-          <BookOpen size={15} /> Permanent collection
-        </span>
-        <button className="close-button" onClick={onClose} aria-label="Close history exhibit">
-          <X size={20} />
-        </button>
-      </div>
+      <ModalHeading step={step} onClose={onClose} closeLabel="Close history exhibit">
+        <BookOpen size={15} /> Permanent collection
+      </ModalHeading>
       <img
         className="exhibit-art"
         src={museumArt.exhibit}

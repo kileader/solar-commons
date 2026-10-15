@@ -51,6 +51,7 @@ button {
   color: #173c36;
 }
 .novel {
+  --guide-space: 112px;
   --look-x: 0px;
   --look-y: 0px;
   --ivory: #f5f2e3;
@@ -62,6 +63,7 @@ button {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding-bottom: calc(var(--guide-space) + env(safe-area-inset-bottom));
   background: #174d47;
 }
 .scene-art {
@@ -1023,11 +1025,12 @@ button {
   color: #f7ead4a3;
 }
 .modal {
+  --modal-padding: 30px;
   border: 1px solid #e5d9b6;
   background: #f5f1e5;
   color: #24463e;
   border-radius: 7px;
-  padding: 30px 34px;
+  padding: var(--modal-padding) 34px;
   max-width: calc(100vw - 32px);
   max-height: 90svh;
   box-shadow: 0 20px 100px #0d2f3980;
@@ -1817,7 +1820,8 @@ button {
     transform: translate(-20px, -20px);
   }
   .modal {
-    padding: 23px 23px;
+    --modal-padding: 23px;
+    padding: var(--modal-padding) 23px;
     max-height: 89svh;
   }
   .modal > h2 {
@@ -2711,5 +2715,141 @@ button {
   }
   .dialogue-body {
     min-height: 110px;
+  }
+}
+
+/* The current step stays in reach when records or larger text extend the page. */
+.novel .scene-footer {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px 24px;
+  align-items: center;
+  height: auto;
+  min-height: 76px;
+  margin: 0;
+  padding: 12px 4.2% calc(12px + env(safe-area-inset-bottom));
+  background: #0b2934f5;
+  border-top: 1px solid #96d7c55c;
+  box-shadow: 0 -6px 25px #061d2b40;
+  color: #e3f1e9;
+  font-size: 14px;
+  letter-spacing: 0;
+  backdrop-filter: blur(16px);
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+  font-style: normal;
+}
+.current-step {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  line-height: 1.4;
+}
+.current-step strong {
+  color: #b9ffe1;
+  font-size: 14px;
+  font-weight: 600;
+}
+.current-step span {
+  font-size: 12px;
+  color: #bfd3c8;
+}
+.scene-jump {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 10px 13px;
+  border: 1px solid #96d7c580;
+  border-radius: 4px;
+  background: #b6efd30b;
+  color: #e3f1e9;
+  font-size: 14px;
+  text-align: left;
+}
+.scene-jump:hover {
+  background: #b6efd322;
+}
+.dialogue-stage,
+.choice-block,
+.hotspots,
+.model-timeline,
+.museum-actions,
+.investigation-actions,
+.dialogue-stage button,
+.scene-view button {
+  scroll-margin-top: 20px;
+  scroll-margin-bottom: calc(var(--guide-space) + env(safe-area-inset-bottom));
+}
+.modal .modal-topline {
+  position: sticky;
+  top: calc(-1 * var(--modal-padding));
+  z-index: 2;
+  margin-top: calc(-1 * var(--modal-padding));
+  padding: calc(var(--modal-padding) + 12px) 0 12px;
+  background: #173b44;
+  border-bottom: 1px solid #96d7c540;
+}
+.modal {
+  scroll-padding-top: 110px;
+  scroll-padding-bottom: 16px;
+}
+.modal-topline > div {
+  min-width: 0;
+}
+.modal-topline .close-button {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+}
+.modal-step {
+  display: block;
+  margin-top: 7px;
+  color: #d1e2d7;
+  font-size: 13px;
+  line-height: 1.4;
+}
+@media (max-width: 520px) {
+  .novel {
+    --guide-space: 128px;
+  }
+  .novel .scene-footer {
+    gap: 10px;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  }
+  .scene-footer .sound-toggle {
+    justify-content: center;
+    min-width: 34px;
+    min-height: 44px;
+  }
+  .scene-footer .sound-toggle > span {
+    display: none;
+  }
+  .scene-jump {
+    max-width: 114px;
+    padding: 9px 10px;
+    font-size: 13px;
+  }
+  .current-step strong {
+    font-size: 13px;
+  }
+  .current-step span {
+    font-size: 11px;
+  }
+}
+@media (max-width: 360px) {
+  .wordmark {
+    font-size: 11px;
+    letter-spacing: 1px;
+    gap: 8px;
+  }
+  .journal-button > span.mobile-label {
+    display: none;
+  }
+  .scene-tools {
+    gap: 8px;
   }
 }
