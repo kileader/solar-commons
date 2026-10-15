@@ -559,7 +559,7 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
             <button onClick={toggleSound}>
               {preferences.muted ? 'Enable sound' : 'Mute sound'}
             </button>
-            {(['master', 'music', 'effects'] as const).map((channel) => (
+            {(['master', 'music', 'voice', 'effects'] as const).map((channel) => (
               <label key={channel}>
                 {channel === 'effects'
                   ? 'Effects & clip'

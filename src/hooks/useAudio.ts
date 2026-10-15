@@ -8,12 +8,13 @@ import {
   type AudioPreferences,
 } from '../audio/preferences'
 import type { DialogueLine } from '../content/harbor'
-import { voiceTestLine } from '../content/harbor'
+import { introLines } from '../content/harbor'
+import { recordingFor } from '../audio/dialogueAssets'
 
 export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognitive: boolean) {
   const [preferences, setPreferences] = useState(loadAudioPreferences)
   const [status, setStatus] = useState<AudioStatus>({ state: 'locked', peak: 0 })
-  const [voiceState, setVoiceState] = useState<VoiceState>('idle')
+  const [voice, setVoice] = useState<{ key: string; state: VoiceState }>({ key: '', state: 'idle' })
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
   const [foreground, setForeground] = useState(() => !document.hidden)
   const [replay, setReplay] = useState(0)
@@ -22,7 +23,12 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
   const preferencesRef = useRef(preferences)
   const linesRef = useRef(lines)
   linesRef.current = lines
-  const speechKey = lines.map((line) => line.id).join('|')
+  const speechKey = JSON.stringify(lines.map((line) => [line.id, line.text]))
+  const speechKeyRef = useRef(speechKey)
+  speechKeyRef.current = speechKey
+  const localVoiceKey = preferences.deviceVoiceFallback
+    ? voices.map((voice) => voice.voiceURI).join('|')
+    : ''
 
   useEffect(() => {
     const engine = new HarborAudio(setStatus)
@@ -33,9 +39,10 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
       service,
       (text) => new SpeechSynthesisUtterance(text),
       (state) => {
-        setVoiceState(state)
+        setVoice({ key: speechKeyRef.current, state })
         engine.setSpeaking(state === 'speaking')
       },
+      { find: recordingFor, create: (url) => new Audio(url) },
     )
     speech.current = player
     const refreshVoices = () => setVoices(service ? localEnglishVoices(service.getVoices()) : [])
@@ -77,7 +84,7 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
     }
     speech.current?.say(linesRef.current, preferences)
     return () => speech.current?.stop()
-  }, [speechKey, paused, foreground, status.state, preferences, voices, replay])
+  }, [speechKey, paused, foreground, status.state, preferences, localVoiceKey, replay])
 
   const unlock = useCallback(() => audio.current?.unlock(), [])
   const play = useCallback((cue: SoundCue) => audio.current?.play(cue), [])
@@ -93,12 +100,32 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
     setReplay((value) => value + 1)
   }, [unlock])
   const testVoice = useCallback(() => {
-    speech.current?.say([voiceTestLine], preferencesRef.current)
-  }, [])
+    unlock()
+    speech.current?.say(
+      [introLines.find((line) => line.speaker === 'Kite')!],
+      preferencesRef.current,
+    )
+  }, [unlock])
+  const hasVoice =
+    lines.some((line) => !!recordingFor(line)) ||
+    (preferences.deviceVoiceFallback && voices.length > 0)
+  const voiceActive =
+    !paused &&
+    foreground &&
+    status.state === 'running' &&
+    preferences.voiceEnabled &&
+    !preferences.muted &&
+    preferences.master * preferences.voice > 0
   return {
     preferences,
     status,
-    voiceState,
+    voiceState: !voiceActive
+      ? ('idle' as const)
+      : voice.key === speechKey
+        ? voice.state
+        : ('loading' as const),
+    foreground,
+    hasVoice,
     voices,
     unlock,
     play,

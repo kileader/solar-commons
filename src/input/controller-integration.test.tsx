@@ -79,6 +79,9 @@ beforeEach(() => {
   vi.stubGlobal('cancelAnimationFrame', (id: number) => frames.delete(id))
   Object.defineProperty(navigator, 'getGamepads', { configurable: true, value: () => [controller] })
   vi.spyOn(document, 'hasFocus').mockImplementation(() => focused)
+  vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue()
+  vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {})
+  vi.spyOn(HTMLMediaElement.prototype, 'load').mockImplementation(() => {})
   vi.stubGlobal('matchMedia', () => ({
     matches: false,
     addEventListener() {},
@@ -125,6 +128,78 @@ afterEach(() => {
 })
 
 describe('scene input integration', () => {
+  it('autoplays recorded lines after the gap and waits for choices and evidence input', () => {
+    vi.useFakeTimers()
+    try {
+      const clips: HTMLMediaElement[] = []
+      vi.mocked(HTMLMediaElement.prototype.play).mockImplementation(function (
+        this: HTMLMediaElement,
+      ) {
+        clips.push(this)
+        return Promise.resolve()
+      })
+      const click = (selector: string) =>
+        act(() => container.querySelector<HTMLButtonElement>(selector)!.click())
+      const wait = (ms: number) => act(() => vi.advanceTimersByTime(ms))
+      const end = () => act(() => clips.at(-1)!.dispatchEvent(new Event('ended')))
+      click('.auto-toggle')
+      expect(container.querySelector('main')?.dataset.voiceState).toBe('loading')
+      wait(60000)
+      expect(text()).toContain('harbor terraces')
+      for (let i = 0; i < 4; i++) {
+        end()
+        wait(999)
+        expect(container.querySelector('.story-choice')).toBeNull()
+        wait(1)
+      }
+      expect(container.querySelectorAll('.story-choice')).toHaveLength(2)
+      wait(60000)
+      expect(container.querySelectorAll('.story-choice')).toHaveLength(2)
+      click('.story-choice')
+      end()
+      wait(1000)
+      end()
+      wait(1000)
+      expect(container.querySelectorAll('.hotspot')).toHaveLength(3)
+      wait(60000)
+      expect(container.querySelectorAll('.hotspot')).toHaveLength(3)
+      click('.hotspot')
+      end()
+      end()
+      wait(60000)
+      expect(container.querySelector('dialog[open]')).toBeTruthy()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+  it('cancels Auto while settings are open and resumes the same line when closed', () => {
+    vi.useFakeTimers()
+    try {
+      const clips: HTMLMediaElement[] = []
+      vi.mocked(HTMLMediaElement.prototype.play).mockImplementation(function (
+        this: HTMLMediaElement,
+      ) {
+        clips.push(this)
+        return Promise.resolve()
+      })
+      act(() => container.querySelector<HTMLButtonElement>('.auto-toggle')!.click())
+      act(() => clips.at(-1)!.dispatchEvent(new Event('ended')))
+      act(() => vi.advanceTimersByTime(900))
+      act(() => container.querySelector<HTMLButtonElement>('[aria-label="Open settings"]')!.click())
+      act(() => vi.advanceTimersByTime(60000))
+      expect(text()).toContain('harbor terraces')
+      act(() =>
+        container.querySelector<HTMLButtonElement>('[aria-label="Close settings"]')!.click(),
+      )
+      expect(container.querySelector('main')?.dataset.voiceState).toBe('loading')
+      act(() => clips.at(-1)!.dispatchEvent(new Event('ended')))
+      act(() => vi.advanceTimersByTime(1000))
+      expect(text()).toContain('feel where you’re looking')
+      act(() => container.querySelector<HTMLButtonElement>('.auto-toggle')!.click())
+    } finally {
+      vi.useRealTimers()
+    }
+  })
   it.each([
     { approach: 0, reading: true, note: 'Names after the last ferry', lead: 1 },
     { approach: 1, reading: false, note: 'A line held from below', lead: 0 },
@@ -239,6 +314,11 @@ describe('scene input integration', () => {
     )
     press(1)
     press(9)
+    const soundSection = [
+      ...container.querySelectorAll<HTMLButtonElement>('.settings-sections button'),
+    ].find((button) => button.textContent === 'Sound')!
+    soundSection.focus()
+    press(0)
     const master = container.querySelector<HTMLInputElement>('input[aria-label="Master volume"]')!
     master.focus()
     press(15)

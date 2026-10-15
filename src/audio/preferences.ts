@@ -5,6 +5,7 @@ export interface AudioPreferences {
   voice: number
   muted: boolean
   voiceEnabled: boolean
+  deviceVoiceFallback: boolean
   voiceURI: string
 }
 
@@ -15,6 +16,7 @@ export const defaultAudioPreferences: AudioPreferences = {
   voice: 1,
   muted: false,
   voiceEnabled: true,
+  deviceVoiceFallback: false,
   voiceURI: '',
 }
 export const audioStorageKey = 'solar-commons.audio.v1'
@@ -28,7 +30,7 @@ export function normalizeAudioPreferences(value: unknown): AudioPreferences {
     if (typeof level === 'number' && Number.isFinite(level))
       result[key] = Math.max(0, Math.min(1, level))
   }
-  for (const key of ['muted', 'voiceEnabled'] as const) {
+  for (const key of ['muted', 'voiceEnabled', 'deviceVoiceFallback'] as const) {
     if (typeof source[key] === 'boolean') result[key] = source[key]
   }
   if (typeof source.voiceURI === 'string' && source.voiceURI.length < 400)

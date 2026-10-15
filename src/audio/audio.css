@@ -4,6 +4,70 @@
   gap: 17px;
   flex-shrink: 0;
 }
+.auto-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid #b8e2c73b;
+  border-radius: 4px;
+  background: transparent;
+  color: #cdebd8;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.auto-toggle:hover,
+.auto-toggle[aria-pressed='true'] {
+  background: #a6ecc91c;
+  border-color: #b8e2c77a;
+  color: #e6fff0;
+}
+.auto-wait {
+  font:
+    12px 'Trebuchet MS',
+    Arial,
+    sans-serif;
+  color: #b8d4c4;
+  margin: 0 0 12px;
+}
+@media (max-width: 360px) {
+  .dialogue-buttons .voice-replay > span {
+    display: none;
+  }
+  .dialogue-buttons {
+    gap: 10px;
+  }
+  .auto-toggle {
+    padding-inline: 7px;
+  }
+}
+.settings-sections {
+  display: flex;
+  gap: 8px;
+  margin: 25px 0 10px;
+  border-bottom: 1px solid #b8e2c73b;
+  padding-bottom: 12px;
+}
+.settings-sections button {
+  flex: 1;
+  padding: 12px 8px;
+  color: #cdebd8;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.settings-sections button[aria-pressed='true'] {
+  background: #a6ecc91c;
+  border-color: #b8e2c77a;
+  color: #e6fff0;
+}
+.settings-section > :is(.audio-settings, .controller-guide) {
+  margin-top: 0;
+  padding-top: 20px;
+  border-top: 0;
+}
 [data-input='gamepad'] :is(button, input, select):focus {
   outline: 3px solid #b5ffdd;
   outline-offset: 5px;
@@ -204,7 +268,7 @@
 @media (max-width: 760px) {
   .dialogue-buttons {
     justify-content: flex-end;
-    gap: 22px;
+    gap: 16px;
     margin-top: 18px;
   }
   .dialogue-buttons .continue-button {

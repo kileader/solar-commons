@@ -4,13 +4,7 @@ import type { ControllerStatus } from '../hooks/useGamepad'
 
 type AudioControls = ReturnType<typeof useAudio>
 
-export function AudioSettings({
-  audio,
-  controller,
-}: {
-  audio: AudioControls
-  controller: ControllerStatus
-}) {
+export function AudioSettings({ audio }: { audio: AudioControls }) {
   const { preferences, voices } = audio
   const levels = [
     { key: 'master', label: 'Master' },
@@ -22,7 +16,7 @@ export function AudioSettings({
     <section className="audio-settings" aria-labelledby="audio-settings-title">
       <h3 id="audio-settings-title">Sound & voice</h3>
       <p className="settings-description">
-        An original ambient score and soft feedback throughout the harbor.
+        Recorded character voices, an ambient score, and soft feedback.
       </p>
       <label className="setting-row compact-setting">
         <span>
@@ -59,25 +53,36 @@ export function AudioSettings({
       ))}
       <label className="setting-row">
         <span>
-          <strong>Read dialogue aloud</strong>
-          <small>Uses local English voices installed on this device.</small>
+          <strong>Play dialogue voices</strong>
+          <small>Uses the supplied recordings where available.</small>
         </span>
         <input
           type="checkbox"
           checked={preferences.voiceEnabled}
-          disabled={voices.length === 0}
           onChange={(event) => {
             audio.update({ voiceEnabled: event.target.checked })
             audio.play('confirm')
           }}
         />
       </label>
+      <label className="setting-row">
+        <span>
+          <strong>Device voice fallback</strong>
+          <small>Read unrecorded lines with a local English voice. Off keeps them text-only.</small>
+        </span>
+        <input
+          type="checkbox"
+          checked={preferences.deviceVoiceFallback}
+          disabled={voices.length === 0}
+          onChange={(event) => audio.update({ deviceVoiceFallback: event.target.checked })}
+        />
+      </label>
       {voices.length ? (
         <>
           <label className="voice-choice">
-            <span>Voice</span>
+            <span>Fallback voice</span>
             <select
-              aria-label="Dialogue voice"
+              aria-label="Fallback voice"
               value={
                 voices.some((voice) => voice.voiceURI === preferences.voiceURI)
                   ? preferences.voiceURI
@@ -96,30 +101,38 @@ export function AudioSettings({
               ))}
             </select>
           </label>
-          <button
-            className="voice-test"
-            disabled={
-              !audio.ready ||
-              preferences.muted ||
-              !preferences.voiceEnabled ||
-              preferences.master * preferences.voice === 0
-            }
-            onClick={audio.testVoice}
-          >
-            <Volume2 size={16} />
-            Try Kite’s voice
-          </button>
         </>
       ) : (
         <p className="settings-description voice-unavailable" role="status">
-          No local English voice is available in this browser. Dialogue remains readable.
+          No local English fallback voice is available in this browser. Recordings still play.
         </p>
       )}
+      <button
+        className="voice-test"
+        disabled={
+          preferences.muted ||
+          !preferences.voiceEnabled ||
+          preferences.master * preferences.voice === 0
+        }
+        onClick={audio.testVoice}
+      >
+        <Volume2 size={16} /> Try Kite’s recorded voice
+      </button>
+      <p className="settings-description">
+        The harbor and opening are voiced. Museum recordings are still to come.
+      </p>
       {audio.voiceState === 'error' && (
         <p className="settings-description" role="status">
           Voice playback could not start. Try the voice button again.
         </p>
       )}
+    </section>
+  )
+}
+
+export function ControllerSettings({ controller }: { controller: ControllerStatus }) {
+  return (
+    <>
       <div className="controller-guide">
         <h3>Controller</h3>
         <p>
@@ -170,6 +183,18 @@ export function AudioSettings({
           Enable sound once.
         </p>
       </div>
-    </section>
+      <div className="keyboard-guide">
+        <span>KEYBOARD</span>
+        <p>
+          <kbd>Enter</kbd> / <kbd>Space</kbd> Continue <kbd>A</kbd> Auto
+        </p>
+        <p>
+          <kbd>C</kbd> Perception <kbd>J</kbd> Field notes
+        </p>
+        <p>
+          <kbd>1</kbd> <kbd>2</kbd> Choose <kbd>Esc</kbd> Close a panel
+        </p>
+      </div>
+    </>
   )
 }

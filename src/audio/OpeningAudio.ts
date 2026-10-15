@@ -1,5 +1,6 @@
 import { defaultAudioPreferences, type AudioPreferences } from './preferences'
 import { consentPressTime, openingDuration } from '../content/opening'
+import { OpeningVoice } from './OpeningVoice'
 
 const cues = [
   { time: consentPressTime, notes: [420, 840], length: 0.09, level: 0.055 },
@@ -26,6 +27,7 @@ export class OpeningAudio {
   private previous = 0
   private disposed = false
   private playing = false
+  private dialogue = new OpeningVoice()
 
   configure(preferences: AudioPreferences) {
     this.preferences = preferences
@@ -33,11 +35,13 @@ export class OpeningAudio {
     this.master?.gain.setTargetAtTime(preferences.muted ? 0 : preferences.master, now, 0.04)
     this.music?.gain.setTargetAtTime(preferences.music, now, 0.04)
     this.effects?.gain.setTargetAtTime(preferences.effects, now, 0.04)
+    this.dialogue.sync(this.previous, this.playing, preferences)
   }
 
   unlock() {
     if (this.disposed) return
     this.playing = true
+    this.dialogue.sync(this.previous, true, this.preferences)
     try {
       if (!this.context) {
         if (!window.AudioContext) return
@@ -95,6 +99,7 @@ export class OpeningAudio {
   }
 
   update(time: number) {
+    this.dialogue.sync(time, this.playing, this.preferences)
     const ctx = this.context
     if (!ctx || ctx.state !== 'running') {
       this.previous = time
@@ -139,6 +144,7 @@ export class OpeningAudio {
   }
 
   seek(time: number) {
+    this.dialogue.sync(time, this.playing, this.preferences, true)
     this.previous = time
     for (const oscillator of this.transients) {
       try {
@@ -153,11 +159,13 @@ export class OpeningAudio {
 
   pause() {
     this.playing = false
+    this.dialogue.pause()
     void this.context?.suspend().catch(() => {})
   }
 
   dispose() {
     this.disposed = true
+    this.dialogue.dispose()
     this.playing = false
     void this.context?.close().catch(() => {})
     this.context = null

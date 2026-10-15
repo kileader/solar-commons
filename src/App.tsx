@@ -14,6 +14,8 @@ import {
   Volume2,
   VolumeX,
   Gamepad2,
+  Play,
+  Pause,
 } from 'lucide-react'
 import { characterArt, harborArt, museumArt } from './art'
 import { approachNotes, museumApproaches, museumContent, type FloodStage } from './content/museum'
@@ -42,7 +44,14 @@ import { useGamepad } from './hooks/useGamepad'
 import { adjustControl, moveFocus, visibleControls } from './input/focus'
 import type { SoundCue } from './audio/HarborAudio'
 import type { DialogueLine } from './content/harbor'
-import { AudioSettings } from './components/AudioSettings'
+import { NovelSettings } from './components/NovelSettings'
+import { useAutoAdvance } from './hooks/useAutoAdvance'
+import {
+  loadReadingPreferences,
+  normalizeReadingPreferences,
+  saveReadingPreferences,
+  type ReadingPreferences,
+} from './reading/preferences'
 import './audio/audio.css'
 
 function EvidenceDiagram({ kind }: { kind: string }) {
@@ -89,7 +98,8 @@ function EvidenceDiagram({ kind }: { kind: string }) {
 export default function App() {
   const [state, dispatch] = useReducer(sceneReducer, initialSceneState)
   const [panel, setPanel] = useState<'journal' | 'settings' | 'history' | null>(null)
-  const [largeText, setLargeText] = useState(false)
+  const [reading, setReading] = useState(loadReadingPreferences)
+  const [auto, setAuto] = useState(false)
   const [usingGamepad, setUsingGamepad] = useState(false)
   const motion = useMotion()
   const currentLine = getCurrentLine(state)
@@ -147,6 +157,22 @@ export default function App() {
     return []
   }, [activeClue, currentLine, state.phase, investigated])
   const audio = useAudio(speechLines, panel !== null, state.perception)
+  useEffect(() => saveReadingPreferences(reading), [reading])
+  function updateReading(patch: Partial<ReadingPreferences>) {
+    setReading((previous) => normalizeReadingPreferences({ ...previous, ...patch }))
+  }
+  function toggleAuto() {
+    audio.unlock()
+    setAuto((previous) => !previous)
+  }
+  useAutoAdvance(
+    currentLine,
+    auto,
+    panel !== null || !!activeClue || !audio.foreground,
+    audio.voiceState,
+    reading,
+    () => perform({ type: 'NEXT' }),
+  )
 
   function perform(event: SceneEvent) {
     audio.unlock()
@@ -179,6 +205,7 @@ export default function App() {
         break
       case 'RESTART':
         cue = 'restart'
+        setAuto(false)
         break
       case 'INSPECT_LAMP':
         cue = 'discovery'
@@ -251,7 +278,7 @@ export default function App() {
         ? visibleControls(modal)
         : visibleControls(document).filter((element) =>
             element.matches(
-              '.continue-button, .voice-replay, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .model-moment, .gate-control, .lamp-discovery',
+              '.continue-button, .auto-toggle, .voice-replay, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .model-moment, .gate-control, .lamp-discovery',
             ),
           )
       const focused = document.activeElement as HTMLElement | null
@@ -297,6 +324,10 @@ export default function App() {
         return
       const target = event.target as HTMLElement
       if (target.closest('input, select, textarea, [contenteditable="true"]')) return
+      if (event.key.toLowerCase() === 'a') {
+        event.preventDefault()
+        toggleAuto()
+      }
       if (event.key.toLowerCase() === 'c') {
         event.preventDefault()
         perform({ type: 'TOGGLE_PERCEPTION' })
@@ -361,11 +392,12 @@ export default function App() {
 
   return (
     <main
-      className={`novel ${inMuseum ? 'museum' : ''} ${state.phase === 'museum-model' ? 'museum-model' : ''} ${state.perception ? 'cognitive' : ''} ${activeClue ? 'is-inspecting' : ''} ${largeText ? 'large-text' : ''}`}
+      className={`novel ${inMuseum ? 'museum' : ''} ${state.phase === 'museum-model' ? 'museum-model' : ''} ${state.perception ? 'cognitive' : ''} ${activeClue ? 'is-inspecting' : ''} ${reading.largeText ? 'large-text' : ''}`}
       data-motion={motion.reduced ? 'reduced' : 'full'}
       data-audio-state={audio.status.state}
       data-audio-peak={audio.status.peak.toFixed(6)}
       data-voice-state={audio.voiceState}
+      data-auto={auto ? 'on' : 'off'}
       data-controller-state={controller}
       data-input={usingGamepad ? 'gamepad' : 'pointer'}
       onPointerDownCapture={(event) => {
@@ -485,7 +517,7 @@ export default function App() {
           <button
             className="tool-button icon-button"
             onClick={() => openPanel('settings')}
-            aria-label="Open accessibility settings"
+            aria-label="Open settings"
             title="Settings"
           >
             <Settings2 size={18} />
@@ -620,20 +652,30 @@ export default function App() {
                     onClick={audio.replayVoice}
                     disabled={
                       !audio.ready ||
-                      !audio.voices.length ||
+                      !audio.hasVoice ||
                       !audio.preferences.voiceEnabled ||
                       audio.preferences.muted ||
                       audio.preferences.master * audio.preferences.voice === 0
                     }
                     aria-label="Replay dialogue"
                     title={
-                      audio.voices.length
+                      audio.hasVoice
                         ? 'Listen to this dialogue again'
-                        : 'No local English voice available'
+                        : 'No recording or enabled fallback voice for this line'
                     }
                   >
                     <Volume2 size={17} />
                     <span>Listen</span>
+                  </button>
+                  <button
+                    className="auto-toggle"
+                    onClick={toggleAuto}
+                    aria-pressed={auto}
+                    aria-label="Autoplay dialogue"
+                    title="Auto: wait for the voice, then continue. A to toggle."
+                  >
+                    {auto ? <Pause size={16} /> : <Play size={16} />}
+                    <span>Auto{auto ? ' on' : ''}</span>
                   </button>
                   <button className="continue-button" onClick={() => perform({ type: 'NEXT' })}>
                     <span>Continue</span>
@@ -646,6 +688,7 @@ export default function App() {
             )}
             {isChoice && (
               <div className="choice-block" key={state.phase}>
+                {auto && <p className="auto-wait">Auto is waiting for your choice.</p>}
                 <p className="choice-prompt">
                   {state.phase === 'entry-choice'
                     ? sceneCopy.openingPrompt
@@ -998,51 +1041,16 @@ export default function App() {
             <X size={20} />
           </button>
         </div>
-        <h2 id="settings-title">A comfortable view</h2>
-        <label className="setting-row">
-          <span>
-            <strong>Reduce motion</strong>
-            <small>
-              {motion.systemReduced
-                ? 'Your system preference is already active.'
-                : 'Still the parallax, floating geometry, and transitions.'}
-            </small>
-          </span>
-          <input
-            type="checkbox"
-            checked={motion.reduced}
-            disabled={motion.systemReduced}
-            onChange={(e) => {
-              motion.setManualReduced(e.target.checked)
-              audio.play('confirm')
-            }}
-          />
-        </label>
-        <label className="setting-row">
-          <span>
-            <strong>Larger dialogue</strong>
-            <small>A little more room for the words.</small>
-          </span>
-          <input
-            type="checkbox"
-            checked={largeText}
-            onChange={(e) => {
-              setLargeText(e.target.checked)
-              audio.play('confirm')
-            }}
-          />
-        </label>
-        <AudioSettings audio={audio} controller={controller} />
-        <div className="keyboard-guide">
-          <span>KEYBOARD</span>
-          <p>
-            <kbd>Enter</kbd> Continue <kbd>C</kbd> Perception <kbd>J</kbd> Field notes
-          </p>
-          <p>
-            <kbd>1</kbd>
-            <kbd>2</kbd> Choose <kbd>Esc</kbd> Close a panel
-          </p>
-        </div>
+        <h2 id="settings-title">Settings</h2>
+        <NovelSettings
+          audio={audio}
+          motion={motion}
+          controller={controller}
+          reading={reading}
+          updateReading={updateReading}
+          auto={auto}
+          setAuto={setAuto}
+        />
         <p className="settings-note">
           All controls also work with Tab and Enter. Scene progress lasts for this visit.
         </p>

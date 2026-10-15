@@ -5,11 +5,12 @@ import {
   VoicePlayback,
   type SpeechService,
 } from './VoicePlayback'
-import { defaultAudioPreferences } from './preferences'
+import { defaultAudioPreferences as defaults } from './preferences'
 import type { DialogueLine } from '../content/harbor'
 
 const voice = (name: string, local = true, lang = 'en-US') =>
   ({ name, voiceURI: name, localService: local, lang, default: false }) as SpeechSynthesisVoice
+const defaultAudioPreferences = { ...defaults, deviceVoiceFallback: true }
 const voices = [
   voice('Microsoft David'),
   voice('Microsoft Zira'),
@@ -57,7 +58,7 @@ describe('local dialogue playback', () => {
     expect(spoken).toHaveLength(2)
     expect(spoken[1].voice?.name).toBe('Microsoft Zira')
     spoken[1].onend?.({} as SpeechSynthesisEvent)
-    expect(state).toHaveBeenLastCalledWith('idle')
+    expect(state).toHaveBeenLastCalledWith('ended')
   })
   it('prevents late completion from resurrecting canceled scene dialogue', () => {
     const { player, spoken } = setup()

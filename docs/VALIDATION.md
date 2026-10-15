@@ -1,5 +1,14 @@
 # Validation
 
+## Recorded dialogue and VN settings — October 15, 2026
+
+- All **103 tests** pass across 13 files. Added coverage checks every supplied filename against actual content, recording playback without device speech, sequential evidence dialogue, cancellation and late events, failed/muted clips, cinematic seeks and pause/resume, autoplay timers and reading time, foreground checks, settings pauses, choice/evidence gates through the actual React UI, and reading-preference recovery/persistence. Existing harbor and museum route coverage remains green.
+- TypeScript and the production Vite build pass. All **26 supplied MP3s** decode successfully with FFmpeg. The build emits 26 hashed audio assets from the unchanged source files, with no TTS API or key.
+- Actual browser playback reaches the `speaking` media event, progresses naturally through the opening harbor conversation in Auto, and waits at the first choice. Opening Settings stops the current recording and holds that line; closing the panel restarts it before Auto continues. The sound page exposes all four mixer channels and the opt-in local voice fallback.
+- Visual inspection covers the Reading menu and dialogue toolbar at desktop 1280 × 720, phone 390 × 844, and narrow 320 × 568 with larger text. The narrow toolbar's Listen label is collapsed to retain its accessible icon control; vertical scrolling accommodates larger text.
+- The opening's four recordings fit their existing shot durations. Automated transport tests cover caption offsets, no repeated starts, mute/voice volume, seek, resume, disposal, and an aborted pending play request. Human listening review, real mobile audio policies, and physical controller hardware remain to be checked.
+- Museum recordings were not among the supplied files; museum dialogue stays readable, with optional device speech. Auto uses reading time for missing or failed voice playback and never selects an answer or operates an exhibit. Story saves and rollback are outside this change. These changes are locally verified; this entry does not claim a new Pages deployment.
+
 ## React restoration and branching Hall of Waters — October 15, 2026
 
 - All **85 tests** pass across nine files. This includes the original 46 tests, 37 museum progression tests, and two museum journeys through the actual React UI. The route matrix combines both harbor entry choices, both harbor endings, both museum approaches, both gate positions, and both final leads. Reading-only discovery, leaving/revisiting the model, invalid actions, replay reset, and evidence retention are covered.

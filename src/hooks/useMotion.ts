@@ -4,7 +4,20 @@ export function useMotion() {
   const [systemReduced, setSystemReduced] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
-  const [manualReduced, setManualReduced] = useState(false)
+  const [manualReduced, setManualReduced] = useState(() => {
+    try {
+      return localStorage.getItem('solar-commons.reduced-motion.v1') === 'true'
+    } catch {
+      return false
+    }
+  })
+  useEffect(() => {
+    try {
+      localStorage.setItem('solar-commons.reduced-motion.v1', String(manualReduced))
+    } catch {
+      /* Optional persistence. */
+    }
+  }, [manualReduced])
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)')
     const update = () => setSystemReduced(media.matches)
