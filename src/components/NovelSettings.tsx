@@ -51,7 +51,7 @@ export function NovelSettings({
                   <span>
                     <strong>Autoplay dialogue</strong>
                     <small>
-                      Continue automatically; choices and investigations always wait for you.
+                      Scroll and continue automatically; choices and model controls wait for you.
                     </small>
                   </span>
                   <input

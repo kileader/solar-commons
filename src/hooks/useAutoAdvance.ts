@@ -7,7 +7,7 @@ export function readingTime(text: string, wordsPerMinute: number) {
   return Math.max(2500, (text.trim().split(/\s+/).length * 60000) / wordsPerMinute)
 }
 
-/** Only dialogue can advance. Choices, evidence panels and the model have no line. */
+/** Advance a displayed voice line or optional reading, never a story choice or model control. */
 export function useAutoAdvance(
   line: DialogueLine | null,
   enabled: boolean,

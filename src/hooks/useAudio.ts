@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { HarborAudio, type AudioStatus, type SoundCue } from '../audio/HarborAudio'
-import { localEnglishVoices, VoicePlayback, type VoiceState } from '../audio/VoicePlayback'
+import {
+  localEnglishVoices,
+  VoicePlayback,
+  type VoiceState,
+  type VoiceProgress,
+} from '../audio/VoicePlayback'
 import {
   loadAudioPreferences,
   normalizeAudioPreferences,
@@ -17,6 +22,7 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
   const [voice, setVoice] = useState<{ key: string; state: VoiceState }>({ key: '', state: 'idle' })
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
   const [replay, setReplay] = useState(0)
+  const [progress, setProgress] = useState<VoiceProgress | null>(null)
   const audio = useRef<HarborAudio | null>(null)
   const speech = useRef<VoicePlayback | null>(null)
   const preferencesRef = useRef(preferences)
@@ -42,6 +48,7 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
         engine.setSpeaking(state === 'speaking')
       },
       { find: recordingFor, create: (url) => new Audio(url) },
+      setProgress,
     )
     speech.current = player
     const refreshVoices = () => setVoices(service ? localEnglishVoices(service.getVoices()) : [])
@@ -108,6 +115,8 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
         ? voice.state
         : ('loading' as const),
     hasVoice,
+    progress,
+    currentLine: lines[0] ?? null,
     voices,
     unlock,
     play,

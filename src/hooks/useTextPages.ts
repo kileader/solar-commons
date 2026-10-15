@@ -52,10 +52,13 @@ export function useTextPages(entries: readonly ReadingEntry[]) {
       document.body.append(probe)
       try {
         const next = source.flatMap((entry) =>
-          paginateText(entry.text, (candidate) => {
-            probe.textContent = candidate
-            return probe.getBoundingClientRect().height <= height - 2
-          }).map((page) => ({ ...page, entry })),
+          (entry.scrollable
+            ? [{ text: entry.text, start: 0 }]
+            : paginateText(entry.text, (candidate) => {
+                probe.textContent = candidate
+                return probe.getBoundingClientRect().height <= height - 2
+              })
+          ).map((page) => ({ ...page, entry })),
         )
         const anchor = position.current
         let selected = next.findIndex(

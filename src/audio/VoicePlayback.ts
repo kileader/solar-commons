@@ -2,6 +2,10 @@ import type { DialogueLine, Speaker } from '../content/harbor'
 import type { AudioPreferences } from './preferences'
 
 export type VoiceState = 'idle' | 'loading' | 'speaking' | 'ended' | 'unavailable' | 'error'
+export interface VoiceProgress {
+  time: number
+  duration: number
+}
 export type SpeechService = Pick<SpeechSynthesis, 'getVoices' | 'speak' | 'cancel'>
 
 export function localEnglishVoices(voices: readonly SpeechSynthesisVoice[]) {
@@ -31,6 +35,7 @@ export class VoicePlayback {
   private generation = 0
   private utterance: SpeechSynthesisUtterance | null = null
   private clip: HTMLAudioElement | null = null
+  private progressTimer: ReturnType<typeof setInterval> | null = null
 
   constructor(
     private service: SpeechService | null,
@@ -40,12 +45,16 @@ export class VoicePlayback {
       find: (line: DialogueLine) => string | undefined
       create: (url: string) => HTMLAudioElement
     },
+    private onProgress?: (progress: VoiceProgress | null) => void,
   ) {}
 
   stop() {
     this.generation++
+    this.clearProgressTimer()
+    this.onProgress?.(null)
     if (this.clip) {
       this.clip.onplaying = this.clip.onended = this.clip.onerror = null
+      this.clip.ontimeupdate = this.clip.onloadedmetadata = null
       this.clip.pause()
       this.clip.removeAttribute('src')
       this.clip.load()
@@ -88,18 +97,36 @@ export class VoicePlayback {
         }
         this.clip = clip
         clip.volume = volume
+        const reportProgress = () => {
+          if (generation !== this.generation || this.clip !== clip) return
+          this.onProgress?.({
+            time: Number.isFinite(clip.currentTime) ? clip.currentTime : 0,
+            duration: Number.isFinite(clip.duration) ? clip.duration : 0,
+          })
+        }
+        clip.ontimeupdate = clip.onloadedmetadata = reportProgress
         clip.onplaying = () => {
-          if (generation === this.generation && this.clip === clip) this.onState('speaking')
+          if (generation !== this.generation || this.clip !== clip) return
+          this.onState('speaking')
+          reportProgress()
+          this.clearProgressTimer()
+          if (this.onProgress) this.progressTimer = setInterval(reportProgress, 200)
         }
         clip.onended = () => {
           if (generation !== this.generation || this.clip !== clip) return
           clip.onplaying = clip.onended = clip.onerror = null
+          clip.ontimeupdate = clip.onloadedmetadata = null
+          reportProgress()
+          this.clearProgressTimer()
           this.clip = null
           speakAt(index + 1)
         }
         const fail = () => {
           if (generation !== this.generation || this.clip !== clip) return
           clip.onplaying = clip.onended = clip.onerror = null
+          clip.ontimeupdate = clip.onloadedmetadata = null
+          this.clearProgressTimer()
+          this.onProgress?.(null)
           clip.pause()
           this.clip = null
           fallback()
@@ -113,6 +140,11 @@ export class VoicePlayback {
       } else fallback()
     }
     speakAt(0)
+  }
+
+  private clearProgressTimer() {
+    if (this.progressTimer !== null) clearInterval(this.progressTimer)
+    this.progressTimer = null
   }
 
   private speakLocal(

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { VoicePlayback } from './VoicePlayback'
+import { VoicePlayback, type VoiceProgress } from './VoicePlayback'
 import { defaultAudioPreferences } from './preferences'
 import { dialogueRecordings, recordingFor, recordingIdFor } from './dialogueAssets'
 import {
@@ -17,7 +17,7 @@ import { exhibitSectionReadings, modelReading, museumReadings } from '../content
 import { initialSceneState, type ScenePhase } from '../state/scene'
 import script from '../../dialogue/script.json'
 
-function setup(blocked = false) {
+function setup(blocked = false, progress?: (progress: VoiceProgress | null) => void) {
   const clips: HTMLAudioElement[] = []
   const state = vi.fn()
   const speak = vi.fn()
@@ -40,12 +40,48 @@ function setup(blocked = false) {
         return clip
       },
     },
+    progress,
   )
   return { player, clips, state, speak }
 }
 const lines = introLines.slice(0, 2)
 
 describe('supplied dialogue recordings', () => {
+  it('reports media time without animation frames and releases progress timers on completion or cancel', () => {
+    vi.useFakeTimers()
+    try {
+      const progress = vi.fn()
+      const { player, clips } = setup(false, progress)
+      player.say(lines.slice(0, 1), defaultAudioPreferences)
+      const clip = clips[0]
+      Object.assign(clip, { currentTime: 0, duration: 20 })
+      clip.onloadedmetadata?.({} as Event)
+      expect(progress).toHaveBeenLastCalledWith({ time: 0, duration: 20 })
+      clip.onplaying?.({} as Event)
+      clip.currentTime = 7
+      vi.advanceTimersByTime(200)
+      expect(progress).toHaveBeenLastCalledWith({ time: 7, duration: 20 })
+      const stale = clip.ontimeupdate!
+      clip.currentTime = 20
+      clip.onended?.({} as Event)
+      expect(progress).toHaveBeenLastCalledWith({ time: 20, duration: 20 })
+      expect(vi.getTimerCount()).toBe(0)
+      player.say(lines.slice(1), defaultAudioPreferences)
+      const next = clips[1]
+      next.onplaying?.({} as Event)
+      expect(vi.getTimerCount()).toBe(1)
+      const count = progress.mock.calls.length
+      stale.call(clip, {} as Event)
+      expect(progress).toHaveBeenCalledTimes(count)
+      player.stop()
+      expect(progress).toHaveBeenLastCalledWith(null)
+      expect(next.ontimeupdate).toBeNull()
+      expect(vi.getTimerCount()).toBe(0)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('maps all 94 recordings to exact authored words across every route and optional reading', () => {
     const authored: DialogueLine[] = [
       ...introLines,

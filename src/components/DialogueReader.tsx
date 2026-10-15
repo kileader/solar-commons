@@ -1,6 +1,7 @@
-import { ArrowRight, ChevronLeft, Pause, Play, Volume2 } from 'lucide-react'
-import { useTextPages } from '../hooks/useTextPages'
-import { useAutoAdvance } from '../hooks/useAutoAdvance'
+import { ArrowRight, Pause, Play, Volume2 } from 'lucide-react'
+import { useRef } from 'react'
+import { useAutoScroll } from '../hooks/useAutoScroll'
+import { readingTime, useAutoAdvance } from '../hooks/useAutoAdvance'
 import type { DialogueLine } from '../content/harbor'
 import type { ReadingPreferences } from '../reading/preferences'
 import type { useAudio } from '../hooks/useAudio'
@@ -24,51 +25,37 @@ export function DialogueReader({
   onReplay: () => void
   onAdvance: () => void
 }) {
-  const pagination = useTextPages([{ id: line.id, title: line.speaker, text: line.text }])
-  const next = () => (pagination.last ? onAdvance() : pagination.goTo(pagination.index + 1))
-  const voice =
-    (!pagination.last && audio.voiceState === 'speaking') ||
-    (pagination.index > 0 && audio.voiceState === 'ended')
-      ? 'unavailable'
-      : audio.voiceState
-  useAutoAdvance(
-    {
-      ...line,
-      id: `${line.id}/page-${pagination.index}`,
-      text: pagination.page?.text ?? line.text,
-    },
+  const body = useRef<HTMLDivElement>(null)
+  useAutoScroll(
+    body,
+    line.id + line.text,
     auto,
     paused,
-    voice,
-    reading,
-    next,
+    audio.voiceState,
+    audio.progress,
+    readingTime(line.text, reading.readingSpeed),
   )
+  useAutoAdvance(line, auto, paused, audio.voiceState, reading, onAdvance)
   return (
     <div className="dialogue-body">
-      <div className="dialogue-text" aria-live="polite" aria-atomic="true">
-        <p ref={pagination.body} className={line.speaker === 'Narrator' ? 'narration' : ''}>
-          {pagination.page?.text ?? line.text}
-        </p>
+      <div
+        ref={body}
+        className="dialogue-text scrollable-passage"
+        role="region"
+        aria-label={`${line.speaker} dialogue`}
+        tabIndex={0}
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <p className={line.speaker === 'Narrator' ? 'narration' : ''}>{line.text}</p>
       </div>
       <div className="dialogue-buttons">
-        {pagination.pages.length > 1 && (
-          <>
-            <button
-              className="page-back"
-              aria-label="Previous dialogue page"
-              disabled={pagination.index === 0}
-              onClick={() => pagination.goTo(pagination.index - 1)}
-            >
-              <ChevronLeft size={17} />
-            </button>
-            <span className="dialogue-page">
-              {pagination.index + 1}/{pagination.pages.length}
-            </span>
-          </>
-        )}
         <button
           className="voice-replay"
-          onClick={onReplay}
+          onClick={() => {
+            if (body.current) body.current.scrollTop = 0
+            onReplay()
+          }}
           aria-label="Replay dialogue"
           disabled={
             !audio.ready ||
@@ -90,8 +77,8 @@ export function DialogueReader({
           {auto ? <Pause size={16} /> : <Play size={16} />}
           <span>Auto{auto ? ' on' : ''}</span>
         </button>
-        <button className="continue-button" onClick={next}>
-          <span>{pagination.last ? 'Continue' : 'Next page'}</span>
+        <button className="continue-button" onClick={onAdvance}>
+          <span>Continue</span>
           <span className="continue-arrow">
             <ArrowRight size={23} />
           </span>

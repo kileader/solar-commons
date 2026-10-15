@@ -3,6 +3,7 @@ import type { DialogueLine } from '../content/harbor'
 
 export interface ReadAloudControls {
   activeId: string | null
+  completedId?: string | null
   canRead: boolean
   onRead: (id: string, lines: readonly DialogueLine[]) => void
 }

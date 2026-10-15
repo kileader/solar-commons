@@ -128,6 +128,73 @@ afterEach(() => {
 })
 
 describe('scene input integration', () => {
+  it.each(clues)(
+    'speaks only the displayed character passage in $id evidence, including when reopened',
+    (clue) => {
+      vi.useFakeTimers()
+      try {
+        const clips: HTMLMediaElement[] = []
+        const visibleAtPlay: (string | null | undefined)[] = []
+        vi.mocked(HTMLMediaElement.prototype.play).mockImplementation(function (
+          this: HTMLMediaElement,
+        ) {
+          clips.push(this)
+          visibleAtPlay.push(container.querySelector('dialog[open] .reader-text')?.textContent)
+          return Promise.resolve()
+        })
+        const click = (selector: string) =>
+          act(() => container.querySelector<HTMLButtonElement>(selector)!.click())
+        const select = (id: string) =>
+          act(() => {
+            const control = container.querySelector<HTMLSelectElement>('dialog[open] select')!
+            control.value = id
+            control.dispatchEvent(new Event('change', { bubbles: true }))
+          })
+        for (let i = 0; i < 4; i++) click('.continue-button')
+        click('.story-choice')
+        click('.continue-button')
+        click('.continue-button')
+        const before = clips.length
+        click(`.hotspot-${clue.id}`)
+        expect(clips).toHaveLength(before)
+        select('modeled')
+        select('uncertain')
+        expect(clips).toHaveLength(before)
+        const [mara, kite] = clue.dialogue
+        select(mara.id)
+        const first = clips.at(-1)!
+        expect(first.src).toContain(mara.id)
+        expect(visibleAtPlay.at(-1)).toBe(mara.text)
+        const staleEnd = first.onended!
+        act(() => first.dispatchEvent(new Event('ended')))
+        act(() => vi.advanceTimersByTime(60000))
+        expect(clips).toHaveLength(before + 1)
+        // Enabling Auto after a line ends waits the normal gap, then shows Kite before speaking.
+        click('dialog[open] [aria-label="Autoplay reading"]')
+        act(() => vi.advanceTimersByTime(999))
+        expect(clips).toHaveLength(before + 1)
+        act(() => vi.advanceTimersByTime(1))
+        expect(clips.at(-1)!.src).toContain(kite.id)
+        expect(visibleAtPlay.at(-1)).toBe(kite.text)
+        select('observed')
+        expect(container.querySelector('main')?.dataset.voiceLine).toBe('')
+        const after = clips.length
+        act(() => staleEnd.call(first, new Event('ended')))
+        act(() => vi.advanceTimersByTime(60000))
+        expect(clips).toHaveLength(after)
+        click('[aria-label="Close evidence"]')
+        const beforeReopen = clips.length
+        click(`.hotspot-${clue.id}`)
+        expect(clips).toHaveLength(beforeReopen)
+        expect(container.querySelector<HTMLSelectElement>('dialog[open] select')!.value).toBe(
+          'observed',
+        )
+      } finally {
+        vi.useRealTimers()
+      }
+    },
+  )
+
   it.each(clues)('retains the $id schematic while paging through its evidence', (clue) => {
     const click = (selector: string) => {
       act(() => container.querySelector<HTMLButtonElement>(selector)!.click())
@@ -389,7 +456,7 @@ describe('scene input integration', () => {
     expect(container.querySelector('dialog[open] .modal-step')?.textContent).toContain(
       'Tide gallery',
     )
-    // Exhibit narration is opt-in, sequential, and never advances the scene.
+    // Each recording has a visible passage; Auto off never queues hidden paragraphs.
     selectReading('section-0')
     clickButton('[aria-label="Listen to Before the water"]')
     expect(latestClip().src).toContain('exhibit-0-heading')
@@ -397,14 +464,42 @@ describe('scene input integration', () => {
     focused = false
     act(() => window.dispatchEvent(new Event('blur')))
     endClip()
-    expect(latestClip().src).toContain('exhibit-0-0')
+    expect(latestClip()).toBe(readingClip)
     expect(readingClip.src).toContain('exhibit-0-heading')
     focused = true
     act(() => window.dispatchEvent(new Event('focus')))
+    selectReading('section-0-0')
+    clickButton('[aria-label="Listen to Before the water, passage 1"]')
+    expect(latestClip().src).toContain('exhibit-0-0')
     endClip()
+    selectReading('section-0-1')
+    clickButton('[aria-label="Listen to Before the water, passage 2"]')
     expect(latestClip().src).toContain('exhibit-0-1')
     endClip()
-    expect(container.querySelector('[aria-label="Stop reading Before the water"]')).toBeNull()
+    expect(
+      container.querySelector('[aria-label="Stop reading Before the water, passage 2"]'),
+    ).toBeNull()
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] })
+    try {
+      // Optional Auto turns to the next recording only after its passage is on screen.
+      selectReading('section-0')
+      clickButton('[aria-label="Autoplay reading"]')
+      clickButton('[aria-label="Listen to Before the water"]')
+      endClip()
+      act(() => vi.advanceTimersByTime(999))
+      expect(latestClip().src).toContain('exhibit-0-heading')
+      act(() => vi.advanceTimersByTime(1))
+      expect(latestClip().src).toContain('exhibit-0-0')
+      expect(container.querySelector<HTMLSelectElement>('dialog[open] select')!.value).toBe(
+        'section-0-0',
+      )
+      expect(container.querySelector('dialog[open] .reader-text')!.textContent).toContain(
+        'Before the Unbinding, Larkhaven’s pumps',
+      )
+      clickButton('[aria-label="Autoplay reading"]')
+    } finally {
+      vi.useRealTimers()
+    }
     selectReading('introduction')
     clickButton('[aria-label="Listen to the exhibit introduction"]')
     const abandonedClip = latestClip()

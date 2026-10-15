@@ -14,7 +14,7 @@ beforeEach(() => {
   vi.useFakeTimers()
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
   vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>
-    setTimeout(() => callback(0), 0),
+    setTimeout(() => callback(performance.now()), 16),
   )
   vi.stubGlobal('cancelAnimationFrame', clearTimeout)
   height = 62
@@ -93,7 +93,7 @@ it('turns every exhibit page, jumps sections, and preserves the reading position
   )
 })
 
-it('paginates a voiced line without replaying it and lets Auto leave only after the recording ends', () => {
+it('keeps one recorded line in one scrollable passage and waits for its ending plus the Auto gap', () => {
   const advance = vi.fn()
   const replay = vi.fn()
   const audio = {
@@ -116,6 +116,9 @@ it('paginates a voiced line without replaying it and lets Auto leave only after 
       />,
     )
   act(render)
+  expect(container.querySelector('.scrollable-passage')!.textContent).toBe(text)
+  expect(container.querySelector('.page-back')).toBeNull()
+  expect(container.querySelector('.continue-button')!.textContent).toBe('Continue')
   for (let i = 0; i < 10; i++) act(() => vi.advanceTimersByTime(10000))
   expect(container.querySelector('.dialogue-text')!.textContent).toContain('last ferry.')
   expect(advance).not.toHaveBeenCalled()
@@ -124,6 +127,29 @@ it('paginates a voiced line without replaying it and lets Auto leave only after 
   act(render)
   act(() => vi.advanceTimersByTime(999))
   expect(advance).not.toHaveBeenCalled()
-  act(() => vi.advanceTimersByTime(10000))
+  act(() => vi.advanceTimersByTime(1))
   expect(advance).toHaveBeenCalledTimes(1)
+})
+
+it('gives separate recordings separate pages without splitting either passage', () => {
+  const changed = vi.fn()
+  const first = { id: 'a', speaker: 'Mara' as const, text }
+  const second = { id: 'b', speaker: 'Kite' as const, text: 'An incomplete handover log.' }
+  act(() =>
+    root.render(
+      <PagedReader
+        entries={[
+          { id: first.id, title: first.speaker, text: first.text, voiceLine: first },
+          { id: second.id, title: second.speaker, text: second.text, voiceLine: second },
+        ]}
+        onVoiceLine={changed}
+      />,
+    ),
+  )
+  expect(changed).toHaveBeenLastCalledWith(first)
+  expect(container.querySelector('.reader-text')!.textContent).toBe(first.text)
+  expect(container.querySelector('.page-buttons [role="status"]')!.textContent).toBe('1 / 2')
+  click('[aria-label="Next page"]')
+  expect(changed).toHaveBeenLastCalledWith(second)
+  expect(container.querySelector('.reader-text')!.textContent).toBe(second.text)
 })

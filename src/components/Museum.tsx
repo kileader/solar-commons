@@ -2,7 +2,7 @@ import { ArrowRight, BookOpen, Waves } from 'lucide-react'
 import { floodSnapshot, floodStages, museumContent, type FloodStage } from '../content/museum'
 import type { SceneEvent, SceneState } from '../state/scene'
 import { Modal, ModalHeading } from './Modal'
-import { PagedReader } from './PagedReader'
+import { PagedReader, type ReaderPlayback } from './PagedReader'
 import { PagedPassage } from './PagedPassage'
 import './museum.css'
 import { exhibitSectionReadings, modelReading, museumReadings } from '../content/museumReadings'
@@ -32,12 +32,14 @@ export function HistoryExhibit({
   reading,
   step,
   onSectionChange,
+  playback,
 }: {
   open: boolean
   onClose: () => void
   reading: ReadAloudControls
   step: string
   onSectionChange: () => void
+  playback: ReaderPlayback
 }) {
   const exhibit = museumContent.historicalExhibit
   const entries = [
@@ -51,16 +53,31 @@ export function HistoryExhibit({
         lines: [museumReadings.introduction],
       },
     },
-    ...exhibit.sections.map((section, index) => ({
-      id: 'section-' + index,
-      title: section.title,
-      text: section.paragraphs.join('\n\n'),
-      reading: {
-        id: 'history-' + index,
-        label: section.title,
-        lines: exhibitSectionReadings(index),
-      },
-    })),
+    ...exhibit.sections.flatMap((section, index) => {
+      const recordings = exhibitSectionReadings(index)
+      return [
+        {
+          id: 'section-' + index,
+          title: section.title,
+          text: section.title,
+          reading: {
+            id: 'history-' + index,
+            label: section.title,
+            lines: [recordings[0]],
+          },
+        },
+        ...section.paragraphs.map((text, paragraph) => ({
+          id: `section-${index}-${paragraph}`,
+          title: `${section.title} · ${paragraph + 1}/${section.paragraphs.length}`,
+          text,
+          reading: {
+            id: `history-${index}-${paragraph}`,
+            label: `${section.title}, passage ${paragraph + 1}`,
+            lines: [recordings[paragraph + 1]],
+          },
+        })),
+      ]
+    }),
     {
       id: 'source',
       title: 'Sources and the teaching model',
@@ -82,7 +99,13 @@ export function HistoryExhibit({
       >
         <BookOpen size={15} /> {exhibit.title}
       </ModalHeading>
-      <PagedReader entries={entries} reading={reading} onSectionChange={onSectionChange} />
+      <PagedReader
+        entries={entries}
+        reading={reading}
+        onSectionChange={onSectionChange}
+        playback={playback}
+        active={open}
+      />
       <button className="modal-done" onClick={onClose}>
         Return to the gallery <ArrowRight size={18} />
       </button>
@@ -96,12 +119,14 @@ export function FloodReconstruction({
   onReadHistory,
   onReadAccount,
   reading,
+  playback,
 }: {
   state: SceneState
   perform: (event: SceneEvent) => void
   onReadHistory: () => void
   onReadAccount: () => void
   reading: ReadAloudControls
+  playback: ReaderPlayback
 }) {
   const snapshot = floodSnapshot(state.floodStage, state.gateOpen)
   const dawn = state.floodStage === 2
@@ -249,7 +274,11 @@ export function FloodReconstruction({
             {dawn ? 'Recorded observation' : 'Illustrated water response'}
           </span>
           <h3>{snapshot.title}</h3>
-          <PagedPassage text={snapshot.detail} />
+          <PagedPassage
+            text={snapshot.detail}
+            line={modelReading(state.floodStage, state.gateOpen)}
+            playback={playback}
+          />
           <ReadAloudButton
             reading={reading}
             id={`model-${state.floodStage}-${state.gateOpen}`}

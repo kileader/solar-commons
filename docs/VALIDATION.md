@@ -1,5 +1,11 @@
 # Validation
 
+## Visible voice passages and Auto scrolling — October 15, 2026
+
+- Each recording keeps its full text in an internally scrollable passage. Different recordings have different pages. Evidence voices start only after their character’s page appears; sensor and uncertainty pages stay silent. Optional historical headings and paragraphs have separate Listen controls. Auto scrolls by media time, then shows the next passage after the configured gap; it never selects a story choice or operates the model.
+- All **132 tests** and the production build pass. Regressions cover gradual scrolling, loading, unvoiced pacing, manual takeover, panel pauses, cleanup, media progress without animation frames, visible text before evidence playback, reopening evidence without stale voices, optional passage progression, and both existing museum journeys. Background playback and focus-change tests still pass. All 94 recording mappings remain unchanged.
+- Browser checks cover 1280 × 720, 320 × 568, and 640 × 360: a long harbor line scrolls without input, Auto stops at a story choice, evidence audio follows the displayed speaker, and the history wall scrolls and advances between paragraphs. Phone prose is 17 px (16 px in short landscape); the larger option remains available. Reading controls stay in the viewport, the document does not scroll, and harbor schematics remain visible. These checks verify playback transport and layout, not a fresh human listening review or physical-device testing.
+
 ## Restore harbor diagrams — October 15, 2026
 
 - The no-scroll refactor had removed the sonar, thermal, and archive schematics from the evidence panels. Their original SVG drawings and source captions are restored and remain visible across evidence pages. Short landscape screens place the drawing beside the reader.

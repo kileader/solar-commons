@@ -1,6 +1,7 @@
 import { Volume2 } from 'lucide-react'
 import type { useAudio } from '../hooks/useAudio'
 import type { ControllerStatus } from '../hooks/useGamepad'
+import { voiceTestLine } from '../content/harbor'
 
 type AudioControls = ReturnType<typeof useAudio>
 
@@ -130,10 +131,7 @@ export function AudioSettings({ audio, page = 0 }: { audio: AudioControls; page?
           >
             <Volume2 size={16} /> Try Kite’s recorded voice
           </button>
-          <p className="settings-description">
-            The harbor, museum, and opening are voiced. Optional exhibit readings have their own
-            Listen buttons.
-          </p>
+          <p className="settings-description">{voiceTestLine.text}</p>
           {audio.voiceState === 'error' && (
             <p className="settings-description" role="status">
               Voice playback could not start. Try the voice button again.
@@ -201,6 +199,10 @@ export function ControllerSettings({
                   <dt>LB / L1 · RB / R1</dt>
                   <dd>Replay voice · mute</dd>
                 </div>
+                <div>
+                  <dt>Right stick</dt>
+                  <dd>Scroll the current passage</dd>
+                </div>
               </>
             )}
           </dl>
@@ -223,8 +225,8 @@ export function ControllerSettings({
             <kbd>1</kbd> <kbd>2</kbd> Choose <kbd>Esc</kbd> Close a panel
           </p>
           <p>
-            Use the Back and Next buttons to turn reading pages. Scene progress lasts for this
-            visit.
+            Scroll long voice passages with the wheel or touch. Auto scrolls for you. Back and Next
+            turn reading pages.
           </p>
         </div>
       )}

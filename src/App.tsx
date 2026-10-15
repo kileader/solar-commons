@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer, useState } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import {
   ArrowRight,
   BookOpen,
@@ -64,6 +64,10 @@ export default function App() {
   >(null)
   const [reading, setReading] = useState(loadReadingPreferences)
   const [auto, setAuto] = useState(false)
+  const [evidenceVoice, setEvidenceVoice] = useState<{
+    clueId: string | null
+    line: DialogueLine | null
+  } | null>(null)
   const [readAloud, setReadAloud] = useState<{ id: string; lines: readonly DialogueLine[] } | null>(
     null,
   )
@@ -71,6 +75,17 @@ export default function App() {
   const motion = useMotion()
   const currentLine = getCurrentLine(state)
   const activeClue = clues.find((clue) => clue.id === state.activeClueId)
+  const clueVoiceId = activeClue?.id ?? null
+  const onEvidenceVoice = useCallback(
+    (line: DialogueLine | null) => {
+      setEvidenceVoice((previous) =>
+        previous?.clueId === clueVoiceId && previous.line === line
+          ? previous
+          : { clueId: clueVoiceId, line },
+      )
+    },
+    [clueVoiceId],
+  )
   const speaker = currentLine?.speaker ?? 'Kite'
   const inMuseum = state.phase.startsWith('museum-')
   const isChoice = [
@@ -113,7 +128,10 @@ export default function App() {
 
   const speechLines = useMemo<readonly DialogueLine[]>(() => {
     if (readAloud) return readAloud.lines
-    if (activeClue) return activeClue.dialogue
+    if (activeClue)
+      return evidenceVoice?.clueId === activeClue.id && evidenceVoice.line
+        ? [evidenceVoice.line]
+        : []
     if (currentLine) return [currentLine]
     if (state.phase === 'investigation')
       return [
@@ -124,7 +142,7 @@ export default function App() {
         },
       ]
     return []
-  }, [readAloud, activeClue, currentLine, state.phase, investigated])
+  }, [readAloud, activeClue, evidenceVoice, currentLine, state.phase, investigated])
   const audio = useAudio(
     speechLines,
     panel !== null && !(['history', 'record', 'model-account'].includes(panel) && readAloud),
@@ -135,17 +153,25 @@ export default function App() {
     !audio.preferences.muted &&
     audio.preferences.master * audio.preferences.voice > 0
   const readControls: ReadAloudControls = {
-    activeId: readAloud?.id ?? null,
+    activeId: ['ended', 'unavailable', 'error'].includes(audio.voiceState)
+      ? null
+      : (readAloud?.id ?? null),
+    completedId: audio.voiceState === 'ended' ? (readAloud?.id ?? null) : null,
     canRead,
     onRead: (id, lines) => {
       audio.unlock()
+      if (readAloud?.id === id && audio.voiceState === 'ended') {
+        audio.replayVoice()
+        return
+      }
       setReadAloud((previous) => (previous?.id === id ? null : { id, lines }))
     },
   }
   useEffect(() => {
-    if (readAloud && (!canRead || ['ended', 'unavailable', 'error'].includes(audio.voiceState)))
+    if (readAloud && (!canRead || ['unavailable', 'error'].includes(audio.voiceState)))
       setReadAloud(null)
   }, [readAloud, canRead, audio.voiceState])
+  const readerPlayback = { audio, auto, preferences: reading, onToggleAuto: toggleAuto }
   function replayDialogue() {
     setReadAloud(null)
     audio.replayVoice()
@@ -161,6 +187,7 @@ export default function App() {
 
   function perform(event: SceneEvent) {
     setReadAloud(null)
+    if (event.type === 'OPEN_CLUE' || event.type === 'CLOSE_CLUE') setEvidenceVoice(null)
     audio.unlock()
     let cue: SoundCue = 'confirm'
     switch (event.type) {
@@ -288,7 +315,14 @@ export default function App() {
         return
       moveFocus(controls, direction)
     },
-    () => {},
+    (amount) => {
+      const root = document.querySelector('dialog[open]') ?? document
+      const passage = root.querySelector<HTMLElement>('.scrollable-passage')
+      if (passage && passage.scrollHeight > passage.clientHeight) {
+        setAuto(false)
+        passage.scrollBy({ top: amount, behavior: 'auto' })
+      }
+    },
   )
 
   useEffect(() => {
@@ -383,6 +417,7 @@ export default function App() {
       data-audio-state={audio.status.state}
       data-audio-peak={audio.status.peak.toFixed(6)}
       data-voice-state={audio.voiceState}
+      data-voice-line={speechLines[0]?.id ?? ''}
       data-auto={auto ? 'on' : 'off'}
       data-controller-state={controller}
       data-input={usingGamepad ? 'gamepad' : 'pointer'}
@@ -562,6 +597,7 @@ export default function App() {
             onReadHistory={readHistory}
             onReadAccount={() => openPanel('model-account')}
             reading={readControls}
+            playback={readerPlayback}
           />
         )}
         {!inMuseum &&
@@ -687,7 +723,15 @@ export default function App() {
             )}
             {state.phase === 'investigation' && (
               <div className="investigation-body">
-                <PagedPassage text={investigated ? sceneCopy.synthesis : sceneCopy.investigation} />
+                <PagedPassage
+                  text={investigated ? sceneCopy.synthesis : sceneCopy.investigation}
+                  line={{
+                    id: `investigation-${investigated}`,
+                    speaker: 'Kite',
+                    text: investigated ? sceneCopy.synthesis : sceneCopy.investigation,
+                  }}
+                  playback={readerPlayback}
+                />
                 <div className="investigation-actions">
                   <span className="reading-dots">
                     {clues.map((clue) => (
@@ -746,7 +790,11 @@ export default function App() {
             {state.phase === 'museum-explore' && (
               <div className="museum-summary">
                 <span className="eyebrow">THE TIDE GALLERY</span>
-                <PagedPassage text={museumContent.museumCopy.explore} />
+                <PagedPassage
+                  text={museumContent.museumCopy.explore}
+                  line={museumReadings.gallery}
+                  playback={readerPlayback}
+                />
                 <ReadAloudButton
                   reading={readControls}
                   id="gallery"
@@ -781,6 +829,8 @@ export default function App() {
                     : 'Two waters. An unfinished account.'}
                 </h2>
                 <PagedPassage
+                  line={state.discovered ? museumReadings.completion : museumReadings.leaveEarly}
+                  playback={readerPlayback}
                   text={
                     state.discovered
                       ? museumContent.museumCopy.completion
@@ -876,6 +926,8 @@ export default function App() {
               </figure>
               <PagedReader
                 key={activeClue.id}
+                onVoiceLine={onEvidenceVoice}
+                playback={readerPlayback}
                 entries={[
                   {
                     id: 'observed',
@@ -896,6 +948,7 @@ export default function App() {
                     id: line.id,
                     title: line.speaker,
                     text: line.text,
+                    voiceLine: line,
                   })),
                 ]}
               />
@@ -945,6 +998,8 @@ export default function App() {
           <BookOpen size={14} /> The handover record
         </ModalHeading>
         <PagedReader
+          active={panel === 'record'}
+          playback={readerPlayback}
           entries={[
             {
               id: 'refuge',
@@ -977,6 +1032,9 @@ export default function App() {
           Flood account
         </ModalHeading>
         <PagedReader
+          active={panel === 'model-account'}
+          playback={readerPlayback}
+          onSectionChange={() => setReadAloud(null)}
           key={`${state.floodStage}-${state.gateOpen}`}
           entries={[
             {
@@ -997,6 +1055,7 @@ export default function App() {
       </Modal>
 
       <HistoryExhibit
+        playback={readerPlayback}
         open={panel === 'history'}
         onClose={closePanel}
         reading={readControls}

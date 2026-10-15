@@ -2,6 +2,8 @@ export interface ReadingEntry {
   id: string
   title: string
   text: string
+  /** One recording stays one passage, with scrolling instead of text splitting. */
+  scrollable?: boolean
 }
 
 export interface ReadingPage {
