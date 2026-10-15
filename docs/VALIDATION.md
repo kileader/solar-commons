@@ -1,5 +1,10 @@
 # Validation
 
+## Compact dialogue — October 15, 2026
+
+- Conversation cards are about 28% shorter at 1280 × 720 and 18% shorter at 320 × 568. A 73–78% opaque backdrop and 6 px blur reveal more of the illustration without shrinking the text. Choices and other reading surfaces retain their reserved space.
+- All **118 tests** and the production build pass. Browser checks cover desktop, narrow phone with larger text and page turns, and 640 × 360 landscape; dialogue and choices have no clipped text or off-screen controls.
+
 ## Viewport reading layout — October 15, 2026
 
 - All **118 tests** pass, including lossless pagination, section selection, reading position across resize, Auto waiting for the end of a recording across multiple pages, and the existing two museum journeys. A browser-discovered page-turn race now has a regression: a resize before React commits a turn must preserve the requested page.

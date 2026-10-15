@@ -16,6 +16,9 @@ body,
   padding: 0;
   overflow: clip;
 }
+.novel:has(.dialogue-body) {
+  grid-template-rows: 76px minmax(0, 1fr) clamp(220px, 31dvh, 270px) 36px;
+}
 .novel .topbar {
   grid-row: 1;
   height: 100%;
@@ -70,7 +73,12 @@ body,
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 20px 28px 14px;
+  padding: 16px 28px 12px;
+  background: linear-gradient(115deg, #123b43ba, #092831c7);
+  backdrop-filter: blur(6px);
+  box-shadow:
+    0 8px 30px #061d2b35,
+    inset 0 0 30px #7cede506;
 }
 .novel .dialogue-topline {
   flex: 0 0 22px;
@@ -639,6 +647,9 @@ body,
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 @media (max-width: 760px) {
+  .novel:has(.dialogue-body) {
+    grid-template-rows: 54px minmax(0, 1fr) 50dvh 30px;
+  }
   .novel[data-phase='museum-explore'],
   .novel[data-phase='museum-complete'] {
     grid-template-rows: 54px minmax(0, 1fr) 64dvh 30px;
@@ -933,6 +944,9 @@ body,
   }
 }
 @media (max-height: 500px) {
+  .novel:has(.dialogue-body) {
+    grid-template-rows: 44px minmax(0, 1fr) 60dvh 26px;
+  }
   .novel .museum-summary {
     gap: 6px;
   }
