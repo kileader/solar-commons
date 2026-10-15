@@ -127,18 +127,17 @@ afterEach(() => {
 })
 
 describe('scene input integration', () => {
-  it('keeps the current step available and reveals choices without selecting one', () => {
+  it('keeps the current step and choices available without scrolling or selecting one', () => {
     const scroll = vi.spyOn(HTMLElement.prototype, 'scrollIntoView')
     const click = (selector: string) => {
       act(() => container.querySelector<HTMLButtonElement>(selector)!.click())
       tick()
     }
-    expect(container.querySelector('.current-step')?.textContent).toContain('At the harbor')
+    expect(container.querySelector('.scene-status')?.textContent).toContain('At the harbor')
     for (let i = 0; i < 4; i++) click('.continue-button')
-    expect(container.querySelector('.current-step')?.textContent).toContain('Your choice')
-    expect(scroll.mock.contexts).toContain(container.querySelector('.choice-block'))
-    container.querySelector<HTMLButtonElement>('.scene-jump')!.focus()
-    click('.scene-jump')
+    expect(container.querySelector('.scene-status')?.textContent).toContain('Your choice')
+    expect(scroll).not.toHaveBeenCalled()
+    expect(container.querySelector('.scene-jump')).toBeNull()
     expect(document.activeElement).toBe(container.querySelector('.story-choice'))
     expect(container.querySelectorAll('.story-choice')).toHaveLength(2)
     click('[aria-label^="Open field notes"]')
@@ -150,15 +149,14 @@ describe('scene input integration', () => {
     click('.story-choice')
     click('.continue-button')
     click('.continue-button')
-    expect(container.querySelector('.current-step')?.textContent).toContain('0 of 3 readings')
+    expect(container.querySelector('.scene-status')?.textContent).toContain('0/3 readings')
     click('.hotspot')
-    expect(container.querySelector('.current-step')?.textContent).toContain('1 of 3 readings')
+    expect(container.querySelector('.scene-status')?.textContent).toContain('1/3 readings')
     expect(container.querySelector('dialog[open] .modal-step')?.textContent).toContain(
       'Harbor investigation',
     )
     click('[aria-label="Close evidence"]')
-    click('.scene-jump')
-    expect(document.activeElement).toBe(container.querySelector('.hotspot'))
+    expect(scroll).not.toHaveBeenCalled()
     expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 examined')
   })
 
@@ -328,6 +326,14 @@ describe('scene input integration', () => {
         clickButton('.continue-button')
       }
     }
+    function selectReading(id: string) {
+      const select = container.querySelector<HTMLSelectElement>('dialog[open] select')!
+      act(() => {
+        select.value = id
+        select.dispatchEvent(new Event('change', { bubbles: true }))
+      })
+      tick()
+    }
     finishLines()
     clickButton('.story-choice')
     finishLines()
@@ -356,6 +362,7 @@ describe('scene input integration', () => {
       'Tide gallery',
     )
     // Exhibit narration is opt-in, sequential, and never advances the scene.
+    selectReading('section-0')
     clickButton('[aria-label="Listen to Before the water"]')
     expect(latestClip().src).toContain('exhibit-0-heading')
     const readingClip = latestClip()
@@ -370,6 +377,7 @@ describe('scene input integration', () => {
     expect(latestClip().src).toContain('exhibit-0-1')
     endClip()
     expect(container.querySelector('[aria-label="Stop reading Before the water"]')).toBeNull()
+    selectReading('introduction')
     clickButton('[aria-label="Listen to the exhibit introduction"]')
     const abandonedClip = latestClip()
     const abandonedEnd = abandonedClip.onended!
@@ -413,17 +421,25 @@ describe('scene input integration', () => {
     expect(container.querySelector('.museum-summary')?.textContent).toContain(
       'The city left a line open.',
     )
+    clickButton('.record-button')
     clickButton('[aria-label="Listen to the handover record"]')
     expect(latestClip().src).toContain('refuge-record')
     clickButton('[aria-label="Stop reading the handover record"]')
+    clickButton('[aria-label="Close handover record"]')
     clickButton('[aria-label="Listen to the chapter epilogue"]')
     expect(latestClip().src).toContain('museum-completion')
     clickText('Review field notes')
-    const notes = container.querySelector('dialog[open]')!.textContent
-    expect(notes).toContain(route.note)
-    expect(notes).toContain('Ferry clear. Refuge held from within.')
-    expect(notes).toContain('Next step:')
-    expect(container.querySelectorAll('.note-list article')).toHaveLength(7)
+    expect(container.querySelectorAll('dialog[open] select option')).toHaveLength(7)
+    selectReading('approach')
+    expect(container.querySelector('dialog[open]')!.textContent).toContain(route.note)
+    selectReading('refuge')
+    expect(container.querySelector('.notes-modal .reader-text')!.textContent).toContain(
+      'Ferry clear. Refuge held from within.',
+    )
+    selectReading('lead')
+    expect(container.querySelector('dialog[open] .reader-heading')!.textContent).toContain(
+      'Next step:',
+    )
   })
 
   it('advances exactly one real dialogue line while A is held', () => {

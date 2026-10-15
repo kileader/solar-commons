@@ -1,5 +1,11 @@
 # Validation
 
+## Viewport reading layout — October 15, 2026
+
+- All **118 tests** pass, including lossless pagination, section selection, reading position across resize, Auto waiting for the end of a recording across multiple pages, and the existing two museum journeys. A browser-discovered page-turn race now has a regression: a resize before React commits a turn must preserve the requested page.
+- Dialogue and choices occupy a reserved viewport area. Long prose uses measured pages; evidence, history, field notes, and the handover record share the paged reader. Settings have short pages. The small-screen reconstruction keeps its gate, moments, lamp, and exit available while its full account remains readable in a panel. No story wording, branching rules, character art, or recordings change in this layout commit.
+- Browser checks cover the harbor, both museum approaches, the model and written-account paths, discovery, choices, and both leads. Layout sizes include 1280 × 720, 390 × 568, 320 × 568 with larger text, and 640 × 360 landscape. These are local browser checks, not physical-device testing or a new Pages deployment.
+
 ## Visible next steps — October 15, 2026
 
 - All **109 tests** pass. A new integration regression follows conversation → choice → notes → investigation, verifies the persistent step and reading count, confirms the choice block is revealed on arrival, and checks that jump controls move focus without selecting a path or recording evidence. Existing museum journeys also assert the history panel's story context.

@@ -1,8 +1,9 @@
 import { ArrowRight, BookOpen, Waves } from 'lucide-react'
-import { museumArt } from '../art'
 import { floodSnapshot, floodStages, museumContent, type FloodStage } from '../content/museum'
 import type { SceneEvent, SceneState } from '../state/scene'
 import { Modal, ModalHeading } from './Modal'
+import { PagedReader } from './PagedReader'
+import { PagedPassage } from './PagedPassage'
 import './museum.css'
 import { exhibitSectionReadings, modelReading, museumReadings } from '../content/museumReadings'
 import { ReadAloudButton, type ReadAloudControls } from './ReadAloudButton'
@@ -30,54 +31,58 @@ export function HistoryExhibit({
   onClose,
   reading,
   step,
+  onSectionChange,
 }: {
   open: boolean
   onClose: () => void
   reading: ReadAloudControls
   step: string
+  onSectionChange: () => void
 }) {
   const exhibit = museumContent.historicalExhibit
+  const entries = [
+    {
+      id: 'introduction',
+      title: 'A city and its waters',
+      text: exhibit.introduction,
+      reading: {
+        id: 'history-introduction',
+        label: 'the exhibit introduction',
+        lines: [museumReadings.introduction],
+      },
+    },
+    ...exhibit.sections.map((section, index) => ({
+      id: 'section-' + index,
+      title: section.title,
+      text: section.paragraphs.join('\n\n'),
+      reading: {
+        id: 'history-' + index,
+        label: section.title,
+        lines: exhibitSectionReadings(index),
+      },
+    })),
+    {
+      id: 'source',
+      title: 'Sources and the teaching model',
+      text: exhibit.source,
+      reading: {
+        id: 'history-source',
+        label: 'the exhibit sources',
+        lines: [museumReadings.source],
+      },
+    },
+  ]
   return (
     <Modal open={open} onClose={onClose} titleId="exhibit-title" className="history-exhibit">
-      <ModalHeading step={step} onClose={onClose} closeLabel="Close history exhibit">
-        <BookOpen size={15} /> Permanent collection
+      <ModalHeading
+        titleId="exhibit-title"
+        step={step}
+        onClose={onClose}
+        closeLabel="Close history exhibit"
+      >
+        <BookOpen size={15} /> {exhibit.title}
       </ModalHeading>
-      <img
-        className="exhibit-art"
-        src={museumArt.exhibit}
-        alt="Sunlit flood-history gallery, with a blue flood line and archival displays"
-      />
-      <h2 id="exhibit-title">{exhibit.title}</h2>
-      <p className="exhibit-introduction">{exhibit.introduction}</p>
-      <ReadAloudButton
-        reading={reading}
-        id="history-introduction"
-        lines={[museumReadings.introduction]}
-        label="the exhibit introduction"
-      />
-      <div className="exhibit-text">
-        {exhibit.sections.map((section, index) => (
-          <section key={section.title}>
-            <h3>{section.title}</h3>
-            <ReadAloudButton
-              reading={reading}
-              id={`history-${index}`}
-              lines={exhibitSectionReadings(index)}
-              label={section.title}
-            />
-            {section.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
-          </section>
-        ))}
-      </div>
-      <p className="exhibit-source">{exhibit.source}</p>
-      <ReadAloudButton
-        reading={reading}
-        id="history-source"
-        lines={[museumReadings.source]}
-        label="the exhibit sources"
-      />
+      <PagedReader entries={entries} reading={reading} onSectionChange={onSectionChange} />
       <button className="modal-done" onClick={onClose}>
         Return to the gallery <ArrowRight size={18} />
       </button>
@@ -89,11 +94,13 @@ export function FloodReconstruction({
   state,
   perform,
   onReadHistory,
+  onReadAccount,
   reading,
 }: {
   state: SceneState
   perform: (event: SceneEvent) => void
   onReadHistory: () => void
+  onReadAccount: () => void
   reading: ReadAloudControls
 }) {
   const snapshot = floodSnapshot(state.floodStage, state.gateOpen)
@@ -242,7 +249,7 @@ export function FloodReconstruction({
             {dawn ? 'Recorded observation' : 'Illustrated water response'}
           </span>
           <h3>{snapshot.title}</h3>
-          <p>{snapshot.detail}</p>
+          <PagedPassage text={snapshot.detail} />
           <ReadAloudButton
             reading={reading}
             id={`model-${state.floodStage}-${state.gateOpen}`}
@@ -274,6 +281,9 @@ export function FloodReconstruction({
         a reproduced handover log.
       </p>
       <div className="museum-actions model-actions">
+        <button className="text-action model-account-button" onClick={onReadAccount}>
+          Read flood account <BookOpen size={17} />
+        </button>
         <button className="text-action" onClick={() => perform({ type: 'LEAVE_MODEL' })}>
           Leave the model for now <ArrowRight size={17} />
         </button>

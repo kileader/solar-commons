@@ -10,16 +10,14 @@ import {
   Settings2,
   Sparkles,
   Sun,
-  Volume2,
   VolumeX,
-  Play,
-  Pause,
+  Volume2,
 } from 'lucide-react'
 import { characterArt, harborArt, museumArt } from './art'
-import { approachNotes, museumApproaches, museumContent, type FloodStage } from './content/museum'
-import { FloodReconstruction, HistoryExhibit, RefugeRecord } from './components/Museum'
+import { museumApproaches, museumContent, floodSnapshot, type FloodStage } from './content/museum'
+import { FloodReconstruction, HistoryExhibit } from './components/Museum'
 import { ReadAloudButton, type ReadAloudControls } from './components/ReadAloudButton'
-import { museumReadings } from './content/museumReadings'
+import { museumReadings, modelReading } from './content/museumReadings'
 import {
   clues,
   conclusionChoices,
@@ -37,7 +35,11 @@ import {
 } from './state/scene'
 import { Kite } from './components/Kite'
 import { Modal, ModalHeading } from './components/Modal'
-import { jumpToScene, sceneGuide, SceneGuide } from './components/SceneGuide'
+import { sceneGuide } from './components/SceneGuide'
+import { DialogueReader } from './components/DialogueReader'
+import { PagedReader } from './components/PagedReader'
+import { fieldNotes } from './content/fieldNotes'
+import { PagedPassage } from './components/PagedPassage'
 import { Perception } from './components/Perception'
 import { useMotion } from './hooks/useMotion'
 import { useAudio } from './hooks/useAudio'
@@ -46,7 +48,6 @@ import { adjustControl, moveFocus, visibleControls } from './input/focus'
 import type { SoundCue } from './audio/HarborAudio'
 import type { DialogueLine } from './content/harbor'
 import { NovelSettings } from './components/NovelSettings'
-import { useAutoAdvance } from './hooks/useAutoAdvance'
 import {
   loadReadingPreferences,
   normalizeReadingPreferences,
@@ -55,50 +56,11 @@ import {
 } from './reading/preferences'
 import './audio/audio.css'
 
-function EvidenceDiagram({ kind }: { kind: string }) {
-  return (
-    <svg className="evidence-diagram" viewBox="0 0 400 105" aria-hidden="true">
-      <defs>
-        <pattern id={`diagram-${kind}`} width="20" height="20" patternUnits="userSpaceOnUse">
-          <path d="M20 0H0V20" fill="none" stroke="currentColor" opacity=".1" />
-        </pattern>
-      </defs>
-      <rect width="400" height="105" fill={`url(#diagram-${kind})`} />
-      {kind === 'geometry' ? (
-        <g fill="none" stroke="currentColor">
-          <path d="M90 68 155 28 285 28 320 54 255 85 120 85Z" strokeDasharray="5 4" opacity=".6" />
-          {[0, 1, 2, 3, 4, 5].map((n) => (
-            <path
-              key={n}
-              d={`M${115 + n * 23} ${64 - n * 3}l65-33v21l-65 33Z`}
-              opacity={0.4 + n * 0.1}
-            />
-          ))}
-        </g>
-      ) : kind === 'thermal' ? (
-        <g fill="none" stroke="currentColor">
-          <path
-            d="M0 72Q50 70 80 73T135 71 190 68 220 43 247 51 270 69 320 71 400 71"
-            strokeWidth="2"
-          />
-          <path d="M0 76H400" strokeDasharray="4 5" opacity=".35" />
-          <ellipse cx="231" cy="57" rx="42" ry="27" strokeDasharray="3 4" opacity=".5" />
-        </g>
-      ) : (
-        <g fill="none" stroke="currentColor">
-          <path d="M30 32H370M30 59H370" opacity=".5" />
-          <path d="M30 77H370" strokeDasharray="4 6" opacity=".4" />
-          <path d="M60 32v27m55-27v27m55-27v27m55-27v27m55-27v27m55-27v27" opacity=".5" />
-          <path d="m178 79 22-13 23 13-23 13Z" strokeDasharray="3 3" />
-        </g>
-      )}
-    </svg>
-  )
-}
-
 export default function App() {
   const [state, dispatch] = useReducer(sceneReducer, initialSceneState)
-  const [panel, setPanel] = useState<'journal' | 'settings' | 'history' | null>(null)
+  const [panel, setPanel] = useState<
+    'journal' | 'settings' | 'history' | 'record' | 'model-account' | null
+  >(null)
   const [reading, setReading] = useState(loadReadingPreferences)
   const [auto, setAuto] = useState(false)
   const [readAloud, setReadAloud] = useState<{ id: string; lines: readonly DialogueLine[] } | null>(
@@ -164,7 +126,7 @@ export default function App() {
   }, [readAloud, activeClue, currentLine, state.phase, investigated])
   const audio = useAudio(
     speechLines,
-    panel !== null && !(panel === 'history' && readAloud),
+    panel !== null && !(['history', 'record', 'model-account'].includes(panel) && readAloud),
     state.perception,
   )
   const canRead =
@@ -195,14 +157,6 @@ export default function App() {
     audio.unlock()
     setAuto((previous) => !previous)
   }
-  useAutoAdvance(
-    currentLine,
-    auto,
-    panel !== null || !!activeClue || !!readAloud,
-    audio.voiceState,
-    reading,
-    () => perform({ type: 'NEXT' }),
-  )
 
   function perform(event: SceneEvent) {
     setReadAloud(null)
@@ -261,7 +215,7 @@ export default function App() {
     dispatch(event)
   }
 
-  function openPanel(next: 'journal' | 'settings' | 'history') {
+  function openPanel(next: 'journal' | 'settings' | 'history' | 'record' | 'model-account') {
     setReadAloud(null)
     audio.unlock()
     if (activeClue) perform({ type: 'CLOSE_CLUE' })
@@ -311,7 +265,7 @@ export default function App() {
         ? visibleControls(modal)
         : visibleControls(document).filter((element) =>
             element.matches(
-              '.continue-button, .auto-toggle, .voice-replay, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .scene-jump, .model-moment, .gate-control, .lamp-discovery',
+              '.continue-button, .auto-toggle, .voice-replay, .page-back, .page-buttons button, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .record-button, .model-moment, .gate-control, .lamp-discovery',
             ),
           )
       const focused = document.activeElement as HTMLElement | null
@@ -333,10 +287,7 @@ export default function App() {
         return
       moveFocus(controls, direction)
     },
-    (amount) => {
-      const target = document.querySelector('dialog[open]') ?? document.scrollingElement
-      target?.scrollBy({ top: amount, behavior: 'auto' })
-    },
+    () => {},
   )
 
   useEffect(() => {
@@ -375,7 +326,7 @@ export default function App() {
         !target.closest('button, a')
       ) {
         event.preventDefault()
-        perform({ type: 'NEXT' })
+        document.querySelector<HTMLButtonElement>('.continue-button')?.click()
       }
       if ((event.key === '1' || event.key === '2') && isChoice) {
         event.preventDefault()
@@ -408,7 +359,6 @@ export default function App() {
               : '.continue-button'
     const frame = requestAnimationFrame(() => {
       document.querySelector<HTMLElement>(selector)?.focus({ preventScroll: true })
-      if (isChoice && !document.hidden && document.hasFocus()) jumpToScene('.choice-block')
     })
     return () => cancelAnimationFrame(frame)
   }, [state.phase, isChoice])
@@ -426,7 +376,8 @@ export default function App() {
 
   return (
     <main
-      className={`novel ${inMuseum ? 'museum' : ''} ${state.phase === 'museum-model' ? 'museum-model' : ''} ${state.perception ? 'cognitive' : ''} ${activeClue ? 'is-inspecting' : ''} ${reading.largeText ? 'large-text' : ''}`}
+      className={`novel ${inMuseum ? 'museum' : ''} ${isChoice ? 'is-choice' : ''} ${state.phase === 'museum-model' ? 'museum-model' : ''} ${state.perception ? 'cognitive' : ''} ${activeClue ? 'is-inspecting' : ''} ${reading.largeText ? 'large-text' : ''}`}
+      data-phase={state.phase}
       data-motion={motion.reduced ? 'reduced' : 'full'}
       data-audio-state={audio.status.state}
       data-audio-peak={audio.status.peak.toFixed(6)}
@@ -598,12 +549,17 @@ export default function App() {
         {inMuseum && state.perception && state.phase !== 'museum-model' && (
           <p className="museum-attention">Shared attention · the worn brass rim</p>
         )}
-        {showRecord && <RefugeRecord reading={readControls} />}
+        {showRecord && (
+          <button className="record-button" onClick={() => openPanel('record')}>
+            <BookOpen size={18} /> Read the handover record
+          </button>
+        )}
         {state.phase === 'museum-model' && (
           <FloodReconstruction
             state={state}
             perform={perform}
             onReadHistory={readHistory}
+            onReadAccount={() => openPanel('model-account')}
             reading={readControls}
           />
         )}
@@ -681,51 +637,17 @@ export default function App() {
               </span>
             </div>
             {currentLine && (
-              <div className="dialogue-body">
-                <div className="dialogue-text" aria-live="polite" aria-atomic="true">
-                  <p key={currentLine.id} className={speaker === 'Narrator' ? 'narration' : ''}>
-                    {currentLine.text}
-                  </p>
-                </div>
-                <div className="dialogue-buttons">
-                  <button
-                    className="voice-replay"
-                    onClick={replayDialogue}
-                    disabled={
-                      !audio.ready ||
-                      !audio.hasVoice ||
-                      !audio.preferences.voiceEnabled ||
-                      audio.preferences.muted ||
-                      audio.preferences.master * audio.preferences.voice === 0
-                    }
-                    aria-label="Replay dialogue"
-                    title={
-                      audio.hasVoice
-                        ? 'Listen to this dialogue again'
-                        : 'No recording or enabled fallback voice for this line'
-                    }
-                  >
-                    <Volume2 size={17} />
-                    <span>Listen</span>
-                  </button>
-                  <button
-                    className="auto-toggle"
-                    onClick={toggleAuto}
-                    aria-pressed={auto}
-                    aria-label="Autoplay dialogue"
-                    title="Auto: wait for the voice, then continue. A to toggle."
-                  >
-                    {auto ? <Pause size={16} /> : <Play size={16} />}
-                    <span>Auto{auto ? ' on' : ''}</span>
-                  </button>
-                  <button className="continue-button" onClick={() => perform({ type: 'NEXT' })}>
-                    <span>Continue</span>
-                    <span className="continue-arrow">
-                      <ArrowRight size={23} />
-                    </span>
-                  </button>
-                </div>
-              </div>
+              <DialogueReader
+                key={currentLine.id + currentLine.text}
+                line={currentLine}
+                audio={audio}
+                reading={reading}
+                auto={auto}
+                paused={panel !== null || !!activeClue || !!readAloud}
+                onToggleAuto={toggleAuto}
+                onReplay={replayDialogue}
+                onAdvance={() => perform({ type: 'NEXT' })}
+              />
             )}
             {isChoice && (
               <div className="choice-block" key={state.phase}>
@@ -764,7 +686,7 @@ export default function App() {
             )}
             {state.phase === 'investigation' && (
               <div className="investigation-body">
-                <p>{investigated ? sceneCopy.synthesis : sceneCopy.investigation}</p>
+                <PagedPassage text={investigated ? sceneCopy.synthesis : sceneCopy.investigation} />
                 <div className="investigation-actions">
                   <span className="reading-dots">
                     {clues.map((clue) => (
@@ -798,15 +720,15 @@ export default function App() {
             )}
             {state.phase === 'complete' && (
               <div className="complete-body">
-                <div>
-                  <span className="eyebrow">END OF THE FIRST SCENE</span>
-                  <h2>{sceneCopy.completionTitle}</h2>
-                  <p>
-                    {state.endingChoiceId === 'handshake'
+                <span className="eyebrow">END OF THE FIRST SCENE</span>
+                <h2>{sceneCopy.completionTitle}</h2>
+                <PagedPassage
+                  text={
+                    state.endingChoiceId === 'handshake'
                       ? sceneCopy.handshakeCompletion
-                      : sceneCopy.surveyCompletion}
-                  </p>
-                </div>
+                      : sceneCopy.surveyCompletion
+                  }
+                />
                 <div className="museum-actions">
                   <button
                     className="replay-button"
@@ -823,7 +745,7 @@ export default function App() {
             {state.phase === 'museum-explore' && (
               <div className="museum-summary">
                 <span className="eyebrow">THE TIDE GALLERY</span>
-                <p>{museumContent.museumCopy.explore}</p>
+                <PagedPassage text={museumContent.museumCopy.explore} />
                 <ReadAloudButton
                   reading={readControls}
                   id="gallery"
@@ -857,11 +779,13 @@ export default function App() {
                     ? museumContent.museumCopy.completionTitle
                     : 'Two waters. An unfinished account.'}
                 </h2>
-                <p>
-                  {state.discovered
-                    ? museumContent.museumCopy.completion
-                    : museumReadings.leaveEarly.text}
-                </p>
+                <PagedPassage
+                  text={
+                    state.discovered
+                      ? museumContent.museumCopy.completion
+                      : museumReadings.leaveEarly.text
+                  }
+                />
                 <ReadAloudButton
                   reading={readControls}
                   id="completion"
@@ -922,10 +846,10 @@ export default function App() {
                   : 'Sound on'}
           </span>
         </button>
-        <SceneGuide
-          guide={guide}
-          auto={auto && !!currentLine && !panel && !activeClue && !readAloud}
-        />
+        <span className="scene-status" role="status" aria-label="Current step">
+          {guide.title}
+          {state.phase === 'investigation' ? ' · ' + state.inspected.length + '/3 readings' : ''}
+        </span>
       </footer>
 
       <Modal
@@ -937,48 +861,40 @@ export default function App() {
         {activeClue && (
           <>
             <ModalHeading
+              titleId="evidence-title"
               step={guide.title}
               onClose={() => perform({ type: 'CLOSE_CLUE' })}
               closeLabel="Close evidence"
             >
-              <Sparkles size={14} /> Evidence {clues.indexOf(activeClue) + 1} of 3
+              <Sparkles size={14} /> {activeClue.title}
             </ModalHeading>
-            <h2 id="evidence-title">{activeClue.title}</h2>
-            <p className="modal-subtitle">{activeClue.subtitle}</p>
-            <EvidenceDiagram kind={activeClue.id} />
-            <div className="evidence-readings">
-              <section className="evidence-reading observed">
-                <h3>
-                  <i />
-                  {activeClue.observation.label}
-                </h3>
-                <strong>{activeClue.observation.value}</strong>
-                <p>{activeClue.observation.detail}</p>
-              </section>
-              <section className="evidence-reading modeled">
-                <h3>
-                  <i />
-                  {activeClue.model.label}
-                </h3>
-                <strong>{activeClue.model.value}</strong>
-                <p>{activeClue.model.detail}</p>
-              </section>
-            </div>
-            <div className="uncertainty">
-              <span>What remains uncertain</span>
-              <p>{activeClue.contradiction}</p>
-            </div>
-            <div className="evidence-dialogue">
-              {activeClue.dialogue.map((line) => (
-                <p key={line.id}>
-                  <span>{line.speaker}</span>
-                  {line.text}
-                </p>
-              ))}
-            </div>
+            <PagedReader
+              key={activeClue.id}
+              entries={[
+                {
+                  id: 'observed',
+                  title: activeClue.observation.label,
+                  text: activeClue.observation.value + '\n\n' + activeClue.observation.detail,
+                },
+                {
+                  id: 'modeled',
+                  title: activeClue.model.label,
+                  text: activeClue.model.value + '\n\n' + activeClue.model.detail,
+                },
+                {
+                  id: 'uncertain',
+                  title: 'What remains uncertain',
+                  text: activeClue.contradiction,
+                },
+                ...activeClue.dialogue.map((line) => ({
+                  id: line.id,
+                  title: line.speaker,
+                  text: line.text,
+                })),
+              ]}
+            />
             <button className="modal-done" onClick={() => perform({ type: 'CLOSE_CLUE' })}>
-              <Check size={16} />
-              Saved to field notes
+              <Check size={16} /> Saved to field notes{' '}
               <span>
                 Return to the harbor <ArrowRight size={17} />
               </span>
@@ -993,73 +909,84 @@ export default function App() {
         titleId="notes-title"
         className="notes-modal"
       >
-        <ModalHeading step={guide.title} onClose={closePanel} closeLabel="Close field notes">
+        <ModalHeading
+          titleId="notes-title"
+          step={guide.title}
+          onClose={closePanel}
+          closeLabel="Close field notes"
+        >
           <BookOpen size={14} /> Field notes
         </ModalHeading>
-        <h2 id="notes-title">Field notes</h2>
-        <p className="modal-subtitle">{sceneCopy.notesSubtitle}</p>
-        {state.inspected.length === 0 ? (
-          <div className="empty-notes">
-            <span>01</span>
-            <p>{sceneCopy.emptyNotes}</p>
-            <small>Your observations will appear here as you investigate.</small>
-          </div>
-        ) : (
-          <div className="note-list">
-            {clues
-              .filter((clue) => state.inspected.includes(clue.id))
-              .map((clue) => (
-                <article key={clue.id}>
-                  <h3>{clue.title}</h3>
-                  <p>
-                    <span>Observed:</span> {clue.observation.value}
-                  </p>
-                  <p>
-                    <span>Modeled:</span> {clue.model.value}
-                  </p>
-                  <small>{clue.contradiction}</small>
-                </article>
-              ))}
-          </div>
-        )}
+        <PagedReader entries={fieldNotes(state)} />
         <p className="notes-footnote">
           In-world sensor readings are authored fiction. Models are hypotheses, never hidden facts.
         </p>
-        {(state.exhibitRead || state.discovered || state.museumApproach) && (
-          <div className="note-list">
-            {state.museumApproach && (
-              <article>
-                <h3>{approachNotes[state.museumApproach].title}</h3>
-                <p>{approachNotes[state.museumApproach].text}</p>
-              </article>
-            )}
-            {state.exhibitRead && (
-              <article>
-                <h3>The Night of Two Waters</h3>
-                <p>
-                  Storm tide and hill runoff met in the lower city. A refuge beneath the east
-                  breakwater kept a listening line to shore.
-                </p>
-              </article>
-            )}
-            {state.discovered && (
-              <article>
-                <h3>{museumContent.refugeRecord.heading}</h3>
-                <p>{museumContent.refugeRecord.text}</p>
-                <small>
-                  The replica’s six ribs fit our partial sonar. A possible location, not a date or
-                  an explanation for today’s warmth or lights.
-                </small>
-              </article>
-            )}
-            {museumLead && (
-              <article>
-                <h3>Next step: {museumLead.label}</h3>
-                <p>{museumLead.detail}</p>
-              </article>
-            )}
-          </div>
-        )}
+      </Modal>
+
+      <Modal
+        open={panel === 'record'}
+        onClose={closePanel}
+        titleId="record-title"
+        className="record-modal"
+      >
+        <ModalHeading
+          titleId="record-title"
+          step={guide.title}
+          onClose={closePanel}
+          closeLabel="Close handover record"
+        >
+          <BookOpen size={14} /> The handover record
+        </ModalHeading>
+        <PagedReader
+          entries={[
+            {
+              id: 'refuge',
+              title: museumContent.refugeRecord.designation,
+              text: museumContent.refugeRecord.text + '\n\n' + museumContent.refugeRecord.caption,
+              reading: {
+                id: 'refuge',
+                label: 'the handover record',
+                lines: [museumReadings.refuge],
+              },
+            },
+          ]}
+          reading={readControls}
+          onSectionChange={() => setReadAloud(null)}
+        />
+      </Modal>
+
+      <Modal
+        open={panel === 'model-account'}
+        onClose={closePanel}
+        titleId="model-account-title"
+        className="model-account-modal"
+      >
+        <ModalHeading
+          titleId="model-account-title"
+          step={guide.title}
+          onClose={closePanel}
+          closeLabel="Close flood account"
+        >
+          Flood account
+        </ModalHeading>
+        <PagedReader
+          key={`${state.floodStage}-${state.gateOpen}`}
+          entries={[
+            {
+              id: 'model-account',
+              title: floodSnapshot(state.floodStage, state.gateOpen).title,
+              text:
+                floodSnapshot(state.floodStage, state.gateOpen).detail +
+                '\n\nA teaching reconstruction. Water levels illustrate competing pressures; the lamp comes from a reproduced handover log.',
+              reading: {
+                id: `model-${state.floodStage}-${state.gateOpen}`,
+                label: 'the flood explanation',
+                lines: [modelReading(state.floodStage, state.gateOpen)],
+              },
+            },
+          ]}
+          reading={readControls}
+        />
       </Modal>
 
       <HistoryExhibit
@@ -1067,6 +994,7 @@ export default function App() {
         onClose={closePanel}
         reading={readControls}
         step={guide.title}
+        onSectionChange={() => setReadAloud(null)}
       />
 
       <Modal
@@ -1075,10 +1003,14 @@ export default function App() {
         titleId="settings-title"
         className="settings-modal"
       >
-        <ModalHeading step={guide.title} onClose={closePanel} closeLabel="Close settings">
-          Make yourself at home
+        <ModalHeading
+          titleId="settings-title"
+          step={guide.title}
+          onClose={closePanel}
+          closeLabel="Close settings"
+        >
+          Settings
         </ModalHeading>
-        <h2 id="settings-title">Settings</h2>
         <NovelSettings
           audio={audio}
           motion={motion}
@@ -1088,9 +1020,6 @@ export default function App() {
           auto={auto}
           setAuto={setAuto}
         />
-        <p className="settings-note">
-          All controls also work with Tab and Enter. Scene progress lasts for this visit.
-        </p>
       </Modal>
     </main>
   )

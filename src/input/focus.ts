@@ -35,6 +35,5 @@ export function moveFocus(controls: readonly HTMLElement[], direction: number) {
   if (controls.length === 0) return
   const current = controls.indexOf(document.activeElement as HTMLElement)
   const next = current < 0 ? 0 : (current + direction + controls.length) % controls.length
-  controls[next].focus()
-  controls[next].scrollIntoView({ block: 'nearest', behavior: 'auto' })
+  controls[next].focus({ preventScroll: true })
 }

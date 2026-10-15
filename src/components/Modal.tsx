@@ -6,16 +6,20 @@ export function ModalHeading({
   step,
   onClose,
   closeLabel,
+  titleId,
 }: {
   children: ReactNode
   step: string
   onClose: () => void
   closeLabel: string
+  titleId?: string
 }) {
   return (
     <div className="modal-topline">
       <div>
-        <span className="eyebrow">{children}</span>
+        <h2 className="eyebrow" id={titleId}>
+          {children}
+        </h2>
         <span className="modal-step">Story · {step}</span>
       </div>
       <button className="close-button" onClick={onClose} aria-label={closeLabel}>
