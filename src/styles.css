@@ -639,7 +639,8 @@ button {
   width: 142px;
   height: 142px;
   top: 27px;
-  left: 9px;
+  left: 50%;
+  transform: translateX(-50%);
   border-radius: 50%;
   background: radial-gradient(circle at 45% 35%, #356c5bca, #0c3a32a3 60%, #10332b55);
   box-shadow:
@@ -651,12 +652,12 @@ button {
 .portrait-orbit {
   position: absolute;
   top: 17px;
-  left: -1px;
+  left: 50%;
   width: 162px;
   height: 162px;
   border: 1px solid #e7dcaa50;
   border-radius: 50%;
-  transform: rotate(-20deg);
+  transform: translateX(-50%) rotate(-20deg);
   border-left-color: transparent;
   border-right-color: transparent;
 }
@@ -690,6 +691,8 @@ button {
   object-fit: contain;
   object-position: bottom;
   position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: 31px;
   filter: drop-shadow(0 6px 8px #163d3080);
 }
@@ -1420,9 +1423,6 @@ button {
     gap: 35px;
     margin-right: 6%;
   }
-  .companion-portrait {
-    justify-self: center;
-  }
   .dialogue-card {
     padding: 29px 40px 19px;
   }
@@ -1619,13 +1619,11 @@ button {
     width: 76px;
     height: 76px;
     top: 9px;
-    left: 12px;
   }
   .portrait-orbit {
     width: 88px;
     height: 88px;
     top: 4px;
-    left: 6px;
   }
   .portrait-caption {
     display: none;
@@ -1635,7 +1633,6 @@ button {
     width: 108px;
     height: 138px;
     bottom: 0;
-    left: -2px;
   }
   .dialogue-card {
     padding: 23px 21px 14px;

@@ -810,13 +810,11 @@ body,
     width: 62px;
     height: 62px;
     top: 4px;
-    left: 4px;
   }
   .novel .portrait-orbit {
     width: 70px;
     height: 70px;
     top: 0;
-    left: 0;
   }
   .novel .companion-portrait .kite-portrait {
     width: 70px;
