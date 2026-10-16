@@ -22,6 +22,17 @@ export interface AudioStatus {
   peak: number
 }
 
+const passageSounds = new Set([
+  'qi-arrival-01',
+  'qi-intro-01',
+  'qi-intro-05',
+  'qi-record-01',
+  'qi-play-03',
+  'qi-play-04',
+  'qi-play-05',
+  'qi-end-04',
+])
+
 /** Original, continuous harbor score. No sample downloads or external audio services. */
 export class HarborAudio {
   private context: AudioContext | null = null
@@ -42,6 +53,11 @@ export class HarborAudio {
   private lastCue = new Map<SoundCue, number>()
   private ducked = false
   private cognitive = false
+  private passage: {
+    id: string
+    bus: GainNode
+    sources: Set<AudioScheduledSourceNode>
+  } | null = null
   private onStateChange = () => this.report()
 
   constructor(private onStatus: (status: AudioStatus) => void) {}
@@ -113,6 +129,99 @@ export class HarborAudio {
   setCognitive(active: boolean) {
     this.cognitive = active
     if (this.filter) this.ramp(this.filter.frequency, active ? 1200 : 2400, 1.2)
+  }
+
+  /** Brief authored scene sounds; skipping or pausing a passage cancels its entire cue. */
+  setPassage(id: string | null) {
+    if (id && this.passage?.id === id) return
+    this.stopPassage()
+    const ctx = this.context
+    if (
+      !id ||
+      !passageSounds.has(id) ||
+      !ctx ||
+      ctx.state !== 'running' ||
+      !this.effects ||
+      this.preferences.muted ||
+      this.preferences.effects === 0
+    )
+      return
+    const passage = { id, bus: ctx.createGain(), sources: new Set<AudioScheduledSourceNode>() }
+    this.passage = passage
+    passage.bus.connect(this.effects)
+    const track = (source: AudioScheduledSourceNode | undefined) => {
+      if (!source) return
+      passage.sources.add(source)
+      source.addEventListener(
+        'ended',
+        () => {
+          passage.sources.delete(source)
+          if (passage.sources.size === 0) passage.bus.disconnect()
+        },
+        { once: true },
+      )
+    }
+    const now = ctx.currentTime
+    const tone = (
+      hz: number,
+      duration: number,
+      level: number,
+      delay = 0,
+      end = hz,
+      type: OscillatorType = 'sine',
+    ) => track(this.tone(passage.bus, hz, duration, level, now + delay, end, type))
+    const air = (duration: number, level: number, delay: number, cutoff: number) =>
+      track(this.air(passage.bus, duration, level, now + delay, cutoff))
+    switch (id) {
+      case 'qi-arrival-01':
+      case 'qi-end-04':
+        // Soft water against the canal steps, with three small reflected droplets.
+        air(4.5, 0.06, 0, 420)
+        ;[0.35, 1.6, 3.1].forEach((delay, i) => tone(940 - i * 95, 0.24, 0.032, delay, 390))
+        break
+      case 'qi-intro-01':
+        // A delicate bench motor settling, not a threatening industrial machine.
+        air(0.65, 0.045, 0, 1700)
+        tone(180, 0.55, 0.018, 0, 120, 'triangle')
+        tone(82, 1.8, 0.013)
+        break
+      case 'qi-intro-05':
+        // Only after the script establishes Ilex's acceptance of the guest channel.
+        tone(783.99, 0.3, 0.032)
+        tone(1046.5, 0.45, 0.024, 0.13)
+        break
+      case 'qi-record-01':
+        air(0.045, 0.12, 0, 2400)
+        air(0.06, 0.09, 0.13, 1900)
+        tone(145, 0.65, 0.022, 0.16, 220, 'triangle')
+        break
+      case 'qi-play-03':
+        air(0.045, 0.085, 0, 2100)
+        air(2.8, 0.025, 0.08, 1300)
+        tone(55, 2.8, 0.014, 0.08)
+        break
+      case 'qi-play-04':
+        // A short, restrained recording texture leaves the supplied voice clearly audible.
+        air(2.2, 0.018, 0, 1600)
+        tone(55, 2.2, 0.009)
+        break
+      case 'qi-play-05':
+        // Two ambiguous switching clicks, followed by damage rather than a coded reply.
+        air(0.035, 0.13, 0.08, 2400)
+        air(0.04, 0.1, 0.37, 2000)
+        air(0.9, 0.035, 0.65, 1100)
+        break
+    }
+  }
+
+  private stopPassage() {
+    if (!this.passage || !this.context) return
+    const { bus, sources } = this.passage
+    this.passage = null
+    const now = this.context.currentTime
+    bus.gain.setTargetAtTime(0, now, 0.008)
+    for (const source of sources) source.stop(now + 0.04)
+    if (sources.size === 0) bus.disconnect()
   }
 
   play(cue: SoundCue) {
@@ -201,6 +310,7 @@ export class HarborAudio {
 
   dispose() {
     this.disposed = true
+    this.stopPassage()
     if (this.timer) clearInterval(this.timer)
     this.context?.removeEventListener('statechange', this.onStateChange)
     void this.context?.close().catch(() => {})
@@ -351,6 +461,7 @@ export class HarborAudio {
       osc.disconnect()
       envelope.disconnect()
     }
+    return osc
   }
 
   private air(bus: AudioNode, duration: number, level: number, at: number, cutoff: number) {
@@ -375,5 +486,6 @@ export class HarborAudio {
       filter.disconnect()
       envelope.disconnect()
     }
+    return source
   }
 }

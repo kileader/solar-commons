@@ -328,7 +328,7 @@ export function quietIndexDialogue(state: SceneState): readonly DialogueLine[] {
   }
 }
 
-/** The recording list is for later casting; none of these lines has generated audio. */
+/** Every implemented passage and lead variation has its own supplied recording. */
 export const quietIndexVoiceLines: readonly DialogueLine[] = [
   ...quietIndexScript,
   ...Object.values(quietIndexArrivalVariants),

@@ -371,7 +371,7 @@ export default function App() {
   )
 
   useEffect(() => {
-    if (state.phase === 'complete') audio.play('ending')
+    if (state.phase === 'complete' || state.phase === 'qi-complete') audio.play('ending')
     if (state.phase === 'ending' && state.endingChoiceId === 'handshake' && state.lineIndex === 1)
       audio.play('signal')
   }, [state.phase, state.endingChoiceId, state.lineIndex, audio.play])

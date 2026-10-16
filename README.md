@@ -38,9 +38,11 @@ Dialogue stays inside the viewport. Long passages scroll with the wheel, touch, 
 
 ## Sound and cinematics
 
-The checked-in [dialogue recordings](dialogue/README.md) contain 94 MP3 performances covering the harbor, museum, opening captions, optional readings, and voice preview. **Listen** replays an available recording. Sound settings control music, effects, and dialogue; optional local device speech for unrecorded text is off by default.
+The checked-in [dialogue recordings](dialogue/README.md) contain **147 MP3 performances** covering the harbor, museum, opening captions, optional readings, voice preview, and all 53 Chapter Two passages and variants. **Listen** replays an available recording. Sound settings control music, effects, and dialogue; optional local device speech for unrecorded text is off by default.
 
-**The Quiet Index dialogue is currently unvoiced**, including the recovered refuge excerpt. Its 53 passages are ready for script review and later recording. Ilex’s supplied five-second introduction is one silent video shot, with pause and skip controls. Reduced motion or unavailable video presents a still image with Continue. Mara, Kite, and Ilex retain their established artwork and consistent dialogue portraits.
+**The Quiet Index is voiced**, including Ilex, narration, all three investigation approaches, both museum-lead variations, and the recovered refuge excerpt. Quiet canal water, restoration machinery, a guest-channel chime, the cartridge reader, and archival hiss and switching clicks complement the performances. These brief original synthesized effects follow the Effects volume and stop when their passage is skipped or paused. The hiss and clicks are authored sound design, not additional historical evidence.
+
+Ilex’s supplied five-second introduction remains one silent video shot, with pause and skip controls. Reduced motion or unavailable video presents a still image with Continue. Mara, Kite, and Ilex retain their established artwork and consistent dialogue portraits.
 
 The prologue and dialogue can continue while another tab or window is active. Browsers and operating systems may suspend background playback, especially on mobile or during sleep.
 
@@ -81,7 +83,7 @@ Tests cover story transitions and branches, remembered choices, keyboard/control
 | `dialogue/`                    | Recorded performances and their exact script mapping       |
 | `docs/`, `studio/`             | Creative direction, storyboards, and production sources    |
 
-The [Quiet Index production notes](docs/quiet-index/README.md) document the supplied assets, editorial adaptations, and playtest results. Its [voice recording plan](docs/quiet-index/VOICE_RECORDING_PLAN.csv) lists all 53 unrecorded passage IDs, speakers, and exact text. Regenerate that list after script changes:
+The [Quiet Index production notes](docs/quiet-index/README.md) document the supplied assets, editorial adaptations, and playtest results. Its [voice recording plan](docs/quiet-index/VOICE_RECORDING_PLAN.csv) lists all 53 passage IDs, speakers, exact text, and recording status. Regenerate that list after script changes; rewritten text is marked unrecorded until a matching performance is supplied:
 
 ```sh
 node tools/export-quiet-index-voices.mjs

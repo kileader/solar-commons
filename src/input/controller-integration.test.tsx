@@ -7,7 +7,8 @@ import { clues } from '../content/harbor'
 import type { AudioStatus } from '../audio/HarborAudio'
 import recordedScript from '../../dialogue/script.json'
 import { quietIndexApproaches } from '../content/quietIndex'
-import { readingTime } from '../hooks/useAutoAdvance'
+
+const passageCue = vi.hoisted(() => vi.fn())
 
 // These tests exercise real UI/reducer/controller wiring; sound rendering is browser-verified.
 vi.mock('../audio/HarborAudio', () => ({
@@ -19,6 +20,7 @@ vi.mock('../audio/HarborAudio', () => ({
     }
     setSpeaking() {}
     setCognitive() {}
+    setPassage = passageCue
     play() {}
     dispose() {}
   },
@@ -69,6 +71,7 @@ function text() {
 }
 
 beforeEach(() => {
+  passageCue.mockClear()
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
   frames = new Map()
   frameId = 0
@@ -602,9 +605,15 @@ describe('scene input integration', () => {
   })
 
   it.each(quietIndexApproaches)(
-    'plays the unvoiced $id encounter with real controls and retained notes',
+    'plays the recorded $id encounter with real controls, passage sounds, and retained notes',
     (approach) => {
       const clips = vi.mocked(HTMLMediaElement.prototype.play)
+      const chapterClips: { clip: HTMLAudioElement; url: string }[] = []
+      clips.mockImplementation(function (this: HTMLMediaElement) {
+        if (this instanceof HTMLAudioElement && this.src.includes('/qi-'))
+          chapterClips.push({ clip: this, url: this.src })
+        return Promise.resolve()
+      })
       const click = (selector: string) => {
         const button = container.querySelector<HTMLButtonElement>(selector)
         expect(button, selector).toBeTruthy()
@@ -662,15 +671,21 @@ describe('scene input integration', () => {
       expect(container.querySelector('.harbor-background')?.getAttribute('src')).toContain(
         'nocturnal_canal.webp',
       )
+      expect(chapterClips.at(-1)?.url).toContain('qi-arrival-01.mp3')
+      expect(passageCue).toHaveBeenLastCalledWith('qi-arrival-01')
       const before = clips.mock.instances.filter(
         (element) => element instanceof HTMLAudioElement,
       ).length
       if (approach.id === 'analysis') {
         vi.useFakeTimers()
         try {
-          const delay = readingTime(text()!, 200) + 1000
           click('.auto-toggle')
-          act(() => vi.advanceTimersByTime(delay - 1))
+          const first = chapterClips.at(-1)!.clip
+          act(() => first.dispatchEvent(new Event('playing')))
+          act(() => vi.advanceTimersByTime(60000))
+          expect(container.querySelector('main')?.dataset.voiceLine).toBe('qi-arrival-01')
+          act(() => first.dispatchEvent(new Event('ended')))
+          act(() => vi.advanceTimersByTime(999))
           expect(container.querySelector('main')?.dataset.voiceLine).toBe('qi-arrival-01')
           act(() => vi.advanceTimersByTime(1))
           expect(container.querySelector('main')?.dataset.voiceLine).toBe('qi-arrival-02')
@@ -720,9 +735,11 @@ describe('scene input integration', () => {
         expect(container.querySelector('dialog[open] .reader-text')?.textContent).toContain(
           'Still uncertain',
         )
+        expect(passageCue).toHaveBeenLastCalledWith(null)
         act(() => vi.advanceTimersByTime(60000))
         expect(container.querySelector('main')?.dataset.voiceLine).toBe(beforeInspection)
         click('[aria-label="Close shared traces"]')
+        expect(passageCue).toHaveBeenLastCalledWith(beforeInspection)
         click('.auto-toggle')
       } finally {
         vi.useRealTimers()
@@ -769,12 +786,24 @@ describe('scene input integration', () => {
       )
       expect(container.querySelector('.companion-portrait')).toBeNull()
       expect(text()).toContain('She can hear you')
-      expect(container.querySelector<HTMLButtonElement>('.voice-replay')!.disabled).toBe(true)
+      expect(container.querySelector<HTMLButtonElement>('.voice-replay')!.disabled).toBe(false)
+      expect(chapterClips.at(-1)?.url).toContain('qi-play-04.mp3')
+      expect(passageCue).toHaveBeenLastCalledWith('qi-play-04')
+      const excerpt = chapterClips.at(-1)!.clip
+      click('.voice-replay')
+      expect(excerpt.onended).toBeNull()
+      expect(excerpt.getAttribute('src')).toBeNull()
+      expect(chapterClips.at(-1)?.url).toContain('qi-play-04.mp3')
       expect(
-        clips.mock.instances.filter((element) => element instanceof HTMLAudioElement),
-      ).toHaveLength(before)
+        clips.mock.instances.filter((element) => element instanceof HTMLAudioElement).length,
+      ).toBeGreaterThan(before)
       finish()
       expect(container.querySelector('main')?.dataset.phase).toBe('qi-complete')
+      expect(passageCue).toHaveBeenLastCalledWith(null)
+      for (const id of ['qi-intro-05', 'qi-record-01', 'qi-play-03', 'qi-play-05', 'qi-end-04'])
+        expect(passageCue).toHaveBeenCalledWith(id)
+      for (const other of quietIndexApproaches.filter((choice) => choice.id !== approach.id))
+        expect(chapterClips.some(({ url }) => url.includes(`/qi-${other.id}-`))).toBe(false)
       expect(container.querySelector('.chapter-complete-badge')?.textContent).toContain(
         'Chapter Two complete',
       )

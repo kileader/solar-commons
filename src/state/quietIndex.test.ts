@@ -126,7 +126,7 @@ describe('The Quiet Index continuity', () => {
     }
   })
 
-  it('gives every reachable passage one stable unrecorded ID, including both lead variations', () => {
+  it('gives every reachable passage one recorded ID, including both lead variations', () => {
     const encountered = new Set<string>()
     for (const lead of ['stair', 'voices']) {
       for (const approach of quietIndexApproaches) {
@@ -144,7 +144,7 @@ describe('The Quiet Index continuity', () => {
       quietIndexVoiceLines.length,
     )
     expect(encountered).toEqual(new Set(quietIndexVoiceLines.map((line) => line.id)))
-    quietIndexVoiceLines.forEach((line) => expect(recordingFor(line)).toBeUndefined())
+    quietIndexVoiceLines.forEach((line) => expect(recordingFor(line), line.id).toBeTruthy())
     expect(quietIndexVoiceLines.find((line) => line.id === 'qi-intro-05')?.text).toContain(
       'Ilex accepts',
     )

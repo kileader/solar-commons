@@ -13,6 +13,7 @@ import {
 } from '../content/harbor'
 import { openingShots } from '../content/opening'
 import { museumContent, museumDialogue } from '../content/museum'
+import { quietIndexVoiceLines } from '../content/quietIndex'
 import { exhibitSectionReadings, modelReading, museumReadings } from '../content/museumReadings'
 import { initialSceneState, type ScenePhase } from '../state/scene'
 import script from '../../dialogue/script.json'
@@ -82,9 +83,11 @@ describe('supplied dialogue recordings', () => {
     }
   })
 
-  it('maps all 94 recordings to exact authored words across every route and optional reading', () => {
+  it('maps all 147 recordings to exact authored words across every route and optional reading', () => {
+    expect(Object.keys(dialogueRecordings)).toHaveLength(147)
     const authored: DialogueLine[] = [
       ...introLines,
+      ...quietIndexVoiceLines,
       ...entryChoices.flatMap((choice) => choice.response),
       ...clues.flatMap((clue) => clue.dialogue),
       ...conclusionChoices.flatMap((choice) => choice.ending),
@@ -136,7 +139,7 @@ describe('supplied dialogue recordings', () => {
     }
     expect([...used].sort()).toEqual(Object.keys(dialogueRecordings).sort())
     expect(script.map((line) => line.id).sort()).toEqual([...used].sort())
-    expect(used.size).toBe(94)
+    expect(used.size).toBe(147)
   })
   it('selects the correct discovery performance for the written, closed-gate and open-gate routes', () => {
     const ids = (patch: Partial<typeof initialSceneState>) =>
@@ -163,6 +166,13 @@ describe('supplied dialogue recordings', () => {
     expect(
       recordingFor({ id: 'museum-discovery-0', speaker: 'Mara', text: 'Another account.' }),
     ).toBeUndefined()
+    for (const line of quietIndexVoiceLines) {
+      expect(recordingIdFor(line)).toBe(line.id)
+      expect(recordingFor({ ...line, text: `${line.text} Changed.` })).toBeUndefined()
+      expect(
+        recordingFor({ ...line, speaker: line.speaker === 'Ilex' ? 'Kite' : 'Ilex' }),
+      ).toBeUndefined()
+    }
   })
   it('plays recordings without installed device voices and signals completion only after every clip', () => {
     const { player, clips, state, speak } = setup()

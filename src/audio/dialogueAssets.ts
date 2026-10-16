@@ -1,7 +1,8 @@
 import type { DialogueLine } from '../content/harbor'
 import script from '../../dialogue/script.json'
 
-// Keep Kevin's source filenames intact; Vite ships each clip with a cache-safe URL.
+// Keep the supplied filenames intact, including Chapter Two's lead variants.
+// Vite ships each clip with a cache-safe URL.
 const files = import.meta.glob<string>('../../dialogue/*.mp3', {
   eager: true,
   query: '?url',

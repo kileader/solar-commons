@@ -72,6 +72,13 @@ export function useAudio(lines: readonly DialogueLine[], paused: boolean, cognit
     audio.current?.setCognitive(cognitive)
   }, [cognitive])
   useEffect(() => {
+    const engine = audio.current
+    engine?.setPassage(
+      paused || status.state !== 'running' ? null : (linesRef.current[0]?.id ?? null),
+    )
+    return () => engine?.setPassage(null)
+  }, [speechKey, paused, status.state, preferences, replay])
+  useEffect(() => {
     if (paused || status.state !== 'running') {
       speech.current?.stop()
       return

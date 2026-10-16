@@ -1,10 +1,14 @@
 # Dialogue recordings
 
-These 94 MP3s were supplied by Kevin on October 15, 2026: the original 26 harbor/opening tracks and 68 museum, optional-reading, and preview tracks. The game uses them unchanged; no audio was generated through an API during integration.
+These **147 MP3s** were supplied by Kevin on October 15, 2026: the original 26 harbor/opening tracks, 68 museum, optional-reading, and preview tracks, and 53 Chapter Two tracks. The game uses them unchanged; no voice audio was generated through an API during integration.
 
 [`script.json`](script.json) preserves the exact recorded wording, speaker, production ID, and any shared runtime ID from the voice handoff. `src/audio/dialogueAssets.ts` matches **runtime ID + speaker + exact text** to the corresponding MP3. This resolves all eleven museum variant performances without changing narrative IDs or story progression. A rewritten line never silently plays the old wording.
 
-`src/audio/recordings.test.ts` checks all 94 tracks against current harbor content, opening captions, every museum branch combination, the optional readings, and the voice preview. It also checks the explicit written-account/open-gate/closed-gate and character/ending variants. All supplied clips are reachable; both gate positions at dawn share `model-2-closed.mp3`, because the displayed dawn account is identical.
+`src/audio/recordings.test.ts` checks all 147 tracks against current harbor content, opening captions, every museum branch combination, the optional readings, voice preview, and every Chapter Two passage. It also checks the explicit written-account/open-gate/closed-gate and character/ending variants. All supplied clips are reachable; both gate positions at dawn share `model-2-closed.mp3`, because the displayed dawn account is identical.
+
+Chapter Two uses the `qi-*.mp3` filenames directly as recording IDs. The Analysis, Empathy, and Intuition routes each have three separate clips; arrival and ending have separate `-stair` and `-voices` takes. The unknown speaker’s refuge excerpt is `qi-play-04.mp3`. All 53 clips decode successfully and total approximately 9 minutes 26 seconds. They use the same exact-wording checks, Listen control, Auto timing, cancellation, and volume settings as the earlier recordings.
+
+The existing Web Audio engine adds brief, original passage effects for canal water, bench machinery, the accepted guest connection, cartridge loading, and archival hiss/clicks. These use the Effects channel independently of dialogue and music. Skipping, replaying, opening a panel, muting, or leaving a passage cancels its scheduled sources; no delayed click can leak into the next scene. Two switching clicks remain ambiguous sound design rather than a decoded response. No supplied MP3 was processed or overwritten, and Ilex’s introduction video remains silent.
 
 `src/audio/dialogueAssets.ts` imports MP3 URLs at build time. Vite gives them hashed filenames and resolves them beneath the deployment's base path. Keep this directory when building or cloning the project. Clips load on demand, rather than downloading the entire voice library at startup.
 
