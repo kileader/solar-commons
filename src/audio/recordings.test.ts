@@ -83,8 +83,8 @@ describe('supplied dialogue recordings', () => {
     }
   })
 
-  it('maps all 147 recordings to exact authored words across every route and optional reading', () => {
-    expect(Object.keys(dialogueRecordings)).toHaveLength(147)
+  it('maps all 148 recordings to exact authored words across every route and optional reading', () => {
+    expect(Object.keys(dialogueRecordings)).toHaveLength(148)
     const authored: DialogueLine[] = [
       ...introLines,
       ...quietIndexVoiceLines,
@@ -139,7 +139,7 @@ describe('supplied dialogue recordings', () => {
     }
     expect([...used].sort()).toEqual(Object.keys(dialogueRecordings).sort())
     expect(script.map((line) => line.id).sort()).toEqual([...used].sort())
-    expect(used.size).toBe(147)
+    expect(used.size).toBe(148)
   })
   it('selects the correct discovery performance for the written, closed-gate and open-gate routes', () => {
     const ids = (patch: Partial<typeof initialSceneState>) =>

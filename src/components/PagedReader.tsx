@@ -26,11 +26,16 @@ export function PageButtons({
   index,
   count,
   onPage,
+  nextLabel = 'Next',
+  finish,
 }: {
   index: number
   count: number
   onPage: (next: number) => void
+  nextLabel?: string
+  finish?: { label: string; onFinish: () => void }
 }) {
+  const last = index + 1 >= count
   return (
     <nav className="page-buttons" aria-label="Reading pages">
       <button aria-label="Previous page" disabled={index === 0} onClick={() => onPage(index - 1)}>
@@ -40,11 +45,12 @@ export function PageButtons({
         {index + 1} / {count}
       </span>
       <button
-        aria-label="Next page"
-        disabled={index + 1 >= count}
-        onClick={() => onPage(index + 1)}
+        aria-label={last && finish ? finish.label : 'Next page'}
+        className={finish ? 'reader-primary' : undefined}
+        disabled={last && !finish}
+        onClick={() => (last && finish ? finish.onFinish() : onPage(index + 1))}
       >
-        <span>Next</span> <ChevronRight size={18} />
+        <span>{last && finish ? finish.label : nextLabel}</span> <ChevronRight size={18} />
       </button>
     </nav>
   )
@@ -57,6 +63,8 @@ export function PagedReader({
   playback,
   onVoiceLine,
   active = true,
+  nextLabel,
+  finish,
 }: {
   entries: readonly ReaderEntry[]
   reading?: ReadAloudControls
@@ -64,6 +72,8 @@ export function PagedReader({
   playback?: ReaderPlayback
   onVoiceLine?: (line: DialogueLine | null) => void
   active?: boolean
+  nextLabel?: string
+  finish?: { label: string; onFinish: () => void }
 }) {
   const pagination = useTextPages(
     entries.map((entry) => ({
@@ -152,7 +162,13 @@ export function PagedReader({
           </button>
         )}
       </div>
-      <PageButtons index={pagination.index} count={pagination.pages.length} onPage={goTo} />
+      <PageButtons
+        index={pagination.index}
+        count={pagination.pages.length}
+        onPage={goTo}
+        nextLabel={nextLabel}
+        finish={finish}
+      />
     </div>
   )
 }

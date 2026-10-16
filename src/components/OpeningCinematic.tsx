@@ -453,8 +453,8 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
             <br /> point of view.
           </h1>
           <p>
-            Twelve years together.
-            <br /> Today, a little closer.
+            Mara studies the ocean. Kite, an independent intelligence, has been her companion for
+            twelve years. Today, they’re taking their wider connection down to the harbor.
           </p>
           <div className="opening-start-actions">
             <button className="opening-primary" onClick={() => start(false)}>

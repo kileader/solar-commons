@@ -85,6 +85,18 @@ body,
   margin: 0 0 10px;
   padding: 0;
 }
+.speaker-identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.novel .speaker-role {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #c4dccf;
+}
 .novel .chapter-ending .dialogue-topline {
   flex-basis: 30px;
 }
@@ -383,6 +395,10 @@ body,
 .page-buttons button:disabled {
   opacity: 0.35;
 }
+.page-buttons .reader-primary {
+  background: #b6efd325;
+  border-color: #b6efd3a0;
+}
 .page-buttons > span {
   font-size: 12px;
   color: #bdd8c8;
@@ -446,6 +462,42 @@ body,
 }
 .evidence-content .paged-reader {
   min-width: 0;
+}
+.evidence-modal .page-buttons {
+  grid-template-columns: auto auto minmax(0, 1fr);
+}
+.evidence-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #96d7c540;
+}
+.evidence-footer p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: #c4dccf;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.evidence-footer svg,
+.evidence-modal .page-buttons svg {
+  flex-shrink: 0;
+}
+.evidence-footer button {
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 6px;
+  border: 0;
+  background: transparent;
+  color: #d9f6e7;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-size: 12px;
 }
 .evidence-figure {
   margin: 0;

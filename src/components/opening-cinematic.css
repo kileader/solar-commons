@@ -385,19 +385,36 @@
     font-size: 11px;
   }
   .opening-invitation h1 {
-    font-size: 33px;
-    margin: 10px 0;
+    font-size: 26px;
+    margin: 0 0 8px;
+  }
+  .opening-invitation h1 br {
+    display: none;
+  }
+  .opening-invitation {
+    top: 58px;
+    bottom: 64px;
+    left: 52%;
+    transform: none;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .opening-invitation .opening-eyebrow {
+    margin: 0 0 8px;
   }
   .opening-invitation > p:not(.opening-eyebrow) {
-    font-size: 15px;
-    line-height: 1.3;
+    font-size: 14px;
+    line-height: 1.35;
+    margin: 0 0 12px;
   }
   .opening-eyebrow,
   .opening-invitation small {
     font-size: 10px;
   }
   .opening-start-actions {
-    margin: 15px 0 10px;
+    margin: 0 0 8px;
+    flex-wrap: nowrap;
+    gap: 6px;
   }
   .opening button {
     min-height: 40px;

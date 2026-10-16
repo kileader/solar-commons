@@ -18,6 +18,8 @@ The story favors character chemistry, humor, and questions worth pursuing. Branc
 
 Start with **Begin with sound** or **Watch silently**, or skip the prologue. Continue the dialogue, choose how Mara responds, and examine the harbor markers. Both harbor endings lead to the museum. After choosing a museum lead, select **Continue to The Quiet Index**. The current stopping point offers chapter replay, field notes, and a return to the museum.
 
+Mara and Kite begin with an outing to try their expanded perception. A maintenance float’s discovery catches their attention, and Mara’s curiosity draws them into investigating the shape beneath the breakwater.
+
 Switch on **Cognitive Perception** to see Kite’s shared attention: harbor geometry, museum arches and water paths, canal reflections, and an archive workbench with a guest-channel diagram. Select a focus marker—or **Shared traces** on phones—to inspect observations, interpretations, and remaining uncertainties. These optional readings pause the dialogue. The archive view only shows an accepted guest connection or a route-specific insight after the story establishes it. Reduced motion keeps the diagrams still.
 
 | Keyboard        | Action                                          |
@@ -34,11 +36,15 @@ Standard controllers are supported. Use the D-pad or left stick to move between 
 
 Dialogue stays inside the viewport. Long passages scroll with the wheel, touch, or keyboard; field notes and optional readings also have Back / Next pages. **Settings → Reading** offers larger text, reduced motion, reading pace, and the pause between passages.
 
+Harbor readings are added to field notes automatically for the current visit. **Continue examination** leads through observations, models, uncertainty, and the characters’ responses; **Finish examination** returns to the harbor from the final page. **Close for now** lets you leave earlier and reopen the reading later.
+
 **Auto** follows the current recording and waits for it to finish before continuing. Unvoiced dialogue uses the selected reading pace. Choices, investigation controls, and chapter endings wait for the player. Opening a panel pauses the underlying dialogue. Manual scrolling takes over the current passage; toggle Auto to resume automatic scrolling.
 
 ## Sound and cinematics
 
-The checked-in [dialogue recordings](dialogue/README.md) contain **147 MP3 performances** covering the harbor, museum, opening captions, optional readings, voice preview, and all 53 Chapter Two passages and variants. **Listen** replays an available recording. Sound settings control music, effects, and dialogue; optional local device speech for unrecorded text is off by default.
+The checked-in [dialogue recordings](dialogue/README.md) contain **148 MP3 performances** covering the harbor, museum, opening captions, optional readings, voice preview, and all 53 Chapter Two passages and variants. **Listen** replays an available recording. Sound settings control music, effects, and dialogue; optional local device speech for unrecorded text is off by default.
+
+Mara’s added harbor reaction, `harbor-curiosity`, uses its supplied recording. All existing recorded dialogue remains intact. The [opening playtest review](docs/OPENING_PLAYTEST_REVIEW.md) includes the opening changes and the optional sonar-prediction proposal.
 
 **The Quiet Index is voiced**, including Ilex, narration, all three investigation approaches, both museum-lead variations, and the recovered refuge excerpt. Quiet canal water, restoration machinery, a guest-channel chime, the cartridge reader, and archival hiss and switching clicks complement the performances. These brief original synthesized effects follow the Effects volume and stop when their passage is skipped or paused. The hiss and clicks are authored sound design, not additional historical evidence.
 

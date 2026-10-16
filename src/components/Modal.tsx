@@ -34,24 +34,30 @@ export function Modal({
   onClose,
   titleId,
   className = '',
+  initialFocus,
   children,
 }: {
   open: boolean
   onClose: () => void
   titleId: string
   className?: string
+  initialFocus?: string
   children: ReactNode
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
-    if (open && !dialog.open) dialog.showModal()
+    if (open && !dialog.open) {
+      dialog.showModal()
+      if (initialFocus)
+        dialog.querySelector<HTMLElement>(initialFocus)?.focus({ preventScroll: true })
+    }
     if (!open && dialog.open) dialog.close()
     return () => {
       if (dialog.open) dialog.close()
     }
-  }, [open])
+  }, [open, initialFocus])
   return (
     <dialog
       ref={ref}

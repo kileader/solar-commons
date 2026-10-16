@@ -751,10 +751,15 @@ export default function App() {
           )}
           <div className="dialogue-card">
             <div className="dialogue-topline">
-              <span className="speaker-name">
-                <i />
-                {speaker === 'Narrator' ? 'NARRATION' : (speaker ?? 'YOUR CHOICE')}
-              </span>
+              <div className="speaker-identity">
+                <span className="speaker-name">
+                  <i />
+                  {speaker === 'Narrator' ? 'NARRATION' : (speaker ?? 'YOUR CHOICE')}
+                </span>
+                {state.phase === 'intro' && speaker && sceneCopy.speakerRoles[speaker] && (
+                  <span className="speaker-role">{sceneCopy.speakerRoles[speaker]}</span>
+                )}
+              </div>
               {chapterComplete || quietIndexComplete ? (
                 <strong className="chapter-complete-badge" role="status">
                   <Check size={16} aria-hidden="true" />{' '}
@@ -763,7 +768,7 @@ export default function App() {
               ) : (
                 <span className="scene-progress">
                   {state.phase === 'investigation'
-                    ? `${state.inspected.length} of 3 examined`
+                    ? `${state.inspected.length} of 3 readings recorded`
                     : state.phase === 'complete'
                       ? 'Scene complete'
                       : ''}
@@ -1021,6 +1026,7 @@ export default function App() {
         onClose={() => perform({ type: 'CLOSE_CLUE' })}
         titleId="evidence-title"
         className="evidence-modal"
+        initialFocus=".reader-primary"
       >
         {activeClue && (
           <>
@@ -1041,6 +1047,11 @@ export default function App() {
                 key={activeClue.id}
                 onVoiceLine={onEvidenceVoice}
                 playback={readerPlayback}
+                nextLabel="Continue examination"
+                finish={{
+                  label: 'Finish examination',
+                  onFinish: () => perform({ type: 'CLOSE_CLUE' }),
+                }}
                 entries={[
                   {
                     id: 'observed',
@@ -1066,12 +1077,12 @@ export default function App() {
                 ]}
               />
             </div>
-            <button className="modal-done" onClick={() => perform({ type: 'CLOSE_CLUE' })}>
-              <Check size={16} /> Saved to field notes{' '}
-              <span>
-                Return to the harbor <ArrowRight size={17} />
-              </span>
-            </button>
+            <div className="evidence-footer">
+              <p>
+                <Check size={16} aria-hidden="true" /> Saved to field notes automatically
+              </p>
+              <button onClick={() => perform({ type: 'CLOSE_CLUE' })}>Close for now</button>
+            </div>
           </>
         )}
       </Modal>

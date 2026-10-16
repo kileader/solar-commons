@@ -1,10 +1,12 @@
 # Dialogue recordings
 
-These **147 MP3s** were supplied by Kevin on October 15, 2026: the original 26 harbor/opening tracks, 68 museum, optional-reading, and preview tracks, and 53 Chapter Two tracks. The game uses them unchanged; no voice audio was generated through an API during integration.
+These **148 MP3s** were supplied by Kevin: 147 on October 15, 2026 (the original 26 harbor/opening tracks, 68 museum, optional-reading, and preview tracks, and 53 Chapter Two tracks), and Mara’s new harbor reaction on October 16. The game uses them unchanged; no voice audio was generated through an API during integration.
+
+The October 16 intro revision adds Mara’s `harbor-curiosity`: **“Well, now I want to know what we’ve been sailing over.”** Its supplied `harbor-curiosity.mp3` matches the exact speaker and wording in `script.json`. Auto waits for this recording to finish before offering the existing entry choices; Listen replays it. No existing clip was replaced. The full recording coverage test requires a matching performance for every authored passage.
 
 [`script.json`](script.json) preserves the exact recorded wording, speaker, production ID, and any shared runtime ID from the voice handoff. `src/audio/dialogueAssets.ts` matches **runtime ID + speaker + exact text** to the corresponding MP3. This resolves all eleven museum variant performances without changing narrative IDs or story progression. A rewritten line never silently plays the old wording.
 
-`src/audio/recordings.test.ts` checks all 147 tracks against current harbor content, opening captions, every museum branch combination, the optional readings, voice preview, and every Chapter Two passage. It also checks the explicit written-account/open-gate/closed-gate and character/ending variants. All supplied clips are reachable; both gate positions at dawn share `model-2-closed.mp3`, because the displayed dawn account is identical.
+`src/audio/recordings.test.ts` checks all 148 tracks against current harbor content, opening captions, every museum branch combination, the optional readings, voice preview, and every Chapter Two passage. It also checks the explicit written-account/open-gate/closed-gate and character/ending variants. All supplied clips are reachable; both gate positions at dawn share `model-2-closed.mp3`, because the displayed dawn account is identical.
 
 Chapter Two uses the `qi-*.mp3` filenames directly as recording IDs. The Analysis, Empathy, and Intuition routes each have three separate clips; arrival and ending have separate `-stair` and `-voices` takes. The unknown speaker’s refuge excerpt is `qi-play-04.mp3`. All 53 clips decode successfully and total approximately 9 minutes 26 seconds. They use the same exact-wording checks, Listen control, Auto timing, cancellation, and volume settings as the earlier recordings.
 

@@ -3,7 +3,7 @@ import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '../App'
-import { clues } from '../content/harbor'
+import { clues, introLines } from '../content/harbor'
 import type { AudioStatus } from '../audio/HarborAudio'
 import recordedScript from '../../dialogue/script.json'
 import { quietIndexApproaches } from '../content/quietIndex'
@@ -156,7 +156,7 @@ describe('scene input integration', () => {
             control.value = id
             control.dispatchEvent(new Event('change', { bubbles: true }))
           })
-        for (let i = 0; i < 4; i++) click('.continue-button')
+        for (let i = 0; i < introLines.length; i++) click('.continue-button')
         click('.story-choice')
         click('.continue-button')
         click('.continue-button')
@@ -206,12 +206,13 @@ describe('scene input integration', () => {
       act(() => container.querySelector<HTMLButtonElement>(selector)!.click())
       tick()
     }
-    for (let i = 0; i < 4; i++) click('.continue-button')
+    for (let i = 0; i < introLines.length; i++) click('.continue-button')
     click('.story-choice')
     click('.continue-button')
     click('.continue-button')
     click(`.hotspot-${clue.id}`)
     const diagram = container.querySelector('dialog[open] .evidence-diagram')!
+    expect(document.activeElement).toBe(container.querySelector('dialog[open] .reader-primary'))
     expect(diagram).toBeTruthy()
     expect(diagram.getAttribute('role')).toBe('img')
     expect(diagram.getAttribute('aria-label')).toBe(clue.subtitle)
@@ -225,7 +226,23 @@ describe('scene input integration', () => {
     )
     expect(container.querySelector('dialog[open] .evidence-diagram')).toBe(diagram)
     expect(container.querySelector('main')?.dataset.phase).toBe('investigation')
-    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 examined')
+    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 readings recorded')
+    expect(container.querySelector('dialog[open] .evidence-footer')?.textContent).toContain(
+      'Saved to field notes automatically',
+    )
+    expect(container.querySelector('[aria-label="Finish examination"]')).toBeNull()
+    for (const title of ['What remains uncertain', ...clue.dialogue.map((line) => line.speaker)]) {
+      click('dialog[open] [aria-label="Next page"]')
+      expect(container.querySelector('dialog[open] .reader-heading')?.textContent).toBe(title)
+      expect(container.querySelector('dialog[open] .evidence-diagram')).toBe(diagram)
+    }
+    expect(container.querySelector('[aria-label="Finish examination"]')).toBeTruthy()
+    click('dialog[open] [aria-label="Previous page"]')
+    expect(container.querySelector('[aria-label="Finish examination"]')).toBeNull()
+    click('dialog[open] [aria-label="Next page"]')
+    click('dialog[open] [aria-label="Finish examination"]')
+    expect(container.querySelector('dialog[open]')).toBeNull()
+    expect(container.querySelector('main')?.dataset.phase).toBe('investigation')
   })
 
   it('keeps the current step and choices available without scrolling or selecting one', () => {
@@ -235,7 +252,7 @@ describe('scene input integration', () => {
       tick()
     }
     expect(container.querySelector('.scene-status')?.textContent).toContain('At the harbor')
-    for (let i = 0; i < 4; i++) click('.continue-button')
+    for (let i = 0; i < introLines.length; i++) click('.continue-button')
     expect(container.querySelector('.scene-status')?.textContent).toContain('Your choice')
     expect(scroll).not.toHaveBeenCalled()
     expect(container.querySelector('.scene-jump')).toBeNull()
@@ -258,7 +275,35 @@ describe('scene input integration', () => {
     )
     click('[aria-label="Close evidence"]')
     expect(scroll).not.toHaveBeenCalled()
-    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 examined')
+    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 readings recorded')
+  })
+
+  it('lets players close evidence early without losing or duplicating the field note', () => {
+    const click = (selector: string) => {
+      act(() => container.querySelector<HTMLButtonElement>(selector)!.click())
+      tick()
+    }
+    for (let i = 0; i < introLines.length; i++) click('.continue-button')
+    click('.story-choice')
+    click('.continue-button')
+    click('.continue-button')
+    click('.hotspot-geometry')
+    expect(container.querySelector('dialog[open] .reader-heading')?.textContent).toBe(
+      clues[0].observation.label,
+    )
+    click('.evidence-footer button')
+    expect(container.querySelector('dialog[open]')).toBeNull()
+    click('[aria-label^="Open field notes"]')
+    expect(container.querySelectorAll('dialog[open] select option')).toHaveLength(1)
+    expect(container.querySelector('dialog[open] .reader-text')?.textContent).toContain(
+      clues[0].contradiction,
+    )
+    click('[aria-label="Close field notes"]')
+    click('.hotspot-geometry')
+    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 readings recorded')
+    expect(container.querySelector('dialog[open] .reader-heading')?.textContent).toBe(
+      clues[0].observation.label,
+    )
   })
 
   it('keeps voice and Auto running across focus changes without restarting a recording', () => {
@@ -335,7 +380,14 @@ describe('scene input integration', () => {
       expect(container.querySelector('main')?.dataset.voiceState).toBe('loading')
       wait(60000)
       expect(text()).toContain('harbor terraces')
-      for (let i = 0; i < 4; i++) {
+      for (const line of introLines) {
+        expect(text()).toBe(line.text)
+        expect(clips.at(-1)!.src).toContain(line.id)
+        if (line.id === 'harbor-curiosity') {
+          wait(60000)
+          expect(text()).toBe(line.text)
+          expect(container.querySelector('.story-choice')).toBeNull()
+        }
         end()
         wait(999)
         expect(container.querySelector('.story-choice')).toBeNull()
@@ -845,14 +897,16 @@ describe('scene input integration', () => {
     expect(container.querySelector('.dialogue-text .narration')).toBeTruthy()
     press(0)
     expect(container.querySelector('.speaker-name')?.textContent).toBe('Mara')
+    expect(container.querySelector('.speaker-role')?.textContent).toBe('Ocean researcher')
     expect(container.querySelector('.companion-portrait .mara-portrait')).toBeTruthy()
     press(0)
     expect(container.querySelector('.speaker-name')?.textContent).toBe('Kite')
+    expect(container.querySelector('.speaker-role')?.textContent).toBe('Independent intelligence')
     expect(container.querySelector('.companion-portrait .kite-portrait')).toBeTruthy()
   })
   it('navigates choices, inspects evidence, and closes it without advancing the story', () => {
     connect()
-    for (let i = 0; i < 4; i++) press(0)
+    for (let i = 0; i < introLines.length; i++) press(0)
     expect(container.querySelectorAll('.story-choice')).toHaveLength(2)
     expect(container.querySelector('.speaker-name')!.textContent).toBe('YOUR CHOICE')
     expect(container.querySelector('.companion-portrait')).toBeNull()
@@ -869,10 +923,10 @@ describe('scene input integration', () => {
     expect(container.querySelector('dialog[open]')?.getAttribute('aria-labelledby')).toBe(
       'evidence-title',
     )
-    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 examined')
+    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 readings recorded')
     press(1)
     expect(container.querySelector('dialog[open]')).toBeNull()
-    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 examined')
+    expect(container.querySelector('.scene-progress')?.textContent).toBe('1 of 3 readings recorded')
   })
   it('toggles perception and notes, and adjusts real volume controls in settings', () => {
     connect()

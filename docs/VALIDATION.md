@@ -1,5 +1,12 @@
 # Validation
 
+## Opening playtest UX — October 16, 2026
+
+- Evidence separates automatic field-note recording from reading navigation. Continue examination leads forward; Finish examination appears only on the final measured page. Early closing remains available. The harbor reports readings recorded, and opening a card focuses its forward action. Introductory speaker labels identify Mara and Kite.
+- All **205 tests across 20 files** and the TypeScript/Vite build pass. Coverage includes the three evidence cards, early-close note retention, focus, role labels, pagination/reflow, exact recording matches, and existing chapter routes.
+- The opening invitation now makes the shared-perception outing explicit. Mara’s approved playful reaction follows Kite’s existing float alert using Kevin’s supplied `harbor-curiosity.mp3`; Auto waits for the clip and configured gap before offering both existing choices. The exact recording test protects all 148 performances, with no pending-recording exception. The new 3.52-second MP3 decodes successfully with FFmpeg. No previous dialogue was rewritten.
+- Local browser checks at 1280 × 720 and 320 × 568 cover both role labels, the measurements-first route, the sonar reading’s observation/model/uncertainty/dialogue pages, separate save and exit controls, and finishing back at the harbor. The expanded invitation also fits 640 × 360 with its compact landscape layout. No art, cinematic timelines, recordings, narrative choices, or later chapters changed. The optional sonar prediction remains a proposal in [the playtest review](OPENING_PLAYTEST_REVIEW.md). No deployment is claimed.
+
 ## Chapter ending and speaker attribution — October 15, 2026
 
 - The completed museum route shows a visible **Chapter One complete** badge and an explicit end-of-playable-story notice. The selected lead is labeled for the next chapter. Leaving the model before finishing the discovery is labeled **Museum visit paused**, while preserving the existing revisit and written-account routes.

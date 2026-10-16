@@ -68,6 +68,10 @@ export const sceneCopy = {
   } as Record<string, string>,
   emptyNotes: 'The harbor is still an open question.',
   notesSubtitle: 'A record of what we know. And what we don’t.',
+  speakerRoles: {
+    Mara: 'Ocean researcher',
+    Kite: 'Independent intelligence',
+  } as Partial<Record<Speaker, string>>,
   perception: {
     observation: '14.2 m below datum',
     model: 'Partial reconstruction',
@@ -96,6 +100,11 @@ export const introLines: DialogueLine[] = [
     id: 'anomaly',
     speaker: 'Kite',
     text: 'The maintenance float found a shape beneath the old breakwater. Its bracing resembles work from before the Unbinding. Resemblance is not a date. Open Cognitive Perception when you’re ready, and we’ll look together.',
+  },
+  {
+    id: 'harbor-curiosity',
+    speaker: 'Mara',
+    text: 'Well, now I want to know what we’ve been sailing over.',
   },
 ]
 

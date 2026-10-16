@@ -42,6 +42,41 @@ function click(selector: string) {
 const text =
   'The tide rose above the gate. Nobody answered the shore station. The refuge lamp remained lit after the last ferry.'
 
+it('offers finishing only on the final measured page, including after reflow', () => {
+  const finish = vi.fn()
+  act(() =>
+    root.render(
+      <PagedReader
+        entries={[{ id: 'evidence', title: 'Observed', text }]}
+        nextLabel="Continue examination"
+        finish={{ label: 'Finish examination', onFinish: finish }}
+      />,
+    ),
+  )
+  expect(container.querySelector('[aria-label="Finish examination"]')).toBeNull()
+  expect(container.querySelector('[aria-label="Next page"]')?.textContent).toContain(
+    'Continue examination',
+  )
+  let turns = 0
+  while (container.querySelector('[aria-label="Next page"]') && turns++ < 20)
+    click('[aria-label="Next page"]')
+  expect(container.querySelector('[aria-label="Finish examination"]')).toBeTruthy()
+  expect(finish).not.toHaveBeenCalled()
+  height = 42
+  act(() => {
+    window.dispatchEvent(new Event('resize'))
+    vi.runOnlyPendingTimers()
+  })
+  while (container.querySelector('[aria-label="Next page"]') && turns++ < 40)
+    click('[aria-label="Next page"]')
+  expect(container.querySelector('[aria-label="Finish examination"]')).toBeTruthy()
+  click('[aria-label="Previous page"]')
+  expect(container.querySelector('[aria-label="Finish examination"]')).toBeNull()
+  click('[aria-label="Next page"]')
+  click('[aria-label="Finish examination"]')
+  expect(finish).toHaveBeenCalledTimes(1)
+})
+
 it('keeps a requested page turn when a resize arrives before React commits it', () => {
   act(() => root.render(<PagedReader entries={[{ id: 'a', title: 'Testimony', text }]} />))
   const first = container.querySelector('.reader-text')!.textContent
