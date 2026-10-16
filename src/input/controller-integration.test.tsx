@@ -699,6 +699,36 @@ describe('scene input integration', () => {
         'quiet_index.webp',
       )
       expect(container.querySelector('.speaker-name')?.textContent).toBe('Ilex')
+      const beforeInspection = container.querySelector('main')?.dataset.voiceLine
+      click('.perception-toggle')
+      expect(container.querySelector('.cognitive-scene .cognitive-sketch')).toBeTruthy()
+      expect(container.querySelector('.cognitive-scene')?.textContent).toContain(
+        'A voice, with boundaries',
+      )
+      // Preserve the manually sampled controller frames while advancing dialogue timers.
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+      try {
+        click('.auto-toggle')
+        if (approach.id === 'empathy') {
+          connect()
+          act(() => container.querySelector<HTMLButtonElement>('.cognitive-focus')!.focus())
+          press(0)
+        } else click('.cognitive-focus')
+        expect(container.querySelector('dialog[open] .reader-text')?.textContent).toContain(
+          'Interpretation',
+        )
+        expect(container.querySelector('dialog[open] .reader-text')?.textContent).toContain(
+          'Still uncertain',
+        )
+        act(() => vi.advanceTimersByTime(60000))
+        expect(container.querySelector('main')?.dataset.voiceLine).toBe(beforeInspection)
+        click('[aria-label="Close shared traces"]')
+        click('.auto-toggle')
+      } finally {
+        vi.useRealTimers()
+      }
+      click('.perception-toggle')
+      expect(container.querySelector('.cognitive-scene')).toBeNull()
       finish()
       expect(container.querySelectorAll('.story-choice')).toHaveLength(3)
       expect(container.querySelector('.archive-waveform')?.textContent).toContain(

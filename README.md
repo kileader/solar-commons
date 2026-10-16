@@ -18,6 +18,8 @@ The story favors character chemistry, humor, and questions worth pursuing. Branc
 
 Start with **Begin with sound** or **Watch silently**, or skip the prologue. Continue the dialogue, choose how Mara responds, and examine the harbor markers. Both harbor endings lead to the museum. After choosing a museum lead, select **Continue to The Quiet Index**. The current stopping point offers chapter replay, field notes, and a return to the museum.
 
+Switch on **Cognitive Perception** to see Kite’s shared attention: harbor geometry, museum arches and water paths, canal reflections, and an archive workbench with a guest-channel diagram. Select a focus marker—or **Shared traces** on phones—to inspect observations, interpretations, and remaining uncertainties. These optional readings pause the dialogue. The archive view only shows an accepted guest connection or a route-specific insight after the story establishes it. Reduced motion keeps the diagrams still.
+
 | Keyboard        | Action                                          |
 | --------------- | ----------------------------------------------- |
 | Enter / Space   | Continue dialogue or activate a focused control |

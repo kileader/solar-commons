@@ -31,6 +31,10 @@ Kevin subsequently supplied `Firefly One continuous cinematic shot. Ilex pauses 
 
 The waveform is a static authored illustration, visibly labeled as illustrative with restoration artifacts and gaps. It does not calculate audio, imply a verified forensic measurement, or identify the speaker. The refuge recording currently appears as readable dialogue, with no new recorded audio. The existing opt-in local device voice fallback can read it; that is not a cast performance.
 
+Cognitive Perception adds a luminous attention sketch over the canal and studio. Focus markers open optional, unvoiced readings about reflections and the selected route outside, or the workbench, guest channel, and signal limits inside. The guest channel remains pending until `qi-intro-05`; private senses stay closed. The signal reading echoes only the chosen investigation insight, after Ilex’s answer, rather than disclosing the other branches. The diagrams are labeled as sketches, not measurements. Inspecting a trace pauses story audio and Auto without changing the investigation choice or adding casting lines. On phones, **Shared traces** opens the same entries in the existing reader; reduced motion stops the diagram animation.
+
+The perception follow-up passes **19 test files / 199 tests** and the production build. Browser checks cover museum and canal views, the archive’s pending/accepted guest channel, focus readings at 320 × 568, short landscape controls, and a reduced-motion view with every new diagram animation disabled. The small-phone museum completion view also reserves readable space for its existing epilogue.
+
 ## Future voice recordings
 
 [VOICE_RECORDING_PLAN.csv](VOICE_RECORDING_PLAN.csv) is the authoritative export of the **53 implemented, unrecorded passages**, including conditional variants. It lists exact IDs, speakers, and text. The original generic `qi-arrival-03` and `qi-end-03` should not be recorded; their replacements are in this export. Existing recordings and `dialogue/script.json` are unchanged.

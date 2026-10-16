@@ -1,0 +1,271 @@
+.cognitive-scene {
+  position: absolute;
+  inset: 0;
+  color: #b8ffe7;
+  pointer-events: none;
+  animation: attention-appear 600ms ease both;
+}
+.cognitive-scene .cognitive-sketch {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 5px #6ffff0c0);
+  opacity: 1;
+}
+.novel.cognitive:has(.cognitive-scene) .harbor-background {
+  filter: saturate(0.4) brightness(0.48) hue-rotate(8deg);
+}
+.cognitive-contours {
+  stroke-width: 1.6;
+}
+.cognitive-archive {
+  color: #b8f9e8;
+}
+.cognitive-caption {
+  position: absolute;
+  left: 0;
+  top: 135px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(90deg, #0b3438e8, #0b343850);
+  border-left: 2px solid currentColor;
+  font:
+    10px/1.4 'Trebuchet MS',
+    sans-serif;
+  letter-spacing: 1px;
+}
+.cognitive-caption strong {
+  display: block;
+  margin-top: 5px;
+  color: #effff0;
+  font:
+    19px/1.3 Georgia,
+    serif;
+  letter-spacing: 0;
+}
+.cognitive-caption > small {
+  margin-left: 20px;
+  padding-top: 2px;
+  color: #eac88b;
+  letter-spacing: 0;
+}
+.cognitive-traces {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  display: flex;
+  gap: 12px;
+  pointer-events: auto;
+}
+.cognitive-focus {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 9px 14px;
+  border: 1px solid #a9f9d894;
+  border-radius: 3px 10px 3px 10px;
+  color: #e3ffee;
+  background: #0b3037e8;
+  box-shadow:
+    0 0 20px #72ffcb15,
+    inset 0 0 20px #72ffcb0a;
+  font-size: 14px;
+  text-align: left;
+  pointer-events: auto;
+}
+.cognitive-focus:hover,
+.cognitive-focus:focus-visible {
+  background: #205b5bea;
+  box-shadow: 0 0 22px #72ffcb4a;
+}
+.cognitive-focus small {
+  display: block;
+  color: #a4d6c8;
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+.cognitive-compact-focus {
+  display: none;
+}
+.cognitive-water-path,
+.cognitive-channel {
+  stroke-dasharray: 12 8;
+  animation: attention-flow 6s linear infinite;
+}
+.cognitive-reticle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: attention-orbit 24s linear infinite;
+}
+.cognitive-sweep {
+  animation: attention-sweep 5s ease-in-out infinite;
+}
+.cognitive .archive-waveform {
+  display: none;
+}
+.cognitive-detail-figure {
+  flex: 0 0 150px;
+  min-height: 0;
+  position: relative;
+  margin: 0;
+  border: 1px solid #8fddc73b;
+  background: radial-gradient(ellipse at center, #28666c44, #0a252e88);
+  color: #b8ffe7;
+}
+.cognitive-detail-figure .cognitive-sketch {
+  display: block;
+  width: 100%;
+  height: calc(100% - 24px);
+}
+.cognitive-detail-figure figcaption {
+  text-align: center;
+  color: #e6cf9d;
+  font-size: 11px;
+}
+.novel.cognitive .location-heading,
+.novel.cognitive .perception-toggle,
+.novel.cognitive .record-button {
+  z-index: 2;
+}
+.novel.cognitive .model-cutaway svg {
+  filter: drop-shadow(0 0 6px #92ffe688);
+}
+@keyframes attention-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes attention-flow {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+@keyframes attention-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes attention-sweep {
+  0%,
+  100% {
+    transform: translateY(-140px);
+    opacity: 0;
+  }
+  15%,
+  80% {
+    opacity: 0.5;
+  }
+  90% {
+    transform: translateY(140px);
+    opacity: 0;
+  }
+}
+@media (max-width: 760px) {
+  .cognitive-caption {
+    top: 105px;
+    padding: 8px 10px;
+    font-size: 8px;
+    max-width: calc(100% - 90px);
+  }
+  .cognitive-caption strong {
+    font-size: 15px;
+  }
+  .cognitive-caption > small {
+    display: none;
+  }
+  .cognitive-traces {
+    display: none;
+  }
+  .cognitive-compact-focus {
+    display: flex;
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    min-height: 36px;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+  .cognitive-compact-focus > span {
+    font-size: 10px;
+    opacity: 0.65;
+  }
+  .cognitive-detail-figure {
+    flex-basis: 110px;
+  }
+  .novel.cognitive .scene-view:has(.record-button) .location-heading,
+  .novel.cognitive .scene-view:has(.record-button) .cognitive-caption {
+    display: none;
+  }
+  .novel.cognitive .scene-view:has(.record-button) .cognitive-compact-focus {
+    top: 12px;
+    bottom: auto;
+  }
+}
+@media (max-width: 760px) and (max-height: 650px) {
+  .cognitive-caption {
+    display: none;
+  }
+  .novel.cognitive:has(.cognitive-scene) .location-heading {
+    top: 0;
+  }
+  .novel.cognitive:has(.cognitive-scene) .location-heading .eyebrow,
+  .novel.cognitive:has(.cognitive-scene) .location-heading > p {
+    display: none;
+  }
+}
+@media (max-height: 500px) {
+  .cognitive-caption,
+  .cognitive-traces {
+    display: none;
+  }
+  .novel.cognitive:has(.cognitive-scene) .location-heading {
+    display: none;
+  }
+  .cognitive-compact-focus {
+    display: flex;
+    position: absolute;
+    left: 0;
+    bottom: 6px;
+    min-height: 34px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  .cognitive-detail-figure {
+    display: none;
+  }
+  .novel.cognitive .scene-view:has(.cognitive-scene) .record-button {
+    right: 240px;
+    left: auto;
+    bottom: 6px;
+    min-height: 34px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .novel.cognitive .scene-view:has(.record-button) .cognitive-compact-focus {
+    top: auto;
+    bottom: 6px;
+  }
+}
+@media (max-width: 760px) and (max-height: 500px) {
+  .novel.cognitive .scene-view:has(.cognitive-scene) .record-button {
+    right: 148px;
+  }
+}
+.novel[data-motion='reduced'] .cognitive-scene,
+.novel[data-motion='reduced'] .cognitive-water-path,
+.novel[data-motion='reduced'] .cognitive-channel,
+.novel[data-motion='reduced'] .cognitive-reticle,
+.novel[data-motion='reduced'] .cognitive-sweep {
+  animation: none;
+}
+.novel[data-motion='reduced'] .cognitive-sweep {
+  display: none;
+}

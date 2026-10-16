@@ -4,6 +4,7 @@ import Startup from './Startup'
 import './styles.css'
 import './viewport.css'
 import './components/quiet-index.css'
+import './components/cognitive-view.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

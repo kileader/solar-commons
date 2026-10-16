@@ -17,6 +17,8 @@ import { characterArt, harborArt, museumArt, quietIndexArt } from './art'
 import { quietIndexApproaches } from './content/quietIndex'
 import { ArchiveWaveform, QuietIndexCompletion } from './components/QuietIndex'
 import { IlexIntroduction } from './components/IlexIntroduction'
+import { CognitiveLayer, CognitiveSketch } from './components/CognitiveView'
+import { cognitiveView, type CognitiveTrace, type CognitiveView } from './content/cognition'
 import { museumApproaches, museumContent, floodSnapshot, type FloodStage } from './content/museum'
 import { FloodReconstruction, HistoryExhibit } from './components/Museum'
 import { ReadAloudButton, type ReadAloudControls } from './components/ReadAloudButton'
@@ -60,11 +62,15 @@ import {
 } from './reading/preferences'
 import './audio/audio.css'
 
+type Panel = 'journal' | 'settings' | 'history' | 'record' | 'model-account' | 'perception'
+
 export default function App() {
   const [state, dispatch] = useReducer(sceneReducer, initialSceneState)
-  const [panel, setPanel] = useState<
-    'journal' | 'settings' | 'history' | 'record' | 'model-account' | null
-  >(null)
+  const [panel, setPanel] = useState<Panel | null>(null)
+  const [perceptionSelection, setPerceptionSelection] = useState<{
+    view: CognitiveView
+    trace: CognitiveTrace
+  } | null>(null)
   const [reading, setReading] = useState(loadReadingPreferences)
   const [auto, setAuto] = useState(false)
   const [evidenceVoice, setEvidenceVoice] = useState<{
@@ -92,6 +98,7 @@ export default function App() {
   const inMuseum = state.phase.startsWith('museum-')
   const inQuietIndex = state.phase.startsWith('qi-')
   const quietIndexComplete = state.phase === 'qi-complete'
+  const sharedView = cognitiveView(state)
   const isChoice = [
     'entry-choice',
     'decision',
@@ -280,7 +287,7 @@ export default function App() {
     dispatch(event)
   }
 
-  function openPanel(next: 'journal' | 'settings' | 'history' | 'record' | 'model-account') {
+  function openPanel(next: Panel) {
     setReadAloud(null)
     audio.unlock()
     if (activeClue) perform({ type: 'CLOSE_CLUE' })
@@ -331,7 +338,7 @@ export default function App() {
         ? visibleControls(modal)
         : visibleControls(document).filter((element) =>
             element.matches(
-              '.continue-button, .auto-toggle, .voice-replay, .page-back, .page-buttons button, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .record-button, .model-moment, .gate-control, .lamp-discovery',
+              '.continue-button, .auto-toggle, .voice-replay, .page-back, .page-buttons button, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .record-button, .model-moment, .gate-control, .lamp-discovery, .cognitive-focus',
             ),
           )
       const focused = document.activeElement as HTMLElement | null
@@ -651,15 +658,18 @@ export default function App() {
           <i className="toggle-indicator" />
         </button>
         {!inMuseum && !inQuietIndex && <Perception active={state.perception} />}
-        {inQuietIndex && state.perception && (
-          <p className="museum-attention">Shared attention · public presence only</p>
+        {sharedView && state.perception && (
+          <CognitiveLayer
+            view={sharedView}
+            onInspect={(trace) => {
+              setPerceptionSelection({ view: sharedView, trace })
+              openPanel('perception')
+            }}
+          />
         )}
         {['qi-record', 'qi-approach-choice', 'qi-approach', 'qi-playback'].includes(
           state.phase,
         ) && <ArchiveWaveform playback={state.phase === 'qi-playback'} />}
-        {inMuseum && state.perception && state.phase !== 'museum-model' && (
-          <p className="museum-attention">Shared attention · the worn brass rim</p>
-        )}
         {showRecord && (
           <button className="record-button" onClick={() => openPanel('record')}>
             <BookOpen size={18} /> Read the handover record
@@ -1084,6 +1094,44 @@ export default function App() {
         <p className="notes-footnote">
           In-world sensor readings are authored fiction. Models are hypotheses, never hidden facts.
         </p>
+      </Modal>
+
+      <Modal
+        open={panel === 'perception'}
+        onClose={closePanel}
+        titleId="perception-detail-title"
+        className="perception-detail-modal"
+      >
+        <ModalHeading
+          titleId="perception-detail-title"
+          step={guide.title}
+          onClose={closePanel}
+          closeLabel="Close shared traces"
+        >
+          <Eye size={15} /> Kite’s shared view
+        </ModalHeading>
+        {perceptionSelection && (
+          <>
+            <figure className="cognitive-detail-figure">
+              <CognitiveSketch view={perceptionSelection.view} />
+              <figcaption>Attention sketch · solid traces / dashed interpretation</figcaption>
+            </figure>
+            <PagedReader
+              key={perceptionSelection.trace.id}
+              entries={[
+                perceptionSelection.trace,
+                ...perceptionSelection.view.traces.filter(
+                  (trace) => trace.id !== perceptionSelection.trace.id,
+                ),
+              ].map((trace) => ({
+                id: trace.id,
+                title: trace.title,
+                scrollable: true,
+                text: `Observed\n${trace.observed}\n\nInterpretation\n${trace.interpretation}\n\nStill uncertain\n${trace.uncertainty}`,
+              }))}
+            />
+          </>
+        )}
       </Modal>
 
       <Modal
