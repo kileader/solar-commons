@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Startup from '../Startup'
 import { audioStorageKey } from '../audio/preferences'
+import type { SceneState } from '../state/scene'
 
 const calls = vi.hoisted(() => ({
   mount: vi.fn(),
@@ -31,9 +32,9 @@ vi.mock('./StudioSplash', () => ({
   ),
 }))
 vi.mock('../App', () => ({
-  default: function Harbor() {
+  default: function Harbor({ initialState }: { initialState: SceneState }) {
     useEffect(() => {
-      calls.mount()
+      calls.mount(initialState)
       document.addEventListener('keydown', calls.input)
       document.addEventListener('click', calls.input)
       return () => {
@@ -120,6 +121,18 @@ beforeEach(() => {
   vi.spyOn(performance, 'now').mockImplementation(() => now)
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue()
   vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {})
+  Object.defineProperty(HTMLDialogElement.prototype, 'showModal', {
+    configurable: true,
+    value: function (this: HTMLDialogElement) {
+      this.open = true
+    },
+  })
+  Object.defineProperty(HTMLDialogElement.prototype, 'close', {
+    configurable: true,
+    value: function (this: HTMLDialogElement) {
+      this.open = false
+    },
+  })
   Object.defineProperty(navigator, 'getGamepads', { configurable: true, value: () => pads })
   container = document.createElement('div')
   document.body.append(container)
@@ -137,6 +150,79 @@ afterEach(() => {
 })
 
 describe('cinematic startup and lifecycle', () => {
+  it('keeps controller navigation and Back inside chapter selection', () => {
+    vi.spyOn(HTMLElement.prototype, 'getClientRects').mockReturnValue([
+      { width: 100, height: 30 },
+    ] as unknown as DOMRectList)
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: vi.fn(),
+    })
+    controller()
+    controller([13])
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('Choose a chapter')
+    controller()
+    controller([0])
+    expect(container.querySelector('dialog[open]')).toBeTruthy()
+    controller()
+    controller([13])
+    expect(document.activeElement?.textContent).toContain('Hall of Waters')
+    controller()
+    controller([0])
+    expect(container.querySelector('[aria-label="Harbor outcome"]')).toBeTruthy()
+    controller()
+    controller([1])
+    tick()
+    expect(container.querySelector('dialog[open]')).toBeNull()
+    expect(opening().getAttribute('data-playback')).toBe('ready')
+    expect(calls.mount).not.toHaveBeenCalled()
+  })
+  it('starts a chosen chapter with explicit context only after held input is released', () => {
+    click('Chapters')
+    act(() => container.querySelectorAll<HTMLButtonElement>('.chapter-option')[3].click())
+    const select = (label: string, value: string) =>
+      act(() => {
+        const control = [...container.querySelectorAll<HTMLSelectElement>('select')].find(
+          (control) => control.closest('label')?.textContent?.includes(label),
+        )!
+        control.value = value
+        control.dispatchEvent(new Event('change', { bubbles: true }))
+      })
+    select('Harbor outcome', 'handshake')
+    select('Museum lead', 'voices')
+    key('keydown', 'Enter')
+    click('Start The Quiet Index')
+    tick()
+    expect(calls.mount).not.toHaveBeenCalled()
+    key('keyup', 'Enter')
+    tick()
+    expect(calls.mount).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        phase: 'qi-arrival',
+        lineIndex: 0,
+        endingChoiceId: 'handshake',
+        museumLeadId: 'voices',
+        quietIndexApproach: null,
+      }),
+    )
+    expect(calls.input).not.toHaveBeenCalled()
+    expect(calls.dispose).toHaveBeenCalledTimes(1)
+  })
+  it('closes chapter selection without skipping the opening or starting sound', () => {
+    click('Chapters')
+    expect(key('keydown', 'Escape').defaultPrevented).toBe(false)
+    act(() =>
+      container
+        .querySelector('dialog[open]')!
+        .dispatchEvent(new Event('cancel', { cancelable: true })),
+    )
+    key('keyup', 'Escape')
+    tick()
+    expect(container.querySelector('dialog[open]')).toBeNull()
+    expect(opening().getAttribute('data-playback')).toBe('ready')
+    expect(calls.mount).not.toHaveBeenCalled()
+    expect(calls.unlock).not.toHaveBeenCalled()
+  })
   it('waits for a sound gesture, plays every shot, then mounts the harbor exactly once', () => {
     tick(10000)
     expect(opening().getAttribute('data-playback')).toBe('ready')

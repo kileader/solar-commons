@@ -20,6 +20,8 @@ Start with **Begin with sound** or **Watch silently**, or skip the prologue. Con
 
 Mara and Kite begin with an outing to try their expanded perception. A maintenance float’s discovery catches their attention, and Mara’s curiosity draws them into investigating the shape beneath the breakwater.
 
+Use **Chapters** on the opening screen or the list icon in the story toolbar to start at the **Prologue**, **The Harbor**, **Hall of Waters**, or **The Quiet Index**. Later starts let you choose the earlier harbor outcome and, for Chapter Two, the museum lead; existing choices are prefilled when available. The required earlier readings appear in field notes, while the new scene’s choices remain open. Starting here replaces story progress for the current visit and keeps your sound and reading preferences. Close the selector to continue your current scene without changing it.
+
 Switch on **Cognitive Perception** to see Kite’s shared attention: harbor geometry, museum arches and water paths, canal reflections, and an archive workbench with a guest-channel diagram. Select a focus marker—or **Shared traces** on phones—to inspect observations, interpretations, and remaining uncertainties. These optional readings pause the dialogue. The archive view only shows an accepted guest connection or a route-specific insight after the story establishes it. Reduced motion keeps the diagrams still.
 
 | Keyboard        | Action                                          |

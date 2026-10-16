@@ -1,5 +1,13 @@
 # Validation
 
+## Chapter selection — October 16, 2026
+
+- **Chapters** is available from the opening invitation and the story toolbar. All four entry points are available immediately: Prologue, The Harbor, Hall of Waters (also Chapter One), and The Quiet Index (Chapter Two). Starting a scene begins a fresh visit; closing the selector leaves the current scene and choices intact. Sound, reading, and motion preferences remain on the device.
+- Later entries display the earlier harbor outcome and, for Chapter Two, the museum lead. Existing choices prefill those controls when available. The shared reducer entry function supplies the required harbor readings and museum discovery, resets current-scene choices and playback controls, and does not mark Chapter Two's investigation or recording as completed. The same factory serves startup selection and in-game jumps.
+- **217 tests across 21 files** pass, along with the TypeScript/Vite production build. Coverage checks every starting context, correct recording variants, fresh notes and reset state, canceling without applying edited context, keyboard release before startup, controller navigation scoped to the dialog, and holding confirmation without advancing a newly entered scene. Existing full-story route and 148-recording coverage remains green.
+- Browser checks cover 1280 × 720, 320 × 568, and 640 × 360. All four entries were exercised, including Chapter Two's missing-voice dialogue reaching recorded playback, a direct museum visit, returning to the prologue, and a fresh harbor with zero clues. Earlier-choice controls scroll into view on phones; a compact two-column layout retains them in landscape. Tightened phone toolbar spacing prevents the new control and note counter from widening the scene. The selector keeps its close control, progress warning, and start action available while its body scrolls.
+- No story lines, recordings, art, or cinematic timing changed. This feature is locally verified; this entry does not claim a new Pages deployment.
+
 ## Opening playtest UX — October 16, 2026
 
 - Evidence separates automatic field-note recording from reading navigation. Continue examination leads forward; Finish examination appears only on the final measured page. Early closing remains available. The harbor reports readings recorded, and opening a card focuses its forward action. Introductory speaker labels identify Mara and Kite.

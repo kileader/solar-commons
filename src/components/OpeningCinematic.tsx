@@ -15,6 +15,8 @@ import {
 import { useGamepad } from '../hooks/useGamepad'
 import { useMotion } from '../hooks/useMotion'
 import { adjustControl, moveFocus, visibleControls } from '../input/focus'
+import { ChapterSelect } from './ChapterSelect'
+import type { StoryStart } from '../state/scene'
 import './opening-cinematic.css'
 
 type Playback = 'ready' | 'playing' | 'paused' | 'finishing'
@@ -119,7 +121,9 @@ function Attention({ shot, local }: { shot: string; local: number }) {
   )
 }
 
-export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
+export function OpeningCinematic({ onComplete }: { onComplete: (start?: StoryStart) => void }) {
+  const [chaptersOpen, setChaptersOpen] = useState(false)
+  const chapterStart = useRef<StoryStart | undefined>(undefined)
   const [playback, setPlayback] = useState<Playback>('ready')
   const playbackRef = useRef<Playback>('ready')
   const [time, setTime] = useState(0)
@@ -211,7 +215,7 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
         const heldPad = heldGamepadButton()
         if (!keys.current.size && !pointers.current.size && !heldPad && !completed) {
           completed = true
-          onComplete()
+          onComplete(chapterStart.current)
           return
         }
       } else if (playbackRef.current === 'playing') {
@@ -282,6 +286,7 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
         consume(event)
         return
       }
+      if (root.current?.querySelector('dialog[open]')) return
       if (event.code === 'Escape') {
         consume(event)
         handlers.current.finish()
@@ -336,6 +341,31 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
   useGamepad(
     (action) => {
       if (playbackRef.current === 'finishing') return
+      const modal = root.current?.querySelector<HTMLDialogElement>('dialog[open]')
+      if (modal) {
+        const active = document.activeElement as HTMLElement | null
+        if (action === 'back') setChaptersOpen(false)
+        else if (
+          action === 'confirm' &&
+          active instanceof HTMLButtonElement &&
+          modal.contains(active)
+        )
+          active.click()
+        else if (['up', 'down', 'left', 'right'].includes(action)) {
+          const direction = action === 'up' || action === 'left' ? -1 : 1
+          if (
+            (action === 'left' || action === 'right') &&
+            active &&
+            modal.contains(active) &&
+            adjustControl(active, direction)
+          )
+            return
+          moveFocus(visibleControls(modal), direction)
+          const focused = document.activeElement as HTMLElement | null
+          focused?.scrollIntoView({ block: 'nearest' })
+        }
+        return
+      }
       if (action === 'back') finish()
       else if (action === 'mute') toggleSound()
       else if (action === 'replay') seek(0)
@@ -362,7 +392,10 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
         moveFocus(visibleControls(root.current), direction)
       }
     },
-    () => {},
+    (amount) =>
+      root.current
+        ?.querySelector('.chapter-select-body')
+        ?.scrollBy({ top: amount, behavior: 'auto' }),
   )
 
   const ready = playback === 'ready'
@@ -443,7 +476,18 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
         <span className="opening-brand-mark" aria-hidden="true">
           ◇
         </span>{' '}
-        SOLAR COMMONS <span className="opening-chapter">PROLOGUE</span>
+        SOLAR COMMONS
+        {ready ? (
+          <button
+            className="opening-chapter-menu"
+            onClick={() => setChaptersOpen(true)}
+            aria-label="Choose a chapter"
+          >
+            Chapters
+          </button>
+        ) : (
+          <span className="opening-chapter">PROLOGUE</span>
+        )}
       </header>
       {ready ? (
         <div className="opening-invitation">
@@ -578,6 +622,17 @@ export function OpeningCinematic({ onComplete }: { onComplete: () => void }) {
           </div>
         )}
       </footer>
+      {chaptersOpen && (
+        <ChapterSelect
+          onClose={() => setChaptersOpen(false)}
+          onStart={(start) => {
+            setChaptersOpen(false)
+            if (start.scene === 'prologue') return
+            chapterStart.current = start
+            finish()
+          }}
+        />
+      )}
       <span className="opening-sr" role="status">
         {audioNotice}
         {playback === 'paused' ? ' Opening paused.' : ''}

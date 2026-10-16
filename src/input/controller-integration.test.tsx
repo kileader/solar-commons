@@ -134,6 +134,104 @@ afterEach(() => {
 })
 
 describe('scene input integration', () => {
+  it('jumps between scenes with chosen context, matching voices, and fresh notes', () => {
+    const clips: HTMLMediaElement[] = []
+    vi.mocked(HTMLMediaElement.prototype.play).mockImplementation(function (
+      this: HTMLMediaElement,
+    ) {
+      clips.push(this)
+      return Promise.resolve()
+    })
+    const click = (selector: string) => {
+      act(() => container.querySelector<HTMLButtonElement>(selector)!.click())
+      tick()
+    }
+    const chapter = (title: string) =>
+      act(() =>
+        [...container.querySelectorAll<HTMLButtonElement>('.chapter-option')]
+          .find((button) => button.querySelector('strong')?.textContent === title)!
+          .click(),
+      )
+    const select = (label: string, value: string) =>
+      act(() => {
+        const control = [...container.querySelectorAll<HTMLSelectElement>('select')].find(
+          (control) => control.closest('label')?.textContent?.includes(label),
+        )!
+        control.value = value
+        control.dispatchEvent(new Event('change', { bubbles: true }))
+      })
+    click('.auto-toggle')
+    click('[aria-label="Choose a chapter"]')
+    chapter('The Quiet Index')
+    select('Harbor outcome', 'handshake')
+    select('Museum lead', 'voices')
+    click('.chapter-start')
+    expect(container.querySelector('main')?.dataset.phase).toBe('qi-arrival')
+    expect(container.querySelector('main')?.dataset.auto).toBe('off')
+    expect(clips.at(-1)?.src).toContain('qi-arrival-01')
+    click('.continue-button')
+    click('.continue-button')
+    expect(clips.at(-1)?.src).toContain('qi-arrival-03-voices')
+    click('[aria-label^="Open field notes"]')
+    expect(container.querySelectorAll('dialog[open] select option')).toHaveLength(5)
+    click('[aria-label="Close field notes"]')
+    click('[aria-label="Choose a chapter"]')
+    expect(
+      container.querySelector<HTMLSelectElement>('.chapter-context label:first-of-type select')!
+        .value,
+    ).toBe('handshake')
+    expect(
+      container.querySelector<HTMLSelectElement>('.chapter-context label:last-of-type select')!
+        .value,
+    ).toBe('voices')
+    select('Museum lead', 'stair')
+    click('[aria-label="Close chapters"]')
+    expect(container.querySelector('main')?.dataset.voiceLine).toBe('qi-arrival-03-voices')
+    click('[aria-label="Choose a chapter"]')
+    expect(container.querySelector<HTMLSelectElement>('[aria-label="Museum lead"]')!.value).toBe(
+      'voices',
+    )
+    chapter('Hall of Waters')
+    click('.chapter-start')
+    expect(container.querySelector('main')?.dataset.phase).toBe('museum-arrival')
+    click('.continue-button')
+    click('.continue-button')
+    expect(clips.at(-1)?.src).toContain('museum-arrival-2--v2')
+    click('[aria-label^="Open field notes"]')
+    expect(container.querySelectorAll('dialog[open] select option')).toHaveLength(3)
+    click('[aria-label="Close field notes"]')
+    click('[aria-label="Choose a chapter"]')
+    chapter('The Harbor')
+    click('.chapter-start')
+    expect(container.querySelector('main')?.dataset.phase).toBe('intro')
+    expect(text()).toContain('harbor terraces')
+    expect(
+      container.querySelector('[aria-label^="Open field notes"]')?.getAttribute('aria-label'),
+    ).toContain('0 clues')
+    expect(container.querySelector('dialog[open]')).toBeNull()
+  })
+  it('lets a controller choose context and start a scene without advancing its first line', () => {
+    connect()
+    press(12)
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('Choose a chapter')
+    press(0)
+    const museum = [...container.querySelectorAll<HTMLButtonElement>('.chapter-option')].find(
+      (button) => button.querySelector('strong')?.textContent === 'Hall of Waters',
+    )!
+    act(() => museum.focus())
+    press(0)
+    const outcome = container.querySelector<HTMLSelectElement>('.chapter-context select')!
+    act(() => outcome.focus())
+    press(15)
+    expect(outcome.value).toBe('handshake')
+    act(() => container.querySelector<HTMLButtonElement>('.chapter-start')!.focus())
+    press(0)
+    tick(3000)
+    expect(container.querySelector('main')?.dataset.phase).toBe('museum-arrival')
+    expect(text()).toContain('The Hall of Waters stands above the harbor')
+    press(0)
+    expect(text()).toContain('Inside, afternoon light')
+  })
   it.each(clues)(
     'speaks only the displayed character passage in $id evidence, including when reopened',
     (clue) => {

@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Eye,
   Maximize2,
+  List,
   RotateCcw,
   Settings2,
   Sparkles,
@@ -37,6 +38,7 @@ import {
   initialSceneState,
   sceneReducer,
   type SceneEvent,
+  type SceneState,
 } from './state/scene'
 import { Kite } from './components/Kite'
 import { Modal, ModalHeading } from './components/Modal'
@@ -54,6 +56,7 @@ import { adjustControl, moveFocus, visibleControls } from './input/focus'
 import type { SoundCue } from './audio/HarborAudio'
 import type { DialogueLine } from './content/harbor'
 import { NovelSettings } from './components/NovelSettings'
+import { ChapterSelect } from './components/ChapterSelect'
 import {
   loadReadingPreferences,
   normalizeReadingPreferences,
@@ -62,10 +65,14 @@ import {
 } from './reading/preferences'
 import './audio/audio.css'
 
-type Panel = 'journal' | 'settings' | 'history' | 'record' | 'model-account' | 'perception'
+type Panel =
+  'journal' | 'settings' | 'history' | 'record' | 'model-account' | 'perception' | 'chapters'
 
-export default function App() {
-  const [state, dispatch] = useReducer(sceneReducer, initialSceneState)
+export default function App({
+  initialState = initialSceneState,
+  onPrologue,
+}: { initialState?: SceneState; onPrologue?: () => void } = {}) {
+  const [state, dispatch] = useReducer(sceneReducer, initialState)
   const [panel, setPanel] = useState<Panel | null>(null)
   const [perceptionSelection, setPerceptionSelection] = useState<{
     view: CognitiveView
@@ -261,6 +268,13 @@ export default function App() {
         cue = 'restart'
         setAuto(false)
         break
+      case 'START_SCENE':
+        cue = 'open'
+        setAuto(false)
+        setPanel(null)
+        setEvidenceVoice(null)
+        setPerceptionSelection(null)
+        break
       case 'INSPECT_LAMP':
         cue = 'discovery'
         break
@@ -338,7 +352,7 @@ export default function App() {
         ? visibleControls(modal)
         : visibleControls(document).filter((element) =>
             element.matches(
-              '.continue-button, .auto-toggle, .voice-replay, .page-back, .page-buttons button, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .record-button, .model-moment, .gate-control, .lamp-discovery, .cognitive-focus',
+              '.chapter-menu-button, .continue-button, .auto-toggle, .voice-replay, .page-back, .page-buttons button, .story-choice, .hotspot, .text-action, .replay-button, .sound-toggle, .record-button, .model-moment, .gate-control, .lamp-discovery, .cognitive-focus',
             ),
           )
       const focused = document.activeElement as HTMLElement | null
@@ -359,9 +373,16 @@ export default function App() {
       if ((action === 'left' || action === 'right') && focused && adjustControl(focused, direction))
         return
       moveFocus(controls, direction)
+      if (panel === 'chapters')
+        (document.activeElement as HTMLElement | null)?.scrollIntoView({ block: 'nearest' })
     },
     (amount) => {
       const root = document.querySelector('dialog[open]') ?? document
+      const chapterBody = root.querySelector<HTMLElement>('.chapter-select-body')
+      if (chapterBody) {
+        chapterBody.scrollBy({ top: amount, behavior: 'auto' })
+        return
+      }
       const passage = root.querySelector<HTMLElement>('.scrollable-passage')
       if (passage && passage.scrollHeight > passage.clientHeight) {
         setAuto(false)
@@ -583,6 +604,15 @@ export default function App() {
           <span>SOLAR COMMONS</span>
         </a>
         <nav className="scene-tools" aria-label="Scene controls">
+          <button
+            className="tool-button chapter-menu-button"
+            onClick={() => openPanel('chapters')}
+            aria-label="Choose a chapter"
+            title="Chapters"
+          >
+            <List size={18} aria-hidden="true" />
+            <span>Chapters</span>
+          </button>
           <button
             className="tool-button journal-button"
             onClick={() => openPanel('journal')}
@@ -1086,6 +1116,23 @@ export default function App() {
           </>
         )}
       </Modal>
+
+      {panel === 'chapters' && (
+        <ChapterSelect
+          context={state}
+          includePrologue={!!onPrologue}
+          onClose={closePanel}
+          onStart={(start) => {
+            if (start.scene === 'prologue') {
+              setAuto(false)
+              setReadAloud(null)
+              setEvidenceVoice(null)
+              setPanel(null)
+              onPrologue?.()
+            } else perform({ type: 'START_SCENE', start })
+          }}
+        />
+      )}
 
       <Modal
         open={panel === 'journal'}

@@ -59,7 +59,19 @@ export interface SceneState {
   quietIndexHeard: boolean
 }
 
+export type StoryStart =
+  | { scene: 'harbor' }
+  | { scene: 'museum'; endingChoiceId: 'survey' | 'handshake' }
+  | {
+      scene: 'quiet-index'
+      endingChoiceId: 'survey' | 'handshake'
+      museumLeadId: 'stair' | 'voices'
+    }
+
+export type ChapterStart = { scene: 'prologue' } | StoryStart
+
 export type SceneEvent =
+  | { type: 'START_SCENE'; start: StoryStart }
   | { type: 'NEXT' }
   | { type: 'CHOOSE_ENTRY'; id: string }
   | { type: 'TOGGLE_PERCEPTION' }
@@ -103,6 +115,20 @@ export const initialSceneState: SceneState = {
   quietIndexHeard: false,
 }
 
+/** A chapter start supplies only its prerequisites, without selecting its new choices. */
+export function sceneAtStart(start: StoryStart): SceneState {
+  const fresh = { ...initialSceneState, inspected: [] }
+  if (start.scene === 'harbor') return fresh
+  return {
+    ...fresh,
+    phase: start.scene === 'museum' ? 'museum-arrival' : 'qi-arrival',
+    inspected: clues.map((clue) => clue.id),
+    endingChoiceId: start.endingChoiceId,
+    discovered: start.scene === 'quiet-index',
+    museumLeadId: start.scene === 'quiet-index' ? start.museumLeadId : null,
+  }
+}
+
 function dialogueForState(state: SceneState): readonly DialogueLine[] {
   switch (state.phase) {
     case 'intro':
@@ -144,6 +170,8 @@ const afterDialogue: Partial<Record<ScenePhase, ScenePhase>> = {
 
 export function sceneReducer(state: SceneState, event: SceneEvent): SceneState {
   switch (event.type) {
+    case 'START_SCENE':
+      return sceneAtStart(event.start)
     case 'NEXT': {
       const lines = dialogueForState(state)
       if (!lines.length) return state
